@@ -34,6 +34,10 @@ All plugins require a license key. You can get a license key from [EventCatalog 
 - [Integrate AsyncAPI files from remote URLs into EventCatalog](./examples/generator-asyncapi/fetch-from-remote-urls/)
 - [Mapping commands, events and queries using the `x-eventcatalog-message-type` extension](./examples/generator-asyncapi/mapping-commands-events-queries/)
 - [Independent Message Versioning using the `x-eventcatalog-message-version` extension](./examples/generator-asyncapi/independent-message-versioning/)
+- [Message Ownership using the `x-eventcatalog-role` extension to control which service owns a message](./examples/generator-asyncapi/message-ownership/)
+    - EventCatalog will parse all messages, sometimes this leads to duplicated messages being created.
+    - The `x-eventcatalog-role` extension can be used to control which service owns a message.
+    - This is useful when you have multiple AsyncAPI files that define the same message.
 
 **EventBridge Integrations**
 
