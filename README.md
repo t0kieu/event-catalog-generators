@@ -5,13 +5,15 @@ This repository contains the generators for the EventCatalog project.
 ## Integration list with EventCatalog
 
 - [OpenAPI](./packages/generator-openapi/README.md)
-    - [Documentation](https://www.eventcatalog.dev/integrations/openapi)
-    - [Example Projects](./examples/generator-openapi/)
+  - [Documentation](https://www.eventcatalog.dev/integrations/openapi)
+  - [Example Projects](./examples/generator-openapi/)
 - [AsyncAPI](./packages/generator-asyncapi/README.md)
-    - [Documentation](https://www.eventcatalog.dev/integrations/asyncapi)
-    - [Example Projects](./examples/generator-asyncapi/)
+  - [Documentation](https://www.eventcatalog.dev/integrations/asyncapi)
+  - [Example Projects](./examples/generator-asyncapi/)
 - [EventCatalog Federation](./packages/generator-federation/README.md)
-    - [Documentation](https://www.eventcatalog.dev/federation)
+  - [Documentation](https://www.eventcatalog.dev/federation)
+- [Amazon EventBridge](./packages/generator-eventbridge/README.md)
+  - [Documentation](https://www.eventcatalog.dev/integrations/eventbridge)
 
 All plugins require a license key. You can get a license key from [EventCatalog Cloud](https://eventcatalog.cloud).
 
