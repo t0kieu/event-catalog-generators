@@ -33,7 +33,7 @@ describe('OpenAPI EventCatalog Plugin', () => {
   afterEach(async () => {
     await fs.rm(join(catalogDir), { recursive: true });
     // hack to wait for async operations to finish in the tests...
-    await new Promise((resolve) => setTimeout(resolve, 250));
+    // await new Promise((resolve) => setTimeout(resolve, 250));
   });
 
   describe('service generation', () => {
@@ -861,7 +861,7 @@ describe('OpenAPI EventCatalog Plugin', () => {
         // Normalize line endings
         const normalizeLineEndings = (str: string) => str.replace(/\r\n/g, '\n');
 
-        expect(normalizeLineEndings(asyncAPIFile)).toEqual(normalizeLineEndings(expected));
+        expect(normalizeLineEndings(asyncAPIFile)).toEqual(expected);
       });
 
       it('when saveParsedSpecFile is set, the OpenAPI files with $ref are resolved and added to the catalog', async () => {
