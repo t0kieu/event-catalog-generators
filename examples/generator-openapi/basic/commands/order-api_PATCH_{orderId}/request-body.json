@@ -1,0 +1,14 @@
+{
+  "type": "object",
+  "properties": {
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "shipped",
+        "delivered",
+        "canceled"
+      ]
+    }
+  }
+}
