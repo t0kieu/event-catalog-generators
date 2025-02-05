@@ -37,6 +37,9 @@ yarn-error.log*
 .DS_Store
 *.pem
 
+packages/**/examples/**/catalog/*
+packages/**/pnpm-lock.yaml
+
 
 examples/generator-openapi/**/queries
 examples/generator-openapi/**/events
