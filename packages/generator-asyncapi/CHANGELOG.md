@@ -1,5 +1,11 @@
 # @eventcatalog/sdk
 
+## 2.8.1
+
+### Patch Changes
+
+- 3cded09: chore(project): sharing files between plugins
+
 ## 2.8.0
 
 ### Minor Changes

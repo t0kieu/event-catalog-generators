@@ -1,5 +1,11 @@
 # @eventcatalog/generator-openapi
 
+## 3.3.1
+
+### Patch Changes
+
+- 3cded09: chore(project): sharing files between plugins
+
 ## 3.3.0
 
 ### Minor Changes
