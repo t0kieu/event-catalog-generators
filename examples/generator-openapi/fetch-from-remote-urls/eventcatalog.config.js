@@ -33,7 +33,7 @@ export default {
       "@eventcatalog/generator-openapi",
       {
         services: [
-          { path: path.join(__dirname, "openapi-files", "product-api.yml") },
+          { path: "https://raw.githubusercontent.com/event-catalog/generators/refs/heads/main/examples/generator-openapi/basic/openapi-files/product-api.yml", id: 'product-api' },
         ],
         domain: { id: "products", name: "Products", version: "0.0.1" },
       },
@@ -42,8 +42,8 @@ export default {
       "@eventcatalog/generator-openapi",
       {
         services: [
-          { path: path.join(__dirname, "openapi-files", "order-api.yml"), id: 'order-service' },
-          { path: path.join(__dirname, "openapi-files", "order-history.yml"), id: 'order-history' },
+          { path: "https://raw.githubusercontent.com/event-catalog/generators/refs/heads/main/examples/generator-openapi/basic/openapi-files/order-api.yml", id: 'order-service' },
+          { path: "https://raw.githubusercontent.com/event-catalog/generators/refs/heads/main/examples/generator-openapi/basic/openapi-files/order-history.yml", id: 'order-history' },
         ],
         domain: {
           id: "order-management",
@@ -56,7 +56,7 @@ export default {
       "@eventcatalog/generator-openapi",
       {
         services: [
-          { path: path.join(__dirname, "openapi-files", "payment-api.yml"), id: 'payment-service' },
+          { path: "https://raw.githubusercontent.com/event-catalog/generators/refs/heads/main/examples/generator-openapi/basic/openapi-files/payment-api.yml", id: 'payment-service' },
         ],
         domain: { id: "payment", name: "Payment", version: "0.0.1" },
       },
