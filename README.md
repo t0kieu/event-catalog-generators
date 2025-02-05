@@ -10,7 +10,7 @@ This repository contains the generators for the EventCatalog project.
 
 Raise a GitHub issue on this project, or contact us on [our Discord server](https://discord.gg/3rjaZMmrAm).
 
-# Commercial use for plugins
+## Commercial use
 
 All plugins are licensed under a [dual-license](./LICENSE.md). To ensure the sustainability of the project, you can freely make use of this software if your projects are Open Source. Otherwise for internal systems you must obtain a [commercial license](./LICENSE-COMMERCIAL.md).
 
