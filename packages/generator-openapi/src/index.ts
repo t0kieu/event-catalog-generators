@@ -47,7 +47,7 @@ export default async (_: any, options: Props) => {
 
   const { services = [], saveParsedSpecFile = false } = options;
   for (const serviceSpec of services) {
-    console.log(chalk.green(`Processing ${serviceSpec.path}`));
+    console.log(chalk.green(`Processing the file ${serviceSpec.path}`));
 
     try {
       await SwaggerParser.validate(serviceSpec.path);
