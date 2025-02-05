@@ -4,8 +4,26 @@ This repository contains the generators for the EventCatalog project.
 
 ## Generators
 
+### OpenAPI Integration
+
+Automate your EventCatalog with OpenAPI files.
+
 - [OpenAPI](./packages/generator-openapi/README.md)
+- [Get License Key](https://eventcatalog.cloud)
+
+### AsyncAPI Integration
+
+Automate your EventCatalog with AsyncAPI files.
+
 - [AsyncAPI](./packages/generator-asyncapi/README.md)
+- [Get License Key](https://eventcatalog.cloud)
+
+### EventCatalog Federation
+
+Merge multiple catalogs into one master catalog.
+
+- [EventCatalog Federation](./packages/generator-federation/README.md)
+- [Get License Key](https://eventcatalog.cloud)
 
 ## Found a problem?
 
