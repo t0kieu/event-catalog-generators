@@ -42,6 +42,7 @@ examples/generator-openapi/**/queries
 examples/generator-openapi/**/events
 examples/generator-openapi/**/domains
 examples/generator-openapi/**/services
+examples/generator-openapi/**/commands
 examples/**/**/build
 examples/**/**/package-lock.json
 examples/**/**/dist
