@@ -8,7 +8,7 @@
     "test": "turbo run test",
     "changeset": "changeset",
     "version-packages": "changeset version",
-    "release": "turbo build --filter=docs^... && changeset publish",
+    "release": "turbo build && changeset publish",
     "format": "prettier --write .",
     "format:diff": "prettier --list-different .",
     "publish-packages": "turbo run build lint test && changeset version && changeset publish"
