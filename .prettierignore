@@ -1,1 +1,8 @@
 examples/
+node_modules
+.changeset/*
+
+packages/**/dist
+packages/**/node_modules
+
+packages/**/pnpm-lock.yaml

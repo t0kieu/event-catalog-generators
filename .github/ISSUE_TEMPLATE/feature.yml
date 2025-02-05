@@ -1,6 +1,6 @@
 name: Enhancement 🚀
 description: Suggest a new feature or other improvement
-labels: ["✨ enhancement", "needs-discussion"]
+labels: ['✨ enhancement', 'needs-discussion']
 body:
   - type: markdown
     attributes:
