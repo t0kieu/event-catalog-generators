@@ -12,6 +12,8 @@ This repository contains the generators for the EventCatalog project.
     - [Example Projects](./examples/generator-asyncapi/)
 - [EventCatalog Federation](./packages/generator-federation/README.md)
     - [Documentation](https://www.eventcatalog.dev/federation)
+- [Amazon EventBridge](./packages/generator-eventbridge/README.md)
+    - [Documentation](https://www.eventcatalog.dev/integrations/eventbridge)
 
 All plugins require a license key. You can get a license key from [EventCatalog Cloud](https://eventcatalog.cloud).
 
