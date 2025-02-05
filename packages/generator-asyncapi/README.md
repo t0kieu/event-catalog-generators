@@ -18,7 +18,7 @@
 
 # Core Features
 
-- 📃 Document domains, services and messages from your AsyncAPI file ([example](https://github.com/event-catalog/eventcatalog-asyncapi-example))
+- 📃 Document domains, services and messages from your AsyncAPI file ([example](https://github.com/event-catalog/generators/tree/main/examples/generator-asyncapi))
 - 📊 Visualise your architecture ([demo](https://demo.eventcatalog.dev/visualiser))
 - ⭐ Download your AsyncAPI files and message schemas form EventCatalog (e.g Avro, JSON) ([demo](https://demo.eventcatalog.dev/docs/events/InventoryAdjusted/0.0.4))
 - 💅 Custom MDX components ([read more](https://eventcatalog.dev/docs/development/components/using-components))
@@ -58,7 +58,7 @@ generators: [
 
 In this example the generator will read the `orders-service.asyncapi.yml` file and also fetch AsyncAPI files from an external URL and populate services and messages inside your catalog. It will add the services to the domain `Orders`.
 
-You can see an example in the [eventcatalog-asyncapi-example](https://github.com/event-catalog/eventcatalog-asyncapi-example/blob/main/eventcatalog.config.js) repo
+You can see an example in the [eventcatalog-asyncapi-example](https://github.com/event-catalog/generators/tree/main/examples/generator-asyncapi/blob/main/eventcatalog.config.js) repo
 
 # Getting started
 
@@ -72,7 +72,7 @@ _Make sure you are on the latest version of EventCatalog_.
 @eventcatalog/generator-asyncapi
 ```
 
-2. Configure your `eventcatalog.config.js` file [(see example)](https://github.com/event-catalog/eventcatalog-asyncapi-example/blob/main/eventcatalog.config.js)
+2. Configure your `eventcatalog.config.js` file [(see example)](https://github.com/event-catalog/generators/tree/main/examples/generator-asyncapi/blob/main/eventcatalog.config.js)
 
 3. Run the generate command
 
