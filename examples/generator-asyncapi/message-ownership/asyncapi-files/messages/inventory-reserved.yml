@@ -1,0 +1,28 @@
+headers:
+  type: object
+  properties:
+    ec-message-type:
+      type: string
+      default: event
+      description: Type of message for EventCatalog
+payload:
+  type: object
+  properties:
+    reservationId:
+      type: string
+      description: Unique identifier for the inventory reservation
+    orderId:
+      type: string
+      description: Unique identifier for the order
+    items:
+      type: array
+      description: List of items reserved
+      items:
+        type: object
+        properties:
+          itemId:
+            type: string
+            description: Unique identifier for the item
+          quantity:
+            type: integer
+            description: Quantity of the item reserved
