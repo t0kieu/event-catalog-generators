@@ -33,7 +33,7 @@ All plugins require a license key. You can get a license key from [EventCatalog 
 - [Integrate AsyncAPI files into EventCatalog](./examples/generator-asyncapi/)
 - [Integrate AsyncAPI files from remote URLs into EventCatalog](./examples/generator-asyncapi/fetch-from-remote-urls/)
 - [Mapping commands, events and queries using the `x-eventcatalog-message-type` extension](./examples/generator-asyncapi/mapping-commands-events-queries/)
-- [Independent Message Versioning](./examples/generator-asyncapi/independent-message-versioning/)
+- [Independent Message Versioning using the `x-eventcatalog-message-version` extension](./examples/generator-asyncapi/independent-message-versioning/)
 
 **EventBridge Integrations**
 
