@@ -14,6 +14,8 @@ This repository contains the generators for the EventCatalog project.
   - [Documentation](https://www.eventcatalog.dev/federation)
 - [Amazon EventBridge](./packages/generator-eventbridge/README.md)
   - [Documentation](https://www.eventcatalog.dev/integrations/eventbridge)
+- [Backstage](https://github.com/event-catalog/backstage-plugin-eventcatalog)
+  - [Documentation](https://www.eventcatalog.dev/integrations/backstage)
 
 All plugins require a license key. You can get a license key from [EventCatalog Cloud](https://eventcatalog.cloud).
 
