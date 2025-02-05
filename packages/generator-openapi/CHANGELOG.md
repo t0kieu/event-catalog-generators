@@ -1,5 +1,11 @@
 # @eventcatalog/generator-openapi
 
+## 3.1.1
+
+### Patch Changes
+
+- aef86c0: chore(plugin): testing CI/CD
+
 ## 3.1.0
 
 ### Minor Changes
