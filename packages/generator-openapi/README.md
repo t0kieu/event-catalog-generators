@@ -6,7 +6,7 @@
 <img src="https://img.shields.io/github/actions/workflow/status/event-catalog/generator-asyncapi/verify-build.yml"/>
 [![](https://dcbadge.limes.pink/api/server/https://discord.gg/3rjaZMmrAm?style=flat)](https://discord.gg/3rjaZMmrAm) [<img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white" height="20px" />](https://www.linkedin.com/in/david-boyne/) [![blog](https://img.shields.io/badge/license-Dual--License-brightgreen)](https://github.com/event-catalog/generator-openapi/blob/main/LICENSE.md)
 
-<img alt="header" src="../../images/openapi.png" />
+<img alt="header" src="https://github.com/event-catalog/generators/blob/main/images/openapi.png?raw=true" />
 
 <h4>Features: Generate EventCatalogs with your OpenAPI files, Auto versioning, schema downloads, map to domains, custom OpenAPI extensions and more... </h4>
 
@@ -150,4 +150,4 @@ You can find the [contributing guidelines here](https://eventcatalog.dev/docs/co
 
 This project is governed by a [dual-license](./LICENSE.md). To ensure the sustainability of the project, you can freely make use of this software if your projects are Open Source. Otherwise for internal systems you must obtain a [commercial license](./LICENSE-COMMERCIAL.md).
 
-If you would like to obtain a Commercial License, you can purchase a license at https://dashboard.eventcatalog.dev or email us at `hello@eventcatalog.dev`.
+If you would like to obtain a Commercial License, you can purchase a license at https://dashboard.eventcatalog.dev or email us at `hello@eventcatalog.dev`
