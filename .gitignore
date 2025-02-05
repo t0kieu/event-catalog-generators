@@ -40,6 +40,9 @@ yarn-error.log*
 packages/**/examples/**/catalog/*
 packages/**/pnpm-lock.yaml
 
+packages/**/src/test/catalog/*
+packages/**/src/test/tmp/*
+
 
 examples/generator-openapi/**/queries
 examples/generator-openapi/**/events
@@ -54,3 +57,7 @@ examples/**/**/node_modules
 examples/**/**/.eventcatalog-core
 examples/**/**/.git
 examples/**/**/.github
+
+
+
+
