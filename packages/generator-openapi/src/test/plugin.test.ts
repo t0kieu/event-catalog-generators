@@ -5,6 +5,23 @@ import { join } from 'node:path';
 import fs from 'fs/promises';
 import { vi } from 'vitest';
 
+// Add mock for chalk at the top with other mocks
+vi.mock('chalk', () => ({
+  default: {
+    blue: (str: string) => str,
+    green: (str: string) => str,
+    yellow: (str: string) => str,
+    red: (str: string) => str,
+    cyan: (str: string) => str,
+    magenta: (str: string) => str,
+    white: (str: string) => str,
+    gray: (str: string) => str,
+    bgBlue: (str: string) => str,
+    bgGreen: (str: string) => str,
+    bgYellow: (str: string) => str,
+  },
+}));
+
 // Add mock for the local checkLicense module
 vi.mock('../utils/checkLicense', () => ({
   default: () => Promise.resolve(),
