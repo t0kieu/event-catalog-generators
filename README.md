@@ -2,7 +2,15 @@
 
 This repository contains the generators for the EventCatalog project.
 
-## Generators
+## Integration list with EventCatalog
+
+- [OpenAPI](./packages/generator-openapi/README.md)
+- [AsyncAPI](./packages/generator-asyncapi/README.md)
+- [EventCatalog Federation](./packages/generator-federation/README.md)
+
+---
+
+## Integrations
 
 ### OpenAPI Integration
 
