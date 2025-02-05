@@ -1,5 +1,11 @@
 # @eventcatalog/generator-federation
 
+## 1.0.0
+
+### Major Changes
+
+- 3a29379: chore(plugin): updated to major version
+
 ## 0.0.3
 
 ### Patch Changes
