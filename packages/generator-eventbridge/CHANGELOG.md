@@ -1,5 +1,11 @@
 # @eventcatalog/generator-eventbridge
 
+## 1.3.0
+
+### Minor Changes
+
+- fa7441f: chore(plugin): updated to minor version
+
 ## 1.2.4
 
 ### Patch Changes
