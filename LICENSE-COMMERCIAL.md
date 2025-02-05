@@ -7,6 +7,7 @@ Under the Commercial License, you are free to:
 - Use this software without open-source obligations, including for proprietary, internal, or commercial purposes.
 - Modify the software without being required to release the modifications to the public.
 - Use the software in private or internal services without the obligation to share the source code with external users.
+- You can get a free trial (14 days) per plugin at https://eventcatalog.cloud or email us at `hello@eventcatalog.dev`
 
 ### When Do You Need a Commercial License?
 
@@ -17,3 +18,10 @@ You will need a Commercial License in the following cases:
 - You are creating a closed-source product that incorporates this software.
 
 If you would like to obtain a Commercial License, you can purchase a license at https://dashboard.eventcatalog.dev or email us at `hello@eventcatalog.dev`
+
+### FAQ
+
+Which license do I need?
+
+- If you are using these plugins for proprietary or internal use, you need a Commercial License.
+- If you are an Open Source project, you can use the software under the AGPL-3.0 license.

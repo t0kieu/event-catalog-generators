@@ -22,7 +22,6 @@ Thank you to our project sponsors.
 
 ## Gold sponsors
 
-
 <div align="center">
   <img alt="gravitee" src="./images/sponsors/gravitee-logo-black.svg" width="50%" />
   <p style="margin: 0; padding: 0;">Manage, secure, and govern every API in your organization</p>
