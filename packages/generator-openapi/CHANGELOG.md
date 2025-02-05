@@ -1,5 +1,11 @@
 # @eventcatalog/generator-openapi
 
+## 3.1.2
+
+### Patch Changes
+
+- 75cda70: chore(plugin): force minor version for openapi
+
 ## 3.1.1
 
 ### Patch Changes
