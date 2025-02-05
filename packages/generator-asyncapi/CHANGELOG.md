@@ -1,5 +1,11 @@
 # @eventcatalog/sdk
 
+## 2.8.0
+
+### Minor Changes
+
+- a80bca6: chore(plugin): updated sdk version
+
 ## 2.7.3
 
 ### Patch Changes
