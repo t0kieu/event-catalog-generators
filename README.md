@@ -23,10 +23,27 @@ All plugins require a license key. You can get a license key from [EventCatalog 
 
 ## Examples
 
+**OpenAPI Integrations**
+
 - [Integrate OpenAPI files into EventCatalog](./examples/generator-openapi/)
+- [Integrate OpenAPI files from remote URLs into EventCatalog](./examples/generator-openapi/fetch-from-remote-urls/)
+
+**AsyncAPI Integrations**
+
 - [Integrate AsyncAPI files into EventCatalog](./examples/generator-asyncapi/)
+- [Integrate AsyncAPI files from remote URLs into EventCatalog](./examples/generator-asyncapi/fetch-from-remote-urls/)
+- [Mapping commands, events and queries using the `x-eventcatalog-message-type` extension](./examples/generator-asyncapi/mapping-commands-events-queries/)
+
+**EventBridge Integrations**
+
 - [Integrate EventBridge files into EventCatalog](./examples/generator-eventbridge/)
+
+**Backstage Integrations**
+
 - [Integrate Backstage plugin into EventCatalog](./examples/backstage-plugin/)
+
+**Multi Generator Example**
+
 - [Integrate multiple generators (AsyncAPI and OpenAPI) into EventCatalog](./examples/multi-generator-example/)
 
 ---
