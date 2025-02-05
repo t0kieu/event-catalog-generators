@@ -5,23 +5,6 @@ import { join } from 'node:path';
 import fs from 'fs/promises';
 import { vi } from 'vitest';
 
-// Add mock for chalk at the top with other mocks
-vi.mock('chalk', () => ({
-  default: {
-    blue: (str: string) => str,
-    green: (str: string) => str,
-    yellow: (str: string) => str,
-    red: (str: string) => str,
-    cyan: (str: string) => str,
-    magenta: (str: string) => str,
-    white: (str: string) => str,
-    gray: (str: string) => str,
-    bgBlue: (str: string) => str,
-    bgGreen: (str: string) => str,
-    bgYellow: (str: string) => str,
-  },
-}));
-
 // Add mock for the local checkLicense module
 vi.mock('../utils/checkLicense', () => ({
   default: () => Promise.resolve(),
@@ -49,8 +32,6 @@ describe('OpenAPI EventCatalog Plugin', () => {
 
   afterEach(async () => {
     await fs.rm(join(catalogDir), { recursive: true });
-    // hack to wait for async operations to finish in the tests...
-    await new Promise((resolve) => setTimeout(resolve, 250));
   });
 
   describe('service generation', () => {
@@ -878,7 +859,7 @@ describe('OpenAPI EventCatalog Plugin', () => {
         // Normalize line endings
         const normalizeLineEndings = (str: string) => str.replace(/\r\n/g, '\n');
 
-        expect(normalizeLineEndings(asyncAPIFile)).toEqual(expected);
+        expect(normalizeLineEndings(asyncAPIFile)).toEqual(normalizeLineEndings(expected));
       });
 
       it('when saveParsedSpecFile is set, the OpenAPI files with $ref are resolved and added to the catalog', async () => {
