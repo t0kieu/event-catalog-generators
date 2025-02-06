@@ -44,6 +44,7 @@ All plugins require a license key. You can get a license key from [EventCatalog 
 **EventBridge Integrations**
 
 - [Import EventBridge schemas into EventCatalog using schema discovery](./examples/generator-eventbridge/basic/)
+- [Import EventBridge schemas into EventCatalog using a custom schema registry](./examples/generator-eventbridge/custom-registry/)
 
 **Backstage Integrations**
 
