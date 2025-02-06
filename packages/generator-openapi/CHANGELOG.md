@@ -1,5 +1,11 @@
 # @eventcatalog/generator-openapi
 
+## 3.3.2
+
+### Patch Changes
+
+- f7b8f68: feat(plugin): now supports x-eventcatalog-message-version
+
 ## 3.3.1
 
 ### Patch Changes
