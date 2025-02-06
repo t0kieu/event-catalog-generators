@@ -1,5 +1,11 @@
 # @eventcatalog/sdk
 
+## 3.0.0
+
+### Major Changes
+
+- c9ad7b7: feat(plugin): asyncapi plugin now groups by service
+
 ## 2.8.2
 
 ### Patch Changes
