@@ -24,6 +24,7 @@ import { defaultMarkdown as generateMarkdownForChannel, getChannelProtocols } fr
 import checkLicense from './checkLicense';
 
 import { EventType, MessageOperations } from './types';
+import { join } from 'node:path';
 
 const parser = new Parser();
 
@@ -33,6 +34,7 @@ const cliArgs = argv(process.argv.slice(2));
 
 const optionsSchema = z.object({
   licenseKey: z.string().optional(),
+  writeFilesToRoot: z.boolean().optional(),
   services: z.array(
     z.object({
       id: z.string({ required_error: 'The service id is required. please provide the service id' }),
@@ -111,18 +113,21 @@ export default async (config: any, options: Props) => {
       version: versionEvent,
       get: getEvent,
       addSchema: addSchemaToEvent,
+      collection: 'events',
     },
     command: {
       write: writeCommand,
       version: versionCommand,
       get: getCommand,
       addSchema: addSchemaToCommand,
+      collection: 'commands',
     },
     query: {
       write: writeQuery,
       version: versionQuery,
       get: getQuery,
       addSchema: addSchemaToQuery,
+      collection: 'queries',
     },
   };
 
@@ -172,6 +177,14 @@ export default async (config: any, options: Props) => {
     let serviceSpecifications = {};
     let serviceSpecificationsFiles = [];
     let serviceMarkdown = generateMarkdownForService(document);
+
+    // Have to ../ as the SDK will put the files into hard coded folders
+    let servicePath = options.domain
+      ? path.join('../', 'domains', options.domain.id, 'services', service.id)
+      : path.join('../', 'services', service.id);
+    if (options.writeFilesToRoot) {
+      servicePath = service.id;
+    }
 
     // Manage domain
     if (options.domain) {
@@ -283,12 +296,18 @@ export default async (config: any, options: Props) => {
           version: versionMessage,
           get: getMessage,
           addSchema: addSchemaToMessage,
+          collection: folder,
         } = MESSAGE_OPERATIONS[eventType];
 
         let messageMarkdown = generateMarkdownForMessage(document, message);
         const badges = message.tags().all() || [];
 
         console.log(chalk.blue(`Processing message: ${getMessageName(message)} (v${messageVersion})`));
+
+        let messagePath = join(servicePath, folder, message.id());
+        if (options.writeFilesToRoot) {
+          messagePath = message.id();
+        }
 
         if (serviceOwnsMessageContract) {
           // Check if the message already exists in the catalog
@@ -321,7 +340,7 @@ export default async (config: any, options: Props) => {
             },
             {
               override: true,
-              path: message.id(),
+              path: messagePath,
             }
           );
 
@@ -399,6 +418,7 @@ export default async (config: any, options: Props) => {
         ...(repository && { repository }),
       },
       {
+        path: servicePath,
         override: true,
       }
     );
