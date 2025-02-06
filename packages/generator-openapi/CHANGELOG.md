@@ -1,5 +1,11 @@
 # @eventcatalog/generator-openapi
 
+## 4.0.0
+
+### Major Changes
+
+- c04dbe8: feat(plugin): openapi plugin now groups by service
+
 ## 3.3.3
 
 ### Patch Changes
