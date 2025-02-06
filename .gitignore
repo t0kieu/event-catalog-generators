@@ -57,6 +57,11 @@ examples/**/**/dependencies
 !examples/generator-federation/basic/customer-experience-team/services/**/events
 !examples/generator-federation/basic/customer-experience-team/services/**/commands
 
+!examples/generator-federation/basic/order-management-team/services
+!examples/generator-federation/basic/order-management-team/services/**/queries
+!examples/generator-federation/basic/order-management-team/services/**/events
+!examples/generator-federation/basic/order-management-team/services/**/commands
+
 examples/**/**/build
 examples/**/**/package-lock.json
 examples/**/**/dist

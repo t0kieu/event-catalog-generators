@@ -6,9 +6,9 @@ const __dirname = path.dirname(url.fileURLToPath(import.meta.url));
 /** @type {import('@eventcatalog/core/bin/eventcatalog.config').Config} */
 export default {
   cId: "10b46030-5736-4600-8254-421c3ed56e47",
-  title: "EventCatalog",
-  tagline: "Discover, Explore and Document your Event Driven Architectures",
-  organizationName: "Your Company",
+  title: "MetaRetail Inc",
+  tagline: "Fake Retail Company for EventCatalog Demo",
+  organizationName: "MetaRetail Inc",
   homepageLink: "https://eventcatalog.dev/",
   editUrl: "https://github.com/boyney123/eventcatalog-demo/edit/master",
   // By default set to false, add true to get urls ending in /
@@ -20,7 +20,7 @@ export default {
   logo: {
     alt: "EventCatalog Logo",
     src: "/logo.png",
-    text: "EventCatalog",
+    text: "MetaRetail Inc",
   },
   docs: {
     sidebar: {
@@ -45,6 +45,18 @@ export default {
             content: 'examples/generator-federation/basic/customer-experience-team/services',
             // specify the target path in your main catalog, here we are importing the services from the customer-experience-team catalog
             destination: path.resolve(__dirname, 'services')
+          },
+          {
+            // importing content from the customer-experience-team catalog
+            content: 'examples/generator-federation/basic/customer-experience-team/teams',
+            // specify the target path in your main catalog, here we are importing the services from the customer-experience-team catalog
+            destination: path.resolve(__dirname, 'teams')
+          },
+          {
+            // importing content from the customer-experience-team catalog
+            content: 'examples/generator-federation/basic/customer-experience-team/users',
+            // specify the target path in your main catalog, here we are importing the services from the customer-experience-team catalog
+            destination: path.resolve(__dirname, 'users')
           }
         ],
 
