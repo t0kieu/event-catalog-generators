@@ -48,6 +48,7 @@ examples/**/**/queries
 examples/**/**/events
 examples/**/**/domains
 examples/**/**/services
+examples/**/**/channels
 examples/**/**/commands
 
 examples/**/**/build
