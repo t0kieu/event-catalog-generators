@@ -1,5 +1,11 @@
 # @eventcatalog/sdk
 
+## 2.8.2
+
+### Patch Changes
+
+- 3890544: fix(plugin): no longer added empty owners
+
 ## 2.8.1
 
 ### Patch Changes
