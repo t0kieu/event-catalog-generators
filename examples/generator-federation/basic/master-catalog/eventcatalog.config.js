@@ -69,7 +69,47 @@ export default {
         enforceUniqueResources: true
       },
     ],
-    // Order Management Team GitHub Repository
+    // Payment Team
+    [
+      '@eventcatalog/generator-federation',
+      {
+        // Pulling information from a GitHub repository
+        source: 'git@github.com:event-catalog/generators.git',
+
+        // specifying the branch to pull from (default is main)
+        branch: 'main',
+
+        // specify which files you want to copy from the repository
+        copy: [
+          {
+            // importing content from the payment-team catalog
+            content: 'examples/generator-federation/basic/payment-team/services',
+            // specify the target path in your main catalog, here we are importing the services from the payment-team catalog
+            destination: path.resolve(__dirname, 'services')
+          },
+          {
+            // importing content from the payment-team catalog
+            content: 'examples/generator-federation/basic/payment-team/teams',
+            // specify the target path in your main catalog, here we are importing the services from the payment-team catalog
+            destination: path.resolve(__dirname, 'teams')
+          },
+          {
+            // importing content from the payment-team catalog
+            content: 'examples/generator-federation/basic/payment-team/users',
+            // specify the target path in your main catalog, here we are importing the services from the payment-team catalog
+            destination: path.resolve(__dirname, 'users')
+          }
+        ],
+
+        // optional, if you want to merge and override any conflicts then set to true (default is false)
+        override: true,
+
+        // optional, if you want the plugin to error 
+        // if there are duplicate resources in your 
+        // main catalog then set to true (default is false)
+        enforceUniqueResources: true
+      },
+    ],
     [
       '@eventcatalog/generator-federation',
       {

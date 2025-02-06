@@ -18,3 +18,25 @@ Federation can help large organizations and teams to:
 - Ease the burden of keeping documentation up to date as it's close to the code
 - Surface relevant information from across an organization
 
+### How it works
+
+1. Teams create their own EventCatalog instance. This can be next to the their code or where ever they want.
+1. Teams generate there documentation (using plugins or just manual). 
+1. They commit their documentation to their repository.
+1. The central catalog is created, and using the federation plugin it merges many catalogs together into one view.
+1. The central catalog is hosted for the organization where people can view the merged catalog and single source of truth.
+
+**Making changes to catalogs**
+
+1. Teams continue to make changes to their own catalogs as they always have.
+1. The central catalog is updated using the federation plugin and changes are merged into the central catalog.
+1. The central catalog is rebuilt and redeployed.
+
+### Running this example
+
+1. Clone the repository and go into the `master-catalog` directory
+1. Run `npm install`
+1. Get a Federation license key from [EventCatalog Cloud](https://eventcatalog.cloud) (14 day trial)
+1. Run the generate command (this will merge many teams catalogs into one, in this example we are merging the `customer-experience-team`, `order-management-team` and `payment-team` catalogs into one central catalog)
+1. Run the catalog locally 
+1. View your catalog at https://localhost:3000
