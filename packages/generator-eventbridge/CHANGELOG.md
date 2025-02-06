@@ -1,5 +1,11 @@
 # @eventcatalog/generator-eventbridge
 
+## 1.3.1
+
+### Patch Changes
+
+- 84c4c89: fix(plugin): fixed issue using channels and custom registries
+
 ## 1.3.0
 
 ### Minor Changes
