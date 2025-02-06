@@ -591,11 +591,7 @@ describe('OpenAPI EventCatalog Plugin', () => {
 
         const command = await getQuery('list-pets');
 
-        const dir = await fs.readdir(join(catalogDir, 'queries'));
-
-        console.log(dir);
-
-        const file = await fs.readFile(join(catalogDir, 'queries', 'list-pets', 'index.md'));
+        const file = await fs.readFile(join(catalogDir, 'services', 'swagger-petstore', 'queries', 'list-pets', 'index.md'));
         expect(file).toBeDefined();
 
         expect(command).toEqual(
@@ -787,7 +783,9 @@ describe('OpenAPI EventCatalog Plugin', () => {
           // Can the schema be something else than JSON schema?
           expect(command.schemaPath).toEqual('request-body.json');
 
-          const schema = await fs.readFile(join(catalogDir, 'commands', 'createPets', 'request-body.json'));
+          const schema = await fs.readFile(
+            join(catalogDir, 'services', 'swagger-petstore', 'commands', 'createPets', 'request-body.json')
+          );
           expect(schema).toBeDefined();
         });
 
@@ -807,9 +805,9 @@ describe('OpenAPI EventCatalog Plugin', () => {
 
           await plugin(config, { services: [{ path: join(openAPIExamples, 'petstore.yml'), id: 'swagger-petstore' }] });
 
-          const command = await getCommand('createPets');
-
-          const schema = await fs.readFile(join(catalogDir, 'commands', 'createPets', 'response-default.json'));
+          const schema = await fs.readFile(
+            join(catalogDir, 'services', 'swagger-petstore', 'commands', 'createPets', 'response-default.json')
+          );
           expect(schema).toBeDefined();
         });
 
@@ -900,6 +898,37 @@ describe('OpenAPI EventCatalog Plugin', () => {
         const normalizeLineEndings = (str: string) => str.replace(' ', '').replace(/\r\n/g, '\n').replace(/\s+/g, '');
 
         expect(normalizeLineEndings(asyncAPIFile)).toEqual(normalizeLineEndings(expected));
+      });
+    });
+
+    describe('writeFilesToRoot', () => {
+      it('when writeFilesToRoot is set to true, the files are written to the root of the catalog and not inside the service folder', async () => {
+        await plugin(config, {
+          services: [{ path: join(openAPIExamples, 'petstore.yml'), id: 'swagger-petstore' }],
+          writeFilesToRoot: true,
+        });
+
+        //  Read events directory
+        const eventsDir = await fs.readdir(join(catalogDir, 'events'));
+        expect(eventsDir).toEqual(['petAdopted']);
+
+        const eventFiles = await fs.readdir(join(catalogDir, 'events', 'petAdopted'));
+        expect(eventFiles).toEqual(['index.md', 'request-body.json', 'response-default.json']);
+
+        const commandsDir = await fs.readdir(join(catalogDir, 'commands'));
+        expect(commandsDir).toEqual(['createPets']);
+
+        const commandFiles = await fs.readdir(join(catalogDir, 'commands', 'createPets'));
+        expect(commandFiles).toEqual(['index.md', 'request-body.json', 'response-default.json']);
+
+        const queriesDir = await fs.readdir(join(catalogDir, 'queries'));
+        expect(queriesDir).toEqual(['list-pets', 'petVaccinated', 'showPetById']);
+
+        const queryFiles = await fs.readdir(join(catalogDir, 'queries', 'list-pets'));
+        expect(queryFiles).toEqual(['index.md', 'response-200.json', 'response-default.json']);
+
+        const serviceFiles = await fs.readdir(join(catalogDir, 'services', 'swagger-petstore'));
+        expect(serviceFiles).toEqual(['index.md', 'petstore.yml']);
       });
     });
 

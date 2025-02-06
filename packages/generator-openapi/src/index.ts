@@ -12,13 +12,14 @@ import { getMessageTypeUtils } from './utils/catalog-shorthand';
 import { OpenAPI } from 'openapi-types';
 import checkLicense from './utils/checkLicense';
 import yaml from 'js-yaml';
-
+import { join } from 'node:path';
 type Props = {
   services: Service[];
   domain?: Domain;
   debug?: boolean;
   saveParsedSpecFile?: boolean;
   licenseKey?: string;
+  writeFilesToRoot?: boolean;
 };
 
 export default async (_: any, options: Props) => {
@@ -65,6 +66,14 @@ export default async (_: any, options: Props) => {
     let serviceSpecificationsFiles = [];
     let serviceSpecifications = service.specifications;
 
+    // Have to ../ as the SDK will put the files into hard coded folders
+    let servicePath = options.domain
+      ? join('../', 'domains', options.domain.id, 'services', service.id)
+      : join('../', 'services', service.id);
+    if (options.writeFilesToRoot) {
+      servicePath = service.id;
+    }
+
     // Manage domain
     if (options.domain) {
       // Try and get the domain
@@ -100,7 +109,7 @@ export default async (_: any, options: Props) => {
     }
 
     // Process all messages for the OpenAPI spec
-    let { sends, receives } = await processMessagesForOpenAPISpec(serviceSpec.path, document);
+    let { sends, receives } = await processMessagesForOpenAPISpec(serviceSpec.path, document, servicePath, options);
     let owners = [];
     let repository = null;
 
@@ -142,7 +151,7 @@ export default async (_: any, options: Props) => {
         ...(owners ? { owners } : {}),
         ...(repository ? { repository } : {}),
       },
-      { path: service.id, override: true }
+      { path: join(servicePath), override: true }
     );
 
     // What files need added to the service (specification files)
@@ -170,7 +179,12 @@ export default async (_: any, options: Props) => {
   }
 };
 
-const processMessagesForOpenAPISpec = async (pathToSpec: string, document: OpenAPI.Document) => {
+const processMessagesForOpenAPISpec = async (
+  pathToSpec: string,
+  document: OpenAPI.Document,
+  servicePath: string,
+  options: Props
+) => {
   const operations = await getOperationsByType(pathToSpec);
   const version = document.info.version;
   let receives = [],
@@ -185,10 +199,13 @@ const processMessagesForOpenAPISpec = async (pathToSpec: string, document: OpenA
 
     console.log(chalk.blue(`Processing message: ${message.name} (v${message.version})`));
 
-    const { addFileToMessage, writeMessage, getMessage, versionMessage } = getMessageTypeUtils(
-      process.env.PROJECT_DIR as string,
-      messageType
-    );
+    const {
+      addFileToMessage,
+      writeMessage,
+      getMessage,
+      versionMessage,
+      collection: folder,
+    } = getMessageTypeUtils(process.env.PROJECT_DIR as string, messageType);
 
     // Check if the message already exists in the catalog
     const catalogedMessage = await getMessage(message.id, 'latest');
@@ -203,8 +220,13 @@ const processMessagesForOpenAPISpec = async (pathToSpec: string, document: OpenA
       }
     }
 
+    let messagePath = join(servicePath, folder, message.id);
+    if (options.writeFilesToRoot) {
+      messagePath = message.id;
+    }
+
     // Write the message to the catalog
-    await writeMessage({ ...message, markdown: messageMarkdown }, { path: message.id, override: true });
+    await writeMessage({ ...message, markdown: messageMarkdown }, { path: messagePath, override: true });
 
     // If the message send or recieved by the service?
     if (messageAction === 'sends') {

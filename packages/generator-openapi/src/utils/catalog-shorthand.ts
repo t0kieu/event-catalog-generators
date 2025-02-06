@@ -30,6 +30,7 @@ export const getMessageTypeUtils = (projectDirectory: string, messageType: strin
       rmMessageById: rmEventById,
       writeMessage: writeEvent,
       addFileToMessage: addFileToEvent,
+      collection: 'events',
     },
     command: {
       versionMessage: versionCommand,
@@ -37,6 +38,7 @@ export const getMessageTypeUtils = (projectDirectory: string, messageType: strin
       rmMessageById: rmCommandById,
       writeMessage: writeCommand,
       addFileToMessage: addFileToCommand,
+      collection: 'commands',
     },
     query: {
       versionMessage: versionQuery,
@@ -44,6 +46,7 @@ export const getMessageTypeUtils = (projectDirectory: string, messageType: strin
       rmMessageById: rmQueryById,
       writeMessage: writeQuery,
       addFileToMessage: addFileToQuery,
+      collection: 'queries',
     },
   };
 
