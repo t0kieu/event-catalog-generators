@@ -26,6 +26,7 @@ paths:
       x-eventcatalog-message-type: query # This is a query operation
       x-eventcatalog-message-name: List Pets # Name used in EventCatalog
       x-eventcatalog-message-id: list-pets # ID value used in EventCatalog
+      x-eventcatalog-message-version: 5.0.0
       parameters:
         - name: limit
           in: query
