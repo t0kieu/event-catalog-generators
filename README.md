@@ -30,6 +30,8 @@ All plugins require a license key. You can get a license key from [EventCatalog 
 - [Mapping commands, events and queries using the `x-eventcatalog-message-type` extension](./examples/generator-openapi/mapping-commands-events-queries/)
 - [Independent Message Versioning using the `x-eventcatalog-message-version` extension](./examples/generator-openapi/independent-message-versioning/)
 
+📹 - [Watch the demo](https://www.youtube.com/watch?v=E6cXxQXH49k)
+
 **AsyncAPI Integrations**
 
 - [Integrate AsyncAPI files into EventCatalog](./examples/generator-asyncapi/)
@@ -41,10 +43,14 @@ All plugins require a license key. You can get a license key from [EventCatalog 
   - The `x-eventcatalog-role` extension can be used to control which service owns a message.
   - This is useful when you have multiple AsyncAPI files that define the same message.
 
+📹 - [Watch the demo](https://www.youtube.com/watch?v=XglwSNAnpKY)  
+
 **EventBridge Integrations**
 
 - [Import EventBridge schemas into EventCatalog using schema discovery](./examples/generator-eventbridge/basic/)
 - [Import EventBridge schemas into EventCatalog using a custom schema registry](./examples/generator-eventbridge/custom-registry/)
+
+📹 - [Watch the demo](https://www.youtube.com/watch?v=MeBuwAflwM4)  
 
 **EventCatalog Federation**
 
@@ -53,9 +59,13 @@ All plugins require a license key. You can get a license key from [EventCatalog 
   - Let your teams focus on what they do best, and use the federation plugin to merge their documentation together.
   - The central catalog is hosted for the organization where people can view the merged catalog and single source of truth.
 
+📹 - [Watch the demo](https://www.youtube.com/watch?v=KnTQkrt-7cc)  
+
 **Backstage Integrations**
 
 - [Integrate Backstage plugin into EventCatalog](https://github.com/event-catalog/backstage-eventcatalog-demo)
+
+📹 - [Watch the demo](https://www.youtube.com/watch?v=mjf7qwoSAC4)  
 
 **Multi Generator Example**
 
