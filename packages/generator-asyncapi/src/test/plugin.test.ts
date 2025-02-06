@@ -904,7 +904,9 @@ describe('AsyncAPI EventCatalog Plugin', () => {
         it('when a message has a schema defined in the AsyncAPI file, the schema is documented in EventCatalog', async () => {
           await plugin(config, { services: [{ path: join(asyncAPIExamplesDir, 'simple.asyncapi.yml'), id: 'account-service' }] });
 
-          const schema = await fs.readFile(join(catalogDir, 'events', 'UserSignedUp', 'schema.json'));
+          const schema = await fs.readFile(
+            join(catalogDir, 'services', 'account-service', 'events', 'UserSignedUp', 'schema.json')
+          );
 
           expect(schema).toBeDefined();
         });
@@ -1089,7 +1091,10 @@ describe('AsyncAPI EventCatalog Plugin', () => {
         expect(event).toBeDefined();
         expect(event.schemaPath).toEqual('schema.avsc');
 
-        const schema = await fs.readFile(join(catalogDir, 'events', 'lightMeasuredMessageAvro', 'schema.avsc'), 'utf-8');
+        const schema = await fs.readFile(
+          join(catalogDir, 'services', 'test-service', 'events', 'lightMeasuredMessageAvro', 'schema.avsc'),
+          'utf-8'
+        );
         const parsedAsyncAPIFile = await fs.readFile(
           join(catalogDir, 'services', 'test-service', 'asyncapi-with-avro-expect-not-to-parse-schemas.yml'),
           'utf-8'
@@ -1188,7 +1193,10 @@ describe('AsyncAPI EventCatalog Plugin', () => {
         expect(event.schemaPath).toEqual('schema.avsc');
 
         // Check file schema.avsc
-        const schema = await fs.readFile(join(catalogDir, 'events', 'userSignedUp', 'schema.avsc'), 'utf-8');
+        const schema = await fs.readFile(
+          join(catalogDir, 'services', 'user-signup-api', 'events', 'userSignedUp', 'schema.avsc'),
+          'utf-8'
+        );
         const schemaParsed = JSON.parse(schema);
         expect(schemaParsed).toEqual({
           type: 'record',
@@ -1317,6 +1325,34 @@ describe('AsyncAPI EventCatalog Plugin', () => {
         const schema = await fs.readFile(join(catalogDir, 'services', 'account-service', 'simple.asyncapi.yml'), 'utf8');
         expect(schema).toBeDefined();
         expect(schema).toContain('x-parser-schema-id');
+      });
+    });
+
+    describe('writeFilesToRoot', () => {
+      it('if `writeFilesToRoot` is true, the files are written to the root of the service', async () => {
+        const { getService } = utils(catalogDir);
+
+        await plugin(config, {
+          services: [{ path: join(asyncAPIExamplesDir, 'simple.asyncapi.yml'), id: 'account-service' }],
+          writeFilesToRoot: true,
+        });
+
+        const service = await getService('account-service', '1.0.0');
+        expect(service.schemaPath).toEqual('simple.asyncapi.yml');
+
+        const events = await fs.readdir(join(catalogDir, 'events'));
+        expect(events).toEqual(['UserSignedOut', 'UserSignedUp']);
+
+        const queries = await fs.readdir(join(catalogDir, 'queries'));
+        expect(queries).toEqual(['CheckEmailAvailability', 'GetUserByEmail']);
+
+        const commands = await fs.readdir(join(catalogDir, 'commands'));
+        expect(commands).toEqual(['SignUpUser']);
+
+        const services = await fs.readdir(join(catalogDir, 'services'));
+        expect(services).toEqual(['account-service']);
+        const file = await fs.readFile(join(catalogDir, 'services', 'account-service', 'simple.asyncapi.yml'), 'utf-8');
+        expect(file).toBeDefined();
       });
     });
   });

@@ -4,6 +4,7 @@ export interface MessageOperations {
   version: (id: string) => Promise<any>;
   get: (id: string, version: string) => Promise<any>;
   addSchema: (id: string, schema: any, version: any) => Promise<void>;
+  collection: string;
 }
 
 // Define valid event types
