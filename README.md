@@ -29,6 +29,7 @@ All plugins require a license key. You can get a license key from [EventCatalog 
 - [Integrate OpenAPI files from remote URLs into EventCatalog](./examples/generator-openapi/fetch-from-remote-urls/)
 - [Mapping commands, events and queries using the `x-eventcatalog-message-type` extension](./examples/generator-openapi/mapping-commands-events-queries/)
 - [Independent Message Versioning using the `x-eventcatalog-message-version` extension](./examples/generator-openapi/independent-message-versioning/)
+
 **AsyncAPI Integrations**
 
 - [Integrate AsyncAPI files into EventCatalog](./examples/generator-asyncapi/)
