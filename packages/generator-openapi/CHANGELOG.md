@@ -1,5 +1,11 @@
 # @eventcatalog/generator-openapi
 
+## 3.3.3
+
+### Patch Changes
+
+- 600fe8a: fix(plugin): fixed message version logging
+
 ## 3.3.2
 
 ### Patch Changes
