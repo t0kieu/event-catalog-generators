@@ -36,7 +36,7 @@ Federation can help large organizations and teams to:
 
 ### Running this example
 
-1. Clone the repository and go into the `master-catalog` directory
+1. Clone the repository and go into the `central-catalog` directory
 1. Run `npm install`
 1. Get a Federation license key from [EventCatalog Cloud](https://eventcatalog.cloud) (14 day trial)
 1. Run the generate command (this will merge many teams catalogs into one, in this example we are merging the `customer-experience-team`, `order-management-team` and `payment-team` catalogs into one central catalog)
