@@ -183,7 +183,7 @@ const processMessagesForOpenAPISpec = async (pathToSpec: string, document: OpenA
     const messageType = operation.type;
     const messageAction = operation.action;
 
-    console.log(chalk.blue(`Processing message: ${message.name} (v${version})`));
+    console.log(chalk.blue(`Processing message: ${message.name} (v${message.version})`));
 
     const { addFileToMessage, writeMessage, getMessage, versionMessage } = getMessageTypeUtils(
       process.env.PROJECT_DIR as string,
@@ -244,7 +244,7 @@ const processMessagesForOpenAPISpec = async (pathToSpec: string, document: OpenA
       }
     }
 
-    console.log(chalk.cyan(` - Message (v${version}) created`));
+    console.log(chalk.cyan(` - Message (v${message.version}) created`));
     if (!operation.operationId) {
       console.log(chalk.yellow(`  - OperationId not found for ${operation.method} ${operation.path}, creating one...`));
       console.log(chalk.yellow(`  - Use operationIds to give better unique names for EventCatalog`));
