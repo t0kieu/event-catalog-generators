@@ -498,7 +498,7 @@ describe('OpenAPI EventCatalog Plugin', () => {
 
         expect(service.receives).toHaveLength(4);
         expect(service.receives).toEqual([
-          { id: 'list-pets', version: '1.0.0' },
+          { id: 'list-pets', version: '5.0.0' },
           { id: 'createPets', version: '1.0.0' },
           { id: 'showPetById', version: '1.0.0' },
           { id: 'petAdopted', version: '1.0.0' },
@@ -528,7 +528,7 @@ describe('OpenAPI EventCatalog Plugin', () => {
         expect(service.receives).toHaveLength(5);
         expect(service.receives).toEqual([
           { id: 'userloggedin', version: '1.0.0' },
-          { id: 'list-pets', version: '1.0.0' },
+          { id: 'list-pets', version: '5.0.0' },
           { id: 'createPets', version: '1.0.0' },
           { id: 'showPetById', version: '1.0.0' },
           { id: 'petAdopted', version: '1.0.0' },
@@ -546,7 +546,7 @@ describe('OpenAPI EventCatalog Plugin', () => {
             name: 'Random Name',
             markdown: 'Here is my original markdown, please do not override this!',
             receives: [
-              { id: 'list-pets', version: '1.0.0' },
+              { id: 'list-pets', version: '5.0.0' },
               { id: 'createPets', version: '1.0.0' },
             ],
           },
@@ -559,7 +559,7 @@ describe('OpenAPI EventCatalog Plugin', () => {
         expect(service.receives).toHaveLength(4);
 
         expect(service.receives).toEqual([
-          { id: 'list-pets', version: '1.0.0' },
+          { id: 'list-pets', version: '5.0.0' },
           { id: 'createPets', version: '1.0.0' },
           { id: 'showPetById', version: '1.0.0' },
           { id: 'petAdopted', version: '1.0.0' },
@@ -601,7 +601,7 @@ describe('OpenAPI EventCatalog Plugin', () => {
         expect(command).toEqual(
           expect.objectContaining({
             id: 'list-pets',
-            version: '1.0.0',
+            version: '5.0.0',
             name: 'List Pets',
             summary: 'List all pets',
             badges: [
@@ -686,7 +686,7 @@ describe('OpenAPI EventCatalog Plugin', () => {
             expect.objectContaining({
               id: 'list-pets',
               name: 'List Pets',
-              version: '1.0.0',
+              version: '5.0.0',
               summary: 'List all pets',
             })
           );
@@ -698,6 +698,15 @@ describe('OpenAPI EventCatalog Plugin', () => {
 
           const event = await getQuery('list-pets');
           expect(event.id).toEqual('list-pets');
+        });
+
+        it('when messages have the `x-eventcatalog-message-version` extension defined, this value is used for the message version', async () => {
+          const { getQuery } = utils(catalogDir);
+
+          await plugin(config, { services: [{ path: join(openAPIExamples, 'petstore.yml'), id: 'swagger-petstore' }] });
+
+          const event = await getQuery('list-pets');
+          expect(event.version).toEqual('5.0.0');
         });
       });
 
