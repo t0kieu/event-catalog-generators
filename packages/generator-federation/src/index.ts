@@ -21,15 +21,16 @@ type GeneratorProps = {
   licenseKey?: string;
   source: string;
   branch?: string;
-  copy: CopyProps[];
+  copy?: CopyProps[];
   debug?: boolean;
   override?: boolean;
+  destination?: string;
   enforceUniqueResources?: boolean;
 };
 
 const log = console.log;
 
-const resources = ['services', 'events', 'domains', 'commands', 'queries', 'flows'];
+const resources = ['services', 'events', 'domains', 'commands', 'queries', 'flows', 'teams', 'users'];
 const tmpDir = path.join(os.tmpdir(), 'eventcatalog');
 
 const getFrontmatter = async (filename: string) => {
@@ -127,15 +128,30 @@ export default async (_: EventCatalogConfig, options: GeneratorProps) => {
   // Sparse checkout the content
   await execSync(`git sparse-checkout init`, { cwd: tmpDir });
 
+  let contentsToCopy = options.copy || resources.map((resource) => ({ content: resource, destination: resource }));
+  const isRootCopyConfiguration = !options.copy;
+
   // Collect all content paths for sparse checkout
-  const allContentPaths = options.copy.flatMap(({ content }) => (Array.isArray(content) ? content : [content]));
+  const allContentPaths = contentsToCopy.flatMap(({ content }) => (Array.isArray(content) ? content : [content]));
   await execSync(`git sparse-checkout set ${allContentPaths.join(' ')} --no-cone`, { cwd: tmpDir });
 
   // Checkout the branch
   await execSync(`git checkout ${options.branch || 'main'}`, { cwd: tmpDir });
 
+  // No copy values have been provides, lets try and copy all EventCatalog Resources, first we have to check if they exist in the project
+  if (isRootCopyConfiguration) {
+    const existingPaths = await Promise.all(
+      allContentPaths.map(async (content) => {
+        const exists = await fsExtra.pathExists(join(tmpDir, content));
+        return exists ? content : null;
+      })
+    );
+    const validPaths = existingPaths.filter((path): path is string => path !== null);
+    contentsToCopy = validPaths.map((path) => ({ content: path, destination: join(options.destination || process.cwd(), path) }));
+  }
+
   // Check for existing paths first and copy for each configuration
-  for (const copyConfig of options.copy) {
+  for (const copyConfig of contentsToCopy) {
     if (!options.override) {
       try {
         await checkForExistingPaths(copyConfig.content, copyConfig.destination, options.enforceUniqueResources || false);

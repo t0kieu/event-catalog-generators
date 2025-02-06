@@ -25,13 +25,6 @@ describe('generator-federation', () => {
     }
   });
 
-  // afterEach(async () => {
-  //   // const exists = await fs.access(join(catalogDir)).then(() => true).catch(() => false);
-  //   // if(exists) {
-  //   //   await fs.rm(join(catalogDir), { recursive: true });
-  //   // }
-  // });
-
   it('clones the source directory and copies the files specified in the content to the destination directory', async () => {
     await plugin(eventCatalogConfig, {
       source: 'https://github.com/event-catalog/eventcatalog.git',
@@ -60,6 +53,23 @@ describe('generator-federation', () => {
 
     const services = await fs.readdir(path.join(catalogDir, 'services'));
     expect(services).toHaveLength(4);
+  });
+
+  it('if no copy configuration is provided then it clones target directory and copies all resources (e.g events, services, domains, teams, users) into the catalog', async () => {
+    await plugin(eventCatalogConfig, {
+      source: 'https://github.com/event-catalog/eventcatalog-ai-demo',
+      override: true,
+      destination: path.join(catalogDir),
+    });
+
+    const domains = await fs.readdir(path.join(catalogDir, 'domains'));
+    expect(domains).toHaveLength(3);
+
+    const teams = await fs.readdir(path.join(catalogDir, 'teams'));
+    expect(teams).toHaveLength(2);
+
+    const users = await fs.readdir(path.join(catalogDir, 'users'));
+    expect(users).toHaveLength(3);
   });
 
   describe('branch', () => {
