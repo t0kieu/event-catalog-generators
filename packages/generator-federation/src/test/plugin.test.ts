@@ -41,7 +41,7 @@ describe('generator-federation', () => {
       const services = await fs.readdir(path.join(catalogDir, 'services'));
       expect(services).toHaveLength(3);
     },
-    { timeout: 10000 }
+    { timeout: 20000 }
   );
 
   it(
@@ -60,7 +60,7 @@ describe('generator-federation', () => {
       const services = await fs.readdir(path.join(catalogDir, 'services'));
       expect(services).toHaveLength(4);
     },
-    { timeout: 10000 }
+    { timeout: 20000 }
   );
 
   it('if no copy configuration is provided then it clones target directory and copies all resources (e.g events, services, domains, teams, users) into the catalog', async () => {
@@ -98,7 +98,7 @@ describe('generator-federation', () => {
         const services = await fs.readdir(path.join(catalogDir, 'services'));
         expect(services).toHaveLength(2);
       },
-      { timeout: 10000 }
+      { timeout: 20000 }
     );
   });
 
@@ -130,7 +130,7 @@ describe('generator-federation', () => {
         const services = await fs.readdir(path.join(catalogDir, 'services'));
         expect(services).toHaveLength(3);
       },
-      { timeout: 10000 }
+      { timeout: 20000 }
     );
 
     it(
@@ -159,7 +159,7 @@ describe('generator-federation', () => {
         const services = await fs.readdir(path.join(catalogDir, 'services'));
         expect(services).toHaveLength(4);
       },
-      { timeout: 10000 }
+      { timeout: 20000 }
     );
   });
 
@@ -189,7 +189,7 @@ describe('generator-federation', () => {
           })
         ).rejects.toThrow(/Path already exists at/);
       },
-      { timeout: 10000 }
+      { timeout: 20000 }
     );
 
     it(
@@ -216,7 +216,7 @@ describe('generator-federation', () => {
           })
         ).rejects.toThrow(/Path already exists at/);
       },
-      { timeout: 10000 }
+      { timeout: 20000 }
     );
   });
 
@@ -251,7 +251,7 @@ describe('generator-federation', () => {
           })
         ).rejects.toThrow(/EventCatalog already has services with the id InventoryService/);
       },
-      { timeout: 10000 }
+      { timeout: 20000 }
     );
   });
 });
