@@ -46,6 +46,13 @@ All plugins require a license key. You can get a license key from [EventCatalog 
 - [Import EventBridge schemas into EventCatalog using schema discovery](./examples/generator-eventbridge/basic/)
 - [Import EventBridge schemas into EventCatalog using a custom schema registry](./examples/generator-eventbridge/custom-registry/)
 
+**EventCatalog Federation**
+
+- [Merge multiple catalogs into one central catalog](./examples/generator-federation/basic/)
+  - Give your teams their own EventCatalog instance, and use the federation plugin to merge them together.
+  - Let your teams focus on what they do best, and use the federation plugin to merge their documentation together.
+  - The central catalog is hosted for the organization where people can view the merged catalog and single source of truth.
+
 **Backstage Integrations**
 
 - [Integrate Backstage plugin into EventCatalog](https://github.com/event-catalog/backstage-eventcatalog-demo)
