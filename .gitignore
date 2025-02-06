@@ -52,15 +52,10 @@ examples/**/**/channels
 examples/**/**/commands
 examples/**/**/dependencies
 
-!examples/generator-federation/basic/team-*/queries
-!examples/generator-federation/basic/team-*/events
-!examples/generator-federation/basic/team-*/domains
-!examples/generator-federation/basic/team-*/services
-!examples/generator-federation/basic/team-*/services/**/queries
-!examples/generator-federation/basic/team-*/services/**/events
-!examples/generator-federation/basic/team-*/services/**/domains
-!examples/generator-federation/basic/team-*/services/**/channels
-!examples/generator-federation/basic/team-*/services/**/commands
+!examples/generator-federation/basic/customer-experience-team/services
+!examples/generator-federation/basic/customer-experience-team/services/**/queries
+!examples/generator-federation/basic/customer-experience-team/services/**/events
+!examples/generator-federation/basic/customer-experience-team/services/**/commands
 
 examples/**/**/build
 examples/**/**/package-lock.json
