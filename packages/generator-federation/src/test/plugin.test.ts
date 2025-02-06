@@ -25,35 +25,43 @@ describe('generator-federation', () => {
     }
   });
 
-  it('clones the source directory and copies the files specified in the content to the destination directory', async () => {
-    await plugin(eventCatalogConfig, {
-      source: 'https://github.com/event-catalog/eventcatalog.git',
-      copy: [
-        {
-          content: 'examples/default/domains/Orders/services',
-          destination: path.join(catalogDir, 'services'),
-        },
-      ],
-    });
+  it(
+    'clones the source directory and copies the files specified in the content to the destination directory',
+    async () => {
+      await plugin(eventCatalogConfig, {
+        source: 'https://github.com/event-catalog/eventcatalog.git',
+        copy: [
+          {
+            content: 'examples/default/domains/Orders/services',
+            destination: path.join(catalogDir, 'services'),
+          },
+        ],
+      });
 
-    const services = await fs.readdir(path.join(catalogDir, 'services'));
-    expect(services).toHaveLength(3);
-  });
+      const services = await fs.readdir(path.join(catalogDir, 'services'));
+      expect(services).toHaveLength(3);
+    },
+    { timeout: 10000 }
+  );
 
-  it('clones the source directory and copies the files specified in the content array to the destination directory', async () => {
-    await plugin(eventCatalogConfig, {
-      source: 'https://github.com/event-catalog/eventcatalog.git',
-      copy: [
-        {
-          content: ['examples/default/domains/Orders/services', 'examples/default/domains/Payment/services'],
-          destination: path.join(catalogDir, 'services'),
-        },
-      ],
-    });
+  it(
+    'clones the source directory and copies the files specified in the content array to the destination directory',
+    async () => {
+      await plugin(eventCatalogConfig, {
+        source: 'https://github.com/event-catalog/eventcatalog.git',
+        copy: [
+          {
+            content: ['examples/default/domains/Orders/services', 'examples/default/domains/Payment/services'],
+            destination: path.join(catalogDir, 'services'),
+          },
+        ],
+      });
 
-    const services = await fs.readdir(path.join(catalogDir, 'services'));
-    expect(services).toHaveLength(4);
-  });
+      const services = await fs.readdir(path.join(catalogDir, 'services'));
+      expect(services).toHaveLength(4);
+    },
+    { timeout: 10000 }
+  );
 
   it('if no copy configuration is provided then it clones target directory and copies all resources (e.g events, services, domains, teams, users) into the catalog', async () => {
     await plugin(eventCatalogConfig, {
