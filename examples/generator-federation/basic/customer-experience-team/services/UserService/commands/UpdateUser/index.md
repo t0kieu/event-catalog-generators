@@ -10,6 +10,18 @@ The UpdateUser command allows customers to update their user profiles in the sys
 
 <NodeGraph />
 
+<SchemaViewer file="schema.json" title="Schema" maxHeight="500px" />
+
+### Example Usage
+
+Copy the following command and paste it into your terminal to update a user.
+
+```bash frame="none"
+curl -X POST https://api.metaretail.com/v1/users/update \
+  -H "Content-Type: application/json" \
+  -d '{"userId": "1234567890", "firstName": "John", "lastName": "Doe", "email": "john.doe@example.com"}'
+```
+
 ### Key Features
 - **Data Validation**: Validates user input including email format, password strength, and required fields
 - **Duplicate Prevention**: Checks for existing accounts to prevent duplicate registrations

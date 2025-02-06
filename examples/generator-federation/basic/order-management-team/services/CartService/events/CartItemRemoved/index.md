@@ -4,11 +4,14 @@ name: Cart Item Removed
 version: 1.0.0
 owners:
   - order-management-team
+schemaPath: ./schema.json
 ---
 
 The `CartItemRemoved` event is emitted when an item is removed from the cart. This event can help with stock management and user behavior tracking.
 
 <NodeGraph />
+
+<SchemaViewer file="schema.json" title="Schema" maxHeight="500px" />
 
 ### Key Features
 

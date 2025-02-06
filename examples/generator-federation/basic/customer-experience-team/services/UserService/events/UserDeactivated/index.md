@@ -10,6 +10,25 @@ The UserDeactivated event is emitted when a user account is deactivated in the s
 
 <NodeGraph />
 
+<SchemaViewer file="schema.json" title="Schema" maxHeight="500px" />
+
+### Publishing an example of this event
+
+We use Kafka to publish events, if you want to publish an example of this event you can use the following command:
+
+```bash frame="none"
+docker exec -it kafka-broker kafka-console-producer --topic user-deactivated --bootstrap-server localhost:9092 --property parse.key=true --property key.separator=, << EOF
+user123,{
+  "userId": "user123",
+  "deactivatedAt": "2024-03-20T10:30:00Z",
+  "reason": "USER_REQUESTED",
+  "additionalNotes": "User requested deactivation"
+}
+EOF
+```
+
+
+
 ### Key Features
 
 - **Deactivation**: Triggers the deactivation of a user account

@@ -10,6 +10,18 @@ The GetUserEmailPreferences query allows customers to retrieve their email prefe
 
 <NodeGraph />
 
+<SchemaViewer file="schema.json" title="Schema" maxHeight="500px" />  
+
+### Example Usage
+
+Copy the following command and paste it into your terminal to get a user.
+
+```bash frame="none"
+curl -X GET https://api.metaretail.com/v1/users/get-email-preferences \
+  -H "Content-Type: application/json" \
+  -d '{"userId": "1234567890"}'
+```
+
 ### Key Features
 
 - **Data Validation**: Validates user input including email format, password strength, and required fields

@@ -4,11 +4,14 @@ name: Cart Checked Out
 version: 1.0.0
 owners:
   - order-management-team
+schemaPath: ./schema.json
 ---
 
 The `CartCheckedOut` event is emitted when a user successfully checks out their cart, creating a new order. It notifies the `Order-Service` and `Payment-Service`.
 
 <NodeGraph />
+
+<SchemaViewer file="schema.json" title="Schema" maxHeight="500px" />
 
 ### Key Features
 

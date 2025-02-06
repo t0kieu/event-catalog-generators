@@ -10,6 +10,18 @@ The DeactivateUser command allows customers to deactivate their user accounts in
 
 <NodeGraph />
 
+<SchemaViewer file="schema.json" title="Schema" maxHeight="500px" />
+
+### Example Usage
+
+Copy the following command and paste it into your terminal to deactivate a user.
+
+```bash frame="none"
+curl -X POST https://api.metaretail.com/v1/users/deactivate \
+  -H "Content-Type: application/json" \
+  -d '{"userId": "1234567890"}'
+```
+
 ### Key Features
 - **Account Deactivation**: Removes user account from the system
 - **Data Retention**: Keeps user data for legal and audit purposes

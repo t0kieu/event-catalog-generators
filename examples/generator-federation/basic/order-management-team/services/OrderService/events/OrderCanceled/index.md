@@ -4,11 +4,14 @@ name: Order Canceled
 version: 1.0.0
 owners:
   - order-management-team
+schemaPath: ./schema.json
 ---
 
 The `OrderCanceled` event is emitted when an order is canceled. It triggers refund processing and stock restoration.
 
 <NodeGraph />
+
+<SchemaViewer file="schema.json" title="Schema" maxHeight="500px" />
 
 ### Key Features
 
