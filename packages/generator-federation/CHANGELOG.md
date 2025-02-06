@@ -1,5 +1,11 @@
 # @eventcatalog/generator-federation
 
+## 1.0.1
+
+### Patch Changes
+
+- c0303e6: feat(plugin): federation generator config now simplified for direct m…
+
 ## 1.0.0
 
 ### Major Changes
