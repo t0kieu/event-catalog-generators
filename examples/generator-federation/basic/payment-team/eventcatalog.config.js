@@ -6,8 +6,8 @@ const __dirname = path.dirname(url.fileURLToPath(import.meta.url));
 /** @type {import('@eventcatalog/core/bin/eventcatalog.config').Config} */
 export default {
   cId: "10b46030-5736-4600-8254-421c3ed56e47",
-  title: "Custom Experience Team",
-  tagline: "EventCatalog for the Custom Experience Team",
+  title: "Payment Team",
+  tagline: "EventCatalog for the Payment Team",
   organizationName: "MetaRetail Inc",
   homepageLink: "https://eventcatalog.dev/",
   editUrl: "https://github.com/boyney123/eventcatalog-demo/edit/master",
@@ -20,7 +20,7 @@ export default {
   logo: {
     alt: "EventCatalog Logo",
     src: "/logo.png",
-    text: "Custom Experience Team",
+    text: "Payment Team",
   },
   docs: {
     sidebar: {
@@ -33,13 +33,9 @@ export default {
   // it will merge the events from all the dependent catalogs
   dependencies: {
     events: [{
-      id: 'PaymentFailed'
+      id: 'OrderCreated'
     }, {
-      id: 'OrderPlaced'
-    }, {
-      id: 'LoyaltyPointsEarned'
-    }, {
-      id: 'PaymentSucceeded'
+      id: 'OrderCancelled'
     }],
   }
 };

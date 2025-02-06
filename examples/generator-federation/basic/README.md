@@ -2,7 +2,7 @@
 
 This example shows you how to use EventCatalog federation to connect multiple EventCatalog instances together.
 
-In this example we have three teams `team-1`, `team-2` and `team-3`. Each team has their own EventCatalog instance and keeps there catalog close to their code.
+In this example we have three teams `customer-experience-team`, `order-management-team` and `payment-team`. Each team has their own EventCatalog instance and keeps there catalog close to their code.
 
 We also have a central EventCatalog instance that is used to view all the teams catalogs and merge them together using federation.
 

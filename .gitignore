@@ -62,6 +62,11 @@ examples/**/**/dependencies
 !examples/generator-federation/basic/order-management-team/services/**/events
 !examples/generator-federation/basic/order-management-team/services/**/commands
 
+!examples/generator-federation/basic/payment-team/services
+!examples/generator-federation/basic/payment-team/services/**/queries
+!examples/generator-federation/basic/payment-team/services/**/events
+!examples/generator-federation/basic/payment-team/services/**/commands
+
 examples/**/**/build
 examples/**/**/package-lock.json
 examples/**/**/dist

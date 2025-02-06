@@ -11,6 +11,7 @@ receives:
     - id: PaymentFailed
     - id: OrderPlaced
     - id: LoyaltyPointsEarned
+    - id: PaymentSucceeded
 sends:
     - id: UserCreated
     - id: UserDeactivated
