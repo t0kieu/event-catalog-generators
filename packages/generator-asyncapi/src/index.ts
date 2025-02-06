@@ -358,7 +358,7 @@ export default async (config: any, options: Props) => {
 
     if (latestServiceInCatalog) {
       serviceMarkdown = latestServiceInCatalog.markdown;
-      owners = latestServiceInCatalog.owners || ([] as any);
+      owners = latestServiceInCatalog.owners || null;
       repository = latestServiceInCatalog.repository || null;
 
       // Found a service, and versions do not match, we need to version the one already there
