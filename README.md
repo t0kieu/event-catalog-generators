@@ -46,7 +46,7 @@ All plugins require a license key. You can get a license key from [EventCatalog 
 
 **Backstage Integrations**
 
-- [Integrate Backstage plugin into EventCatalog](./examples/backstage-plugin/)
+- [Integrate Backstage plugin into EventCatalog](https://github.com/event-catalog/backstage-eventcatalog-demo)
 
 **Multi Generator Example**
 
