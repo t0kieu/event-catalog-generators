@@ -1,5 +1,11 @@
 # @eventcatalog/generator-openapi
 
+## 4.0.1
+
+### Patch Changes
+
+- 47d09d9: chore(plugin): changed default markdown for messages
+
 ## 4.0.0
 
 ### Major Changes
