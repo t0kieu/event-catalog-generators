@@ -4,11 +4,14 @@ export type Domain = {
   id: string;
   name: string;
   version: string;
+  owners?: string[];
 };
 
 export type Service = {
   id: string;
   path: string;
+  owners?: string[];
+  setMessageOwnersToServiceOwners?: boolean;
 };
 
 export type Operation = {

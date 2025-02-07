@@ -96,6 +96,7 @@ export default async (_: any, options: Props) => {
           name: domainName,
           version: domainVersion,
           markdown: generateMarkdownForDomain(),
+          ...(options.domain?.owners ? { owners: options.domain.owners } : {}),
         });
         console.log(chalk.cyan(` - Domain (v${domainVersion}) created`));
       }
@@ -109,8 +110,12 @@ export default async (_: any, options: Props) => {
     }
 
     // Process all messages for the OpenAPI spec
-    let { sends, receives } = await processMessagesForOpenAPISpec(serviceSpec.path, document, servicePath, options);
-    let owners = [];
+    let { sends, receives } = await processMessagesForOpenAPISpec(serviceSpec.path, document, servicePath, {
+      ...options,
+      owners: service.setMessageOwnersToServiceOwners ? service.owners : [],
+    });
+
+    let owners = service.owners || [];
     let repository = null;
 
     // Check if service is already defined... if the versions do not match then create service.
@@ -183,7 +188,7 @@ const processMessagesForOpenAPISpec = async (
   pathToSpec: string,
   document: OpenAPI.Document,
   servicePath: string,
-  options: Props
+  options: Props & { owners: string[] }
 ) => {
   const operations = await getOperationsByType(pathToSpec);
   const version = document.info.version;
@@ -226,7 +231,10 @@ const processMessagesForOpenAPISpec = async (
     }
 
     // Write the message to the catalog
-    await writeMessage({ ...message, markdown: messageMarkdown }, { path: messagePath, override: true });
+    await writeMessage(
+      { ...message, markdown: messageMarkdown, ...(options.owners ? { owners: options.owners } : {}) },
+      { path: messagePath, override: true }
+    );
 
     // If the message send or recieved by the service?
     if (messageAction === 'sends') {

@@ -125,6 +125,19 @@ describe('OpenAPI EventCatalog Plugin', () => {
           { id: 'simple-api-overview', version: '2.0.0' },
         ]);
       });
+
+      it('if the domain has owners, they are added to the domain', async () => {
+        const { getDomain } = utils(catalogDir);
+
+        await plugin(config, {
+          services: [{ path: join(openAPIExamples, 'petstore.yml'), id: 'swagger-petstore' }],
+          domain: { id: 'orders', name: 'Orders', version: '1.0.0', owners: ['John Doe', 'Jane Doe'] },
+        });
+
+        const domain = await getDomain('orders', '1.0.0');
+
+        expect(domain.owners).toEqual(['John Doe', 'Jane Doe']);
+      });
     });
 
     describe('services', () => {
@@ -566,6 +579,18 @@ describe('OpenAPI EventCatalog Plugin', () => {
         ]);
       });
 
+      it('if the service has owners, they are added to the service', async () => {
+        const { getService } = utils(catalogDir);
+
+        await plugin(config, {
+          services: [{ path: join(openAPIExamples, 'petstore.yml'), id: 'swagger-petstore', owners: ['John Doe', 'Jane Doe'] }],
+        });
+
+        const service = await getService('swagger-petstore', '1.0.0');
+
+        expect(service.owners).toEqual(['John Doe', 'Jane Doe']);
+      });
+
       describe('service options', () => {
         describe('config option: id', () => {
           it('if an `id` value is given in the service config options, then the generator uses that id and does not generate one from the title', async () => {
@@ -770,6 +795,24 @@ describe('OpenAPI EventCatalog Plugin', () => {
 
         expect(getCommandByProductId).toBeDefined();
         expect(getCommandMessage).toBeDefined();
+      });
+
+      it('when the service has owners, the messages are given the same owners', async () => {
+        const { getCommand } = utils(catalogDir);
+
+        await plugin(config, {
+          services: [
+            { path: join(openAPIExamples, 'without-operationIds.yml'), id: 'product-api', owners: ['John Doe', 'Jane Doe'] },
+          ],
+        });
+
+        const getCommandByProductId = await getCommand('product-api_GET_{productId}');
+        const getCommandMessage = await getCommand('product-api_GET');
+
+        expect(getCommandByProductId).toBeDefined();
+        expect(getCommandMessage).toBeDefined();
+        expect(getCommandByProductId.owners).toEqual(['John Doe', 'Jane Doe']);
+        expect(getCommandMessage.owners).toEqual(['John Doe', 'Jane Doe']);
       });
 
       describe('schemas', () => {
