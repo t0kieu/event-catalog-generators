@@ -54,4 +54,5 @@ export type GeneratorProps = {
   debug?: boolean;
   mapEventsBy?: EventMap;
   credentials?: AwsCredentialIdentity | AwsCredentialIdentityProvider;
+  writeFilesToRoot?: boolean;
 };
