@@ -24,16 +24,13 @@ export const markdownForResponses = (openAPIOperation: OpenAPIOperation) => {
   let markdown = '### Responses\n';
 
   for (const [statusCode, content] of Object.entries(openAPIOperation.responses as any)) {
+    // @ts-ignore
     if (content.isSchema) {
-      markdown += `**${statusCode} Response**
-<SchemaViewer file="response-${statusCode}.json" maxHeight="500" id="response-${statusCode}" />
-      `;
+      markdown += `**${statusCode} Response**\n`;
+      markdown += `<SchemaViewer file="response-${statusCode}.json" maxHeight="500" id="response-${statusCode}" />\n\n`;
     } else {
-      markdown += `**${statusCode} Response**
-      \`\`\`json
-${JSON.stringify(content, null, 2)}
-\`\`\`
-            `;
+      markdown += `**${statusCode} Response**\n`;
+      markdown += `\`\`\`json\n${JSON.stringify(content, null, 2)}\n\`\`\`\n\n`;
     }
   }
 
@@ -42,11 +39,6 @@ ${JSON.stringify(content, null, 2)}
 
 export const defaultMarkdown = (message: Operation, openAPIOperation: OpenAPIOperation = {}) => {
   return `
-
-
-## Architecture
-<NodeGraph />
-
 ${
   message.description
     ? `
@@ -79,6 +71,10 @@ ${
 }
 
 ${markdownForResponses(openAPIOperation)}
+
+## Architecture
+
+<NodeGraph />
 
 `;
 };
