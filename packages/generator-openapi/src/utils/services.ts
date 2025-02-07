@@ -43,5 +43,7 @@ export const buildService = (serviceOptions: Service, document: OpenAPI.Document
     },
     markdown: defaultMarkdown(document, schemaPath),
     badges: documentTags.map((tag) => ({ content: tag.name, textColor: 'blue', backgroundColor: 'blue' })),
+    owners: serviceOptions.owners || [],
+    setMessageOwnersToServiceOwners: serviceOptions.setMessageOwnersToServiceOwners || true,
   };
 };
