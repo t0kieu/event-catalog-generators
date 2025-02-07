@@ -1,5 +1,11 @@
 # @eventcatalog/generator-eventbridge
 
+## 2.0.0
+
+### Major Changes
+
+- 0815abd: feat(plugin): eventbridge plugin now groups by service
+
 ## 1.3.1
 
 ### Patch Changes
