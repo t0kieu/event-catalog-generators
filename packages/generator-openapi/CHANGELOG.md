@@ -1,5 +1,11 @@
 # @eventcatalog/generator-openapi
 
+## 4.0.2
+
+### Patch Changes
+
+- 741afb2: feat(plugin): change style of HTTP data from OpenAPI
+
 ## 4.0.1
 
 ### Patch Changes
