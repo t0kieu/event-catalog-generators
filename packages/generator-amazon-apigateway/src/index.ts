@@ -6,7 +6,7 @@ import { writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import chalk from 'chalk';
 import fs from 'fs/promises';
-
+import checkLicense from './checkLicense';
 export type Route = {
   type: 'command' | 'query' | 'event';
   id?: string;
@@ -38,6 +38,8 @@ export default async (_: any, options: Props) => {
   if (!process.env.PROJECT_DIR) {
     throw new Error('Please provide catalog url (env variable PROJECT_DIR)');
   }
+
+  await checkLicense(options.licenseKey);
 
   const outputDir = options.output
     ? join(process.env.PROJECT_DIR, options.output)
