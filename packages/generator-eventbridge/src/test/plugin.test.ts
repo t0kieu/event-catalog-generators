@@ -1,7 +1,7 @@
 import { expect, it, describe, beforeEach, afterEach, vi } from 'vitest';
 import utils from '@eventcatalog/sdk';
 import plugin from '../index';
-import { join } from 'node:path';
+import path, { join } from 'node:path';
 import fs from 'fs/promises';
 import {
   DescribeSchemaCommand,
@@ -750,10 +750,10 @@ describe('EventBridge EventCatalog Plugin', () => {
 
         expect(userSignedUp.schemaPath).toEqual('myapp.users@UserSignedUp-jsondraft.json');
         const jsonDraftSchema = await fs.readFile(
-          join(catalogDir, 'events', 'UserSignedUp', 'myapp.users@UserSignedUp-jsondraft.json')
+          join(catalogDir, 'services', 'Orders Service', 'events', 'UserSignedUp', 'myapp.users@UserSignedUp-jsondraft.json')
         );
         const openAPISchema = await fs.readFile(
-          join(catalogDir, 'events', 'UserSignedUp', 'myapp.users@UserSignedUp-openapi.json')
+          join(catalogDir, 'services', 'Orders Service', 'events', 'UserSignedUp', 'myapp.users@UserSignedUp-openapi.json')
         );
 
         expect(jsonDraftSchema).toBeDefined();
@@ -864,6 +864,48 @@ describe('EventBridge EventCatalog Plugin', () => {
         schemaPath: 'myapp.users@UserSignedUp-jsondraft.json',
         badges: expect.anything(),
       });
+    });
+  });
+
+  describe('writeFilesToRoot', () => {
+    it('when writeFilesToRoot is true the events, domains and services are written to the root of the catalog', async () => {
+      await plugin(config, {
+        region: 'us-east-1',
+        registryName: 'discovered-schemas',
+        writeFilesToRoot: true,
+        services: [{ id: 'Orders Service', version: '1.0.0', sends: [{ prefix: 'myapp' }] }],
+        domain: { id: 'Orders Domain', version: '1.0.0', name: 'Orders Domain' },
+      });
+
+      const domains = await fs.readdir(path.join(catalogDir, 'domains'));
+      expect(domains).toEqual(['Orders Domain']);
+
+      const services = await fs.readdir(path.join(catalogDir, 'services'));
+      expect(services).toEqual(['Orders Service']);
+
+      const events = await fs.readdir(path.join(catalogDir, 'events'));
+      expect(events).toEqual(['OrderPlaced', 'UserLoggedIn', 'UserSignedUp']);
+
+      const orderPlacedFiles = await fs.readdir(path.join(catalogDir, 'events', 'OrderPlaced'));
+      expect(orderPlacedFiles).toEqual([
+        'index.md',
+        'myapp.orders@OrderPlaced-jsondraft.json',
+        'myapp.orders@OrderPlaced-openapi.json',
+      ]);
+
+      const userSignedUpFiles = await fs.readdir(path.join(catalogDir, 'events', 'UserSignedUp'));
+      expect(userSignedUpFiles).toEqual([
+        'index.md',
+        'myapp.users@UserSignedUp-jsondraft.json',
+        'myapp.users@UserSignedUp-openapi.json',
+      ]);
+
+      const userLoggedInFiles = await fs.readdir(path.join(catalogDir, 'events', 'UserLoggedIn'));
+      expect(userLoggedInFiles).toEqual([
+        'index.md',
+        'myapp.users@UserLoggedIn-jsondraft.json',
+        'myapp.users@UserLoggedIn-openapi.json',
+      ]);
     });
   });
 

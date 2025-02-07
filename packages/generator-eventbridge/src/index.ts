@@ -18,6 +18,7 @@ import { defaultMarkdown as generateMarkdownForMessage, getBadgesForMessage } fr
 import { generatedMarkdownByEventBus } from './utils/channel';
 import { parse } from '@aws-sdk/util-arn-parser';
 import { DescribeEventBusCommand, EventBridgeClient } from '@aws-sdk/client-eventbridge';
+import path, { join } from 'node:path';
 
 async function tryFetchJSONSchema(
   schemasClient: SchemasClient,
@@ -187,7 +188,16 @@ export default async (config: EventCatalogConfig, options: GeneratorProps) => {
 
     const eventsToWrite = [...sendsEvents, ...receivesEvents];
 
-    await processEvents(eventsToWrite, options);
+    // Path to write the service to
+    // Have to ../ as the SDK will put the files into hard coded folders
+    let servicePath = options.domain
+      ? path.join('../', 'domains', options.domain.id, 'services', service.id)
+      : path.join('../', 'services', service.id);
+    if (options.writeFilesToRoot) {
+      servicePath = service.id;
+    }
+
+    await processEvents(eventsToWrite, options, servicePath);
 
     // Manage domain
     if (options.domain) {
@@ -262,22 +272,25 @@ export default async (config: EventCatalogConfig, options: GeneratorProps) => {
       }
     }
 
-    await writeService({
-      id: service.id,
-      markdown: serviceMarkdown,
-      name: service.id,
-      version: service.version,
-      sends,
-      receives,
-      specifications: serviceSpecifications,
-      owners: owners,
-    });
+    await writeService(
+      {
+        id: service.id,
+        markdown: serviceMarkdown,
+        name: service.id,
+        version: service.version,
+        sends,
+        receives,
+        specifications: serviceSpecifications,
+        owners: owners,
+      },
+      { path: servicePath, override: true }
+    );
   }
 
   console.log(chalk.green(`\nFinished generating event catalog with EventBridge schema registry ${options.registryName}`));
 };
 
-const processEvents = async (events: Event[], options: GeneratorProps) => {
+const processEvents = async (events: Event[], options: GeneratorProps, servicePath?: string) => {
   // This is set by EventCatalog. This is the directory where the catalog is stored
   const eventCatalogDirectory = process.env.PROJECT_DIR;
   const eventBridgeClient = new EventBridgeClient({ region: options.region, credentials: options.credentials });
@@ -353,15 +366,25 @@ const processEvents = async (events: Event[], options: GeneratorProps) => {
       eventChannel = [{ id: event.eventBusName, version: 'latest' }];
     }
 
-    await writeEvent({
-      id: event.id,
-      name: event.id,
-      version: event.version?.toString() || '',
-      schemaPath,
-      markdown: messageMarkdown,
-      badges: getBadgesForMessage(event, options.eventBusName),
-      ...(eventChannel.length > 0 && { channels: eventChannel }),
-    });
+    // Where to write the event to
+    let messagePath = event.id;
+
+    if (servicePath && !options.writeFilesToRoot) {
+      messagePath = join(servicePath, 'events', event.id);
+    }
+
+    await writeEvent(
+      {
+        id: event.id,
+        name: event.id,
+        version: event.version?.toString() || '',
+        schemaPath,
+        markdown: messageMarkdown,
+        badges: getBadgesForMessage(event, options.eventBusName),
+        ...(eventChannel.length > 0 && { channels: eventChannel }),
+      },
+      { path: messagePath }
+    );
 
     console.log(chalk.cyan(` - Event (${event.id} v${event.version}) created`));
 
