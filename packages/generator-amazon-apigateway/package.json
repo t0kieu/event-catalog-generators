@@ -1,0 +1,40 @@
+{
+  "name": "@eventcatalog/generator-amazon-apigateway",
+  "version": "0.0.0",
+  "description": "Generator for Amazon API Gateway",
+  "scripts": {
+    "build": "tsup",
+    "test": "vitest",
+    "format": "prettier --write .",
+    "format:diff": "prettier --list-different .",
+    "changeset": "changeset",
+    "release": "changeset publish"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@smithy/types": "^3.5.0",
+    "@types/node": "^20.16.1",
+    "prettier": "^3.3.3",
+    "tsup": "^8.1.0",
+    "typescript": "^5.5.3",
+    "vitest": "^2.0.2"
+  },
+  "files": [
+    "dist",
+    "package.json"
+  ],
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "dependencies": {
+    "@aws-sdk/client-api-gateway": "^3.743.0",
+    "@aws-sdk/credential-provider-node": "^3.743.0",
+    "@changesets/cli": "^2.27.7",
+    "chalk": "^4"
+  }
+}
