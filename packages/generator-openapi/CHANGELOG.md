@@ -1,5 +1,11 @@
 # @eventcatalog/generator-openapi
 
+## 4.0.3
+
+### Patch Changes
+
+- 9707921: feat(plugin): added ability to set owners on your openapi files
+
 ## 4.0.2
 
 ### Patch Changes
