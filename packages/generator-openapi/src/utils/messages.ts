@@ -21,15 +21,58 @@ const markdownForParameters = (parameters: OpenAPIParameter[]) => {
 };
 
 export const markdownForResponses = (openAPIOperation: OpenAPIOperation) => {
-  let markdown = '### Responses\n';
+  let markdown = '### Responses\n\n';
+
+  const getStatusCodeColor = (code: string) => {
+    const firstDigit = code[0];
+    switch (firstDigit) {
+      case '2':
+        return 'green';
+      case '4':
+        return 'orange';
+      case '5':
+        return 'red';
+      default:
+        return 'gray';
+    }
+  };
 
   for (const [statusCode, content] of Object.entries(openAPIOperation.responses as any)) {
-    // @ts-ignore
-    if (content.isSchema) {
-      markdown += `**${statusCode} Response**\n`;
+    const color = getStatusCodeColor(statusCode);
+    const statusText =
+      {
+        '200': 'OK',
+        '201': 'Created',
+        '202': 'Accepted',
+        '204': 'No Content',
+        '301': 'Moved Permanently',
+        '302': 'Found',
+        '304': 'Not Modified',
+        '400': 'Bad Request',
+        '401': 'Unauthorized',
+        '403': 'Forbidden',
+        '404': 'Not Found',
+        '405': 'Method Not Allowed',
+        '409': 'Conflict',
+        '422': 'Unprocessable Entity',
+        '429': 'Too Many Requests',
+        '500': 'Internal Server Error',
+        '502': 'Bad Gateway',
+        '503': 'Service Unavailable',
+        '504': 'Gateway Timeout',
+      }[statusCode] || '';
+
+    markdown += `#### <span className="text-${color}-500">${statusCode}${statusText ? ` ${statusText}` : ''}</span>\n`;
+
+    // Add description if available
+    if ((content as any).description) {
+      markdown += `${(content as any).description}\n`;
+    }
+
+    // Add schema viewer or JSON content
+    if ((content as any).isSchema) {
       markdown += `<SchemaViewer file="response-${statusCode}.json" maxHeight="500" id="response-${statusCode}" />\n\n`;
     } else {
-      markdown += `**${statusCode} Response**\n`;
       markdown += `\`\`\`json\n${JSON.stringify(content, null, 2)}\n\`\`\`\n\n`;
     }
   }

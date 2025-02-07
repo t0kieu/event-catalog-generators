@@ -821,7 +821,8 @@ describe('OpenAPI EventCatalog Plugin', () => {
           console.log(command.markdown);
 
           expect(command.markdown).toContain(`### Responses
-**default Response**
+
+#### <span className="text-gray-500">default</span>
 <SchemaViewer file="response-default.json" maxHeight="500" id="response-default" />`);
         });
 
