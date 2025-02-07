@@ -207,5 +207,29 @@ describe('Amazon API Gateway Plugin', () => {
 
       expect(parsedSpec.paths['/orders'].get['x-eventcatalog-message-name']).toEqual('MyCustomName');
     });
+
+    it('if the schema is empty, the x-eventcatalog-render-schema-viewer extension is set to false on that component', async () => {
+      await plugin(config, {
+        output: 'amazon-apigateway-specs',
+        apis: [
+          {
+            name: 'InfaApi',
+            region: 'us-east-1',
+            stageName: 'prod',
+            routes: {
+              'get /orders': {
+                type: 'command',
+                name: 'MyCustomName',
+              },
+            },
+          },
+        ],
+      });
+
+      const file = await fs.readFile(join(catalogDir, 'amazon-apigateway-specs', 'InfaApi.json'), 'utf-8');
+      const parsedSpec = JSON.parse(file);
+
+      expect(parsedSpec.components.schemas.Empty['x-eventcatalog-render-schema-viewer']).toEqual(false);
+    });
   });
 });
