@@ -1,5 +1,11 @@
 # @eventcatalog/generator-amazon-apigateway
 
+## 1.0.2
+
+### Patch Changes
+
+- dc1b589: feat(plugin): if apigateway schemas are empty the render-schema-viewe…
+
 ## 1.0.1
 
 ### Patch Changes
