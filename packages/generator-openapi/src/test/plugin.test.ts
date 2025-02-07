@@ -818,10 +818,11 @@ describe('OpenAPI EventCatalog Plugin', () => {
 
           const command = await getCommand('createPets');
 
+          console.log(command.markdown);
+
           expect(command.markdown).toContain(`### Responses
 **default Response**
 <SchemaViewer file="response-default.json" maxHeight="500" id="response-default" />`);
-          9;
         });
 
         it('when a message has parameters they are added to the markdown file when the message is new in the catalog', async () => {
