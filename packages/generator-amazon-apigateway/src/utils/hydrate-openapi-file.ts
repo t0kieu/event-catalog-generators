@@ -49,8 +49,18 @@ export async function hydrate(openApiSpec: any, routeConfig: any, version?: numb
             operationObj['x-eventcatalog-message-name'] = config.name;
           }
         }
+
+        // Add render false for empty schemas
+        if (operationObj.requestBody?.content?.['application/json']?.schema?.title === 'Empty Schema') {
+          operationObj.requestBody.content['application/json'].schema['x-eventcatalog-render'] = false;
+        }
       }
     }
+  }
+
+  // Add render false for empty schemas in components
+  if (modifiedSpec.components?.schemas?.Empty?.title === 'Empty Schema') {
+    modifiedSpec.components.schemas.Empty['x-eventcatalog-render-schema-viewer'] = false;
   }
 
   return modifiedSpec;
