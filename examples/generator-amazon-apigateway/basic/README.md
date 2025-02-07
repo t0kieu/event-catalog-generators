@@ -2,7 +2,7 @@
 
 This example documents APIS from Amazon API Gateway and maps them into services and messages in EventCatalog.
 
-![EventCatalog Amazon API Gateway Example](../../../images/amazon-apigateway-example.png)
+![EventCatalog Amazon API Gateway Example](../../../images/amazon-apigateway.png)
 
 This example contains:
 
