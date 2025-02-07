@@ -63,7 +63,7 @@ export default async (_: any, options: Props) => {
     console.log(chalk.cyan(` - Found OpenAPI file, hydrating with EventCatalog extensions...`));
     const hydratedSpec = await hydrate(openApiSpec, api.routes, api.version);
 
-    const output = join(process.env.PROJECT_DIR, 'amazon-apigateway-specs', `${api.name}.json`);
+    const output = join(outputDir, `${api.name}.json`);
 
     // ensure the directory exists
     await fs.mkdir(outputDir, { recursive: true });
