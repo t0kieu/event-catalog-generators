@@ -1,5 +1,11 @@
 # @eventcatalog/generator-amazon-apigateway
 
+## 1.0.3
+
+### Patch Changes
+
+- b2e31c4: feat(plugin): setup licenses for apigateway
+
 ## 1.0.2
 
 ### Patch Changes
