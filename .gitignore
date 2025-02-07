@@ -78,7 +78,7 @@ examples/**/**/.github
 
 scripts/
 
-examples/generator-amazon-apigateway/
+examples/generator-amazon-apigateway/basic/amazon-api-gateway-output
 
 
 
