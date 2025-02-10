@@ -149,6 +149,8 @@ export default async (_: EventCatalogConfig, options: GeneratorProps) => {
   // Checkout the branch
   await execSync(`git checkout ${options.branch || 'main'}`, { cwd: tmpDir });
 
+  console.log('ALL CONTENT PATHS', allContentPaths);
+
   // No copy values have been provides, lets try and copy all EventCatalog Resources, first we have to check if they exist in the project
   if (isRootCopyConfiguration) {
     const existingPaths = await Promise.all(
@@ -158,6 +160,7 @@ export default async (_: EventCatalogConfig, options: GeneratorProps) => {
       })
     );
     const validPaths = existingPaths.filter((path): path is string => path !== null);
+    console.log('VALID PATHS', validPaths);
 
     contentsToCopy = validPaths.map((value) => ({
       content: value,
