@@ -4,7 +4,7 @@
   "description": "Merge multiple catalogs into one master catalog powered by git",
   "scripts": {
     "build": "tsup",
-    "test": "vitest",
+    "test": "vitest --allowOnly",
     "format": "prettier --write .",
     "format:diff": "prettier --list-different .",
     "changeset": "changeset",
