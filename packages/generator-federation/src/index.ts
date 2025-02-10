@@ -1,7 +1,7 @@
 import utils from '@eventcatalog/sdk';
 import chalk from 'chalk';
 import { execSync } from 'node:child_process';
-import path, { join, sep } from 'node:path';
+import path, { join } from 'node:path';
 import fs from 'fs/promises';
 import fsExtra from 'fs-extra';
 import checkLicense from './utils/checkLicense';
@@ -158,13 +158,10 @@ export default async (_: EventCatalogConfig, options: GeneratorProps) => {
       })
     );
     const validPaths = existingPaths.filter((path): path is string => path !== null);
-    contentsToCopy = validPaths.map((path) => ({
-      content: path,
-      destination: join(
-        options.destination || process.cwd(),
-        // fix for windows using sep
-        path.replace(join(options.sourceRootDir || '', sep), '')
-      ),
+
+    contentsToCopy = validPaths.map((value) => ({
+      content: value,
+      destination: join(options.destination || process.cwd(), path.relative(options.sourceRootDir as string, value)),
     }));
   }
 
