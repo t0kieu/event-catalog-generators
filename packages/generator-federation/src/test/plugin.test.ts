@@ -84,7 +84,7 @@ describe('generator-federation', () => {
     { timeout: 20000 }
   );
 
-  it.only(
+  it(
     'if a `sourceRootDir` is provided then it will be used as the root directory to copy files from',
     async () => {
       await plugin(eventCatalogConfig, {

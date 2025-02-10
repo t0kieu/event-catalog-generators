@@ -145,14 +145,12 @@ export default async (_: EventCatalogConfig, options: GeneratorProps) => {
   let allContentPaths = contentsToCopy.flatMap(({ content }) => (Array.isArray(content) ? content : [content]));
 
   // Convert Windows backslashes to forward slashes for git commands
-  const gitPaths = allContentPaths.map(p => p.replace(/\\/g, '/'));
-  
+  const gitPaths = allContentPaths.map((p) => p.replace(/\\/g, '/'));
+
   await execSync(`git sparse-checkout set ${gitPaths.join(' ')} --no-cone`, { cwd: tmpDir });
 
   // Checkout the branch
   await execSync(`git checkout ${options.branch || 'main'}`, { cwd: tmpDir });
-
-  console.log('ALL CONTENT PATHS', allContentPaths);
 
   // No copy values have been provides, lets try and copy all EventCatalog Resources, first we have to check if they exist in the project
   if (isRootCopyConfiguration) {
@@ -163,7 +161,6 @@ export default async (_: EventCatalogConfig, options: GeneratorProps) => {
       })
     );
     const validPaths = existingPaths.filter((path): path is string => path !== null);
-    console.log('VALID PATHS', validPaths);
 
     contentsToCopy = validPaths.map((value) => ({
       content: value,
@@ -173,8 +170,6 @@ export default async (_: EventCatalogConfig, options: GeneratorProps) => {
       ),
     }));
   }
-
-  console.log('CONTENT TO COPY', contentsToCopy);
 
   // Check for existing paths first and copy for each configuration
   for (const copyConfig of contentsToCopy) {
