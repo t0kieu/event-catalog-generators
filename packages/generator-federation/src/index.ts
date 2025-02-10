@@ -144,7 +144,10 @@ export default async (_: EventCatalogConfig, options: GeneratorProps) => {
   // Collect all content paths for sparse checkout
   let allContentPaths = contentsToCopy.flatMap(({ content }) => (Array.isArray(content) ? content : [content]));
 
-  await execSync(`git sparse-checkout set ${allContentPaths.join(' ')} --no-cone`, { cwd: tmpDir });
+  // Convert Windows backslashes to forward slashes for git commands
+  const gitPaths = allContentPaths.map(p => p.replace(/\\/g, '/'));
+  
+  await execSync(`git sparse-checkout set ${gitPaths.join(' ')} --no-cone`, { cwd: tmpDir });
 
   // Checkout the branch
   await execSync(`git checkout ${options.branch || 'main'}`, { cwd: tmpDir });
