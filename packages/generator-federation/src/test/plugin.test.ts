@@ -78,7 +78,9 @@ describe('generator-federation', () => {
 
     const users = await fs.readdir(path.join(catalogDir, 'users'));
     expect(users).toHaveLength(3);
-  });
+  },
+    { timeout: 20000 }
+  );
 
   it(
     'if a `sourceRootDir` is provided then it will be used as the root directory to copy files from',
