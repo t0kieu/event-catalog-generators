@@ -89,7 +89,7 @@ describe('generator-federation', () => {
     async () => {
       await plugin(eventCatalogConfig, {
         source: 'https://github.com/event-catalog/eventcatalog.git',
-        sourceRootDir: 'examples/default',
+        sourceRootDir: process.platform === 'win32' ? 'examples\\default' : 'examples/default',
         override: true,
         destination: path.join(catalogDir),
       });
