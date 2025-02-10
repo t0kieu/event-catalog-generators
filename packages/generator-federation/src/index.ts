@@ -168,6 +168,8 @@ export default async (_: EventCatalogConfig, options: GeneratorProps) => {
     }));
   }
 
+  console.log('CONTENT TO COPY', contentsToCopy);
+
   // Check for existing paths first and copy for each configuration
   for (const copyConfig of contentsToCopy) {
     if (!options.override) {
