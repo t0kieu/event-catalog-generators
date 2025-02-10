@@ -163,7 +163,7 @@ export default async (_: EventCatalogConfig, options: GeneratorProps) => {
       content: value,
       destination: join(
         options.destination || process.cwd(),
-        options.sourceRootDir ? path.relative(options.sourceRootDir, value) : value
+        options.sourceRootDir ? path.normalize(path.relative(path.normalize(options.sourceRootDir), value)) : value
       ),
     }));
   }
