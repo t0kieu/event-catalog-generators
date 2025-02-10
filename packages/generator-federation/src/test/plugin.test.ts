@@ -80,6 +80,28 @@ describe('generator-federation', () => {
     expect(users).toHaveLength(3);
   });
 
+  it(
+    'if a `sourceRootDir` is provided then it will be used as the root directory to copy files from',
+    async () => {
+      await plugin(eventCatalogConfig, {
+        source: 'https://github.com/event-catalog/eventcatalog.git',
+        sourceRootDir: 'examples/default',
+        override: true,
+        destination: path.join(catalogDir),
+      });
+
+      const domains = await fs.readdir(path.join(catalogDir, 'domains'));
+      expect(domains).toHaveLength(3);
+
+      const teams = await fs.readdir(path.join(catalogDir, 'teams'));
+      expect(teams).toHaveLength(2);
+
+      const users = await fs.readdir(path.join(catalogDir, 'users'));
+      expect(users).toHaveLength(3);
+    },
+    { timeout: 20000 }
+  );
+
   describe('branch', () => {
     it(
       'clones the source directory (with the given branch) and copies the files specified in the content array to the destination directory',
