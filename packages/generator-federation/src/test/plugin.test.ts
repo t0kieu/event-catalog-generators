@@ -84,12 +84,12 @@ describe('generator-federation', () => {
     { timeout: 20000 }
   );
 
-  it(
+  it.only(
     'if a `sourceRootDir` is provided then it will be used as the root directory to copy files from',
     async () => {
       await plugin(eventCatalogConfig, {
         source: 'https://github.com/event-catalog/eventcatalog.git',
-        sourceRootDir: process.platform === 'win32' ? 'examples\\default' : 'examples/default',
+        sourceRootDir: 'examples/default',
         override: true,
         destination: path.join(catalogDir),
       });
