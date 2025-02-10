@@ -26,9 +26,8 @@ type GeneratorProps = {
   override?: boolean;
   destination?: string;
   enforceUniqueResources?: boolean;
+  sourceRootDir?: string;
 };
-
-const log = console.log;
 
 const resources = ['services', 'events', 'domains', 'commands', 'queries', 'flows', 'teams', 'users'];
 const tmpDir = path.join(os.tmpdir(), 'eventcatalog');
@@ -129,11 +128,26 @@ export default async (_: EventCatalogConfig, options: GeneratorProps) => {
   await execSync(`git sparse-checkout init`, { cwd: tmpDir });
 
   let contentsToCopy = options.copy || resources.map((resource) => ({ content: resource, destination: resource }));
+
+  // If a `sourceRootDir` is provided then it will be used as the root directory to copy files from
+  if (options.sourceRootDir) {
+    contentsToCopy = contentsToCopy.map((content) => {
+      const contentPath = Array.isArray(content.content)
+        ? content.content.map((c) => join(options.sourceRootDir as string, c))
+        : join(options.sourceRootDir as string, content.content);
+      return { content: contentPath, destination: content.destination };
+    });
+  }
+
   const isRootCopyConfiguration = !options.copy;
 
   // Collect all content paths for sparse checkout
-  const allContentPaths = contentsToCopy.flatMap(({ content }) => (Array.isArray(content) ? content : [content]));
-  await execSync(`git sparse-checkout set ${allContentPaths.join(' ')} --no-cone`, { cwd: tmpDir });
+  let allContentPaths = contentsToCopy.flatMap(({ content }) => (Array.isArray(content) ? content : [content]));
+
+  // Convert Windows backslashes to forward slashes for git commands
+  const gitPaths = allContentPaths.map((p) => p.replace(/\\/g, '/'));
+
+  await execSync(`git sparse-checkout set ${gitPaths.join(' ')} --no-cone`, { cwd: tmpDir });
 
   // Checkout the branch
   await execSync(`git checkout ${options.branch || 'main'}`, { cwd: tmpDir });
@@ -147,7 +161,14 @@ export default async (_: EventCatalogConfig, options: GeneratorProps) => {
       })
     );
     const validPaths = existingPaths.filter((path): path is string => path !== null);
-    contentsToCopy = validPaths.map((path) => ({ content: path, destination: join(options.destination || process.cwd(), path) }));
+
+    contentsToCopy = validPaths.map((value) => ({
+      content: value,
+      destination: join(
+        options.destination || process.cwd(),
+        options.sourceRootDir ? path.normalize(path.relative(path.normalize(options.sourceRootDir), value)) : value
+      ),
+    }));
   }
 
   // Check for existing paths first and copy for each configuration
