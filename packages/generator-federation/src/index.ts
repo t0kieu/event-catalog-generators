@@ -161,7 +161,7 @@ export default async (_: EventCatalogConfig, options: GeneratorProps) => {
 
     contentsToCopy = validPaths.map((value) => ({
       content: value,
-      destination: join(options.destination || process.cwd(), path.relative(options.sourceRootDir as string, value)),
+      destination: join(options.destination || process.cwd(), path.relative(options.sourceRootDir || '', value)),
     }));
   }
 
