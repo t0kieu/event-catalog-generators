@@ -1,5 +1,11 @@
 # @eventcatalog/generator-federation
 
+## 1.0.2
+
+### Patch Changes
+
+- d741a9b: feat(plugin): added source root directory in federation
+
 ## 1.0.1
 
 ### Patch Changes
