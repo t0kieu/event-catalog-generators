@@ -40,6 +40,7 @@ const optionsSchema = z.object({
       id: z.string({ required_error: 'The service id is required. please provide the service id' }),
       path: z.string({ required_error: 'The service path is required. please provide the path to specification file' }),
       name: z.string().optional(),
+      owners: z.array(z.string()).optional(),
     }),
     { message: 'Please provide correct services configuration' }
   ),
@@ -47,6 +48,7 @@ const optionsSchema = z.object({
     .object({
       id: z.string({ required_error: 'The domain id is required. please provide a domain id' }),
       name: z.string({ required_error: 'The domain name is required. please provide a domain name' }),
+      owners: z.array(z.string()).optional(),
       version: z.string({ required_error: 'The domain version is required. please provide a domain version' }),
     })
     .optional(),
@@ -171,7 +173,7 @@ export default async (config: any, options: Props) => {
     let sends = [];
     let receives = [];
 
-    let owners = null;
+    let owners = service.owners || null;
     let repository = null;
 
     let serviceSpecifications = {};
@@ -189,7 +191,7 @@ export default async (config: any, options: Props) => {
     // Manage domain
     if (options.domain) {
       // Try and get the domain
-      const { id: domainId, name: domainName, version: domainVersion } = options.domain;
+      const { id: domainId, name: domainName, version: domainVersion, owners: domainOwners } = options.domain;
       const domain = await getDomain(options.domain.id, domainVersion || 'latest');
       const currentDomain = await getDomain(options.domain.id, 'latest');
 
@@ -208,6 +210,7 @@ export default async (config: any, options: Props) => {
           name: domainName,
           version: domainVersion,
           markdown: generateMarkdownForDomain(document),
+          ...(domainOwners && { owners: domainOwners }),
           // services: [{ id: serviceId, version: version }],
         });
         console.log(chalk.cyan(` - Domain (v${domainVersion}) created`));
@@ -336,6 +339,7 @@ export default async (config: any, options: Props) => {
               markdown: messageMarkdown,
               badges: badges.map((badge) => ({ content: badge.name(), textColor: 'blue', backgroundColor: 'blue' })),
               schemaPath: messageHasSchema(message) ? getSchemaFileName(message) : undefined,
+              ...(owners && { owners }),
               ...(channelsForMessage.length > 0 && { channels: channelsForMessage }),
             },
             {
@@ -376,8 +380,9 @@ export default async (config: any, options: Props) => {
     console.log(chalk.blue(`Processing service: ${serviceId} (v${version})`));
 
     if (latestServiceInCatalog) {
+      // persist data between versioning and matching
       serviceMarkdown = latestServiceInCatalog.markdown;
-      owners = latestServiceInCatalog.owners || null;
+      owners = latestServiceInCatalog.owners || owners;
       repository = latestServiceInCatalog.repository || null;
 
       // Found a service, and versions do not match, we need to version the one already there
