@@ -1,5 +1,11 @@
 # @eventcatalog/sdk
 
+## 3.0.1
+
+### Patch Changes
+
+- 63dcc36: feat(plugin): added ability to add owners to asyncapi plugin
+
 ## 3.0.0
 
 ### Major Changes
