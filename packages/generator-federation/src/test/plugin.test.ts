@@ -101,10 +101,10 @@ describe('generator-federation', () => {
       expect(domains).toHaveLength(3);
 
       const teams = await fs.readdir(path.join(catalogDir, 'teams'));
-      expect(teams).toHaveLength(2);
+      expect(teams).toHaveLength(4);
 
       const users = await fs.readdir(path.join(catalogDir, 'users'));
-      expect(users).toHaveLength(3);
+      expect(users).toHaveLength(23);
     },
     { timeout: 20000 }
   );

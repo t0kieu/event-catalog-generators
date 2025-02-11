@@ -111,6 +111,17 @@ describe('AsyncAPI EventCatalog Plugin', () => {
         });
         expect(await getDomain('orders', '1.0.0')).toBeUndefined();
       });
+
+      it('if a domain is defined with owners, the owners are written to the domain', async () => {
+        const { getDomain } = utils(catalogDir);
+        await plugin(config, {
+          services: [{ path: join(asyncAPIExamplesDir, 'simple.asyncapi.yml'), id: 'account-service' }],
+          domain: { id: 'orders', name: 'Orders Domain', version: '1.0.0', owners: ['John Doe', 'Jane Doe'] },
+        });
+
+        const domain = await getDomain('orders', '1.0.0');
+        expect(domain.owners).toEqual(['John Doe', 'Jane Doe']);
+      });
     });
 
     describe('services', () => {
@@ -595,6 +606,18 @@ describe('AsyncAPI EventCatalog Plugin', () => {
           asyncapiPath: 'simple.asyncapi.yml',
         });
       });
+
+      it('if the service has owners, these owners are written to the service', async () => {
+        const { getService } = utils(catalogDir);
+        await plugin(config, {
+          services: [
+            { path: join(asyncAPIExamplesDir, 'simple.asyncapi.yml'), id: 'account-service', owners: ['John Doe', 'Jane Doe'] },
+          ],
+        });
+
+        const service = await getService('account-service', '1.0.0');
+        expect(service.owners).toEqual(['John Doe', 'Jane Doe']);
+      });
     });
 
     describe('generator options', () => {
@@ -898,6 +921,23 @@ describe('AsyncAPI EventCatalog Plugin', () => {
         // custom version is used
         expect(event.version).toEqual('2.0.0');
         expect(event.schemaPath).toEqual('schema.json');
+      });
+
+      it('when the service has owners, the messages are given the same owners', async () => {
+        const { getEvent } = utils(catalogDir);
+        const { getService } = utils(catalogDir);
+
+        await plugin(config, {
+          services: [
+            { path: join(asyncAPIExamplesDir, 'simple.asyncapi.yml'), id: 'account-service', owners: ['John Doe', 'Jane Doe'] },
+          ],
+        });
+
+        const service = await getService('account-service', '1.0.0');
+        const event = await getEvent('usersignedup', '1.0.0');
+
+        expect(event.owners).toEqual(['John Doe', 'Jane Doe']);
+        expect(service.owners).toEqual(['John Doe', 'Jane Doe']);
       });
 
       describe('schemas', () => {
