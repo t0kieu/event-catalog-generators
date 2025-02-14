@@ -1,5 +1,11 @@
 # @eventcatalog/sdk
 
+## 3.0.2
+
+### Patch Changes
+
+- bab80ff: feat(core): added cli logs to let users know about updates
+
 ## 3.0.1
 
 ### Patch Changes

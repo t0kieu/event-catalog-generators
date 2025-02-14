@@ -1,5 +1,11 @@
 # @eventcatalog/generator-amazon-apigateway
 
+## 1.0.4
+
+### Patch Changes
+
+- bab80ff: feat(core): added cli logs to let users know about updates
+
 ## 1.0.3
 
 ### Patch Changes

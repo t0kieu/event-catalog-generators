@@ -1,5 +1,11 @@
 # @eventcatalog/generator-eventbridge
 
+## 2.0.1
+
+### Patch Changes
+
+- bab80ff: feat(core): added cli logs to let users know about updates
+
 ## 2.0.0
 
 ### Major Changes

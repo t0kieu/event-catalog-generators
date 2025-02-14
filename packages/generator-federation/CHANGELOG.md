@@ -1,5 +1,11 @@
 # @eventcatalog/generator-federation
 
+## 1.0.3
+
+### Patch Changes
+
+- bab80ff: feat(core): added cli logs to let users know about updates
+
 ## 1.0.2
 
 ### Patch Changes
