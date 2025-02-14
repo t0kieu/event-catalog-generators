@@ -1,4 +1,5 @@
 import { Options, defineConfig } from 'tsup';
+import path from 'path';
 
 export function createTsupConfig(options?: Partial<Options>) {
   return defineConfig({

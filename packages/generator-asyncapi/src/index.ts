@@ -6,6 +6,8 @@ import yaml from 'js-yaml';
 import { z } from 'zod';
 import chalk from 'chalk';
 import path from 'path';
+import pkgJSON from '../package.json';
+import { checkForPackageUpdate } from '../../../shared/check-for-package-update';
 
 // AsyncAPI Parsers
 import { AvroSchemaParser } from '@asyncapi/avro-schema-parser';
@@ -80,6 +82,7 @@ export default async (config: any, options: Props) => {
   }
 
   await checkLicense(options.licenseKey);
+  await checkForPackageUpdate(pkgJSON.name);
 
   const {
     writeService,

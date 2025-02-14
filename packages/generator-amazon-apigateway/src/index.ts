@@ -7,6 +7,9 @@ import { join } from 'node:path';
 import chalk from 'chalk';
 import fs from 'fs/promises';
 import checkLicense from './checkLicense';
+import pkgJSON from '../package.json';
+import { checkForPackageUpdate } from '../../../shared/check-for-package-update';
+
 export type Route = {
   type: 'command' | 'query' | 'event';
   id?: string;
@@ -40,6 +43,7 @@ export default async (_: any, options: Props) => {
   }
 
   await checkLicense(options.licenseKey);
+  await checkForPackageUpdate(pkgJSON.name);
 
   const outputDir = options.output
     ? join(process.env.PROJECT_DIR, options.output)

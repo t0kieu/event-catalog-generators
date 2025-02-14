@@ -7,6 +7,9 @@ import fsExtra from 'fs-extra';
 import checkLicense from './utils/checkLicense';
 import fm from 'front-matter';
 import os from 'node:os';
+import pkgJSON from '../package.json';
+import { checkForPackageUpdate } from '../../../shared/check-for-package-update';
+
 // The event.catalog.js values for your plugin
 type EventCatalogConfig = any;
 
@@ -112,6 +115,7 @@ export default async (_: EventCatalogConfig, options: GeneratorProps) => {
   }
 
   await checkLicense(options.licenseKey);
+  await checkForPackageUpdate(pkgJSON.name);
 
   // Remove the tmpDir if it exists
   if (fsExtra.existsSync(tmpDir)) {
