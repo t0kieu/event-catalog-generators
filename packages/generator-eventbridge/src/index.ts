@@ -19,6 +19,8 @@ import { generatedMarkdownByEventBus } from './utils/channel';
 import { parse } from '@aws-sdk/util-arn-parser';
 import { DescribeEventBusCommand, EventBridgeClient } from '@aws-sdk/client-eventbridge';
 import path, { join } from 'node:path';
+import pkgJSON from '../package.json';
+import { checkForPackageUpdate } from '../../../shared/check-for-package-update';
 
 async function tryFetchJSONSchema(
   schemasClient: SchemasClient,
@@ -144,7 +146,7 @@ export default async (config: EventCatalogConfig, options: GeneratorProps) => {
   }
 
   await checkLicense(options.licenseKey);
-
+  await checkForPackageUpdate(pkgJSON.name);
   // EventCatalog SDK (https://www.eventcatalog.dev/docs/sdk)
   const {
     writeService,

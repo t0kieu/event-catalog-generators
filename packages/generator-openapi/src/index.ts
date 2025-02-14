@@ -13,6 +13,9 @@ import { OpenAPI } from 'openapi-types';
 import checkLicense from './utils/checkLicense';
 import yaml from 'js-yaml';
 import { join } from 'node:path';
+import pkgJSON from '../package.json';
+import { checkForPackageUpdate } from '../../../shared/check-for-package-update';
+
 type Props = {
   services: Service[];
   domain?: Domain;
@@ -33,7 +36,7 @@ export default async (_: any, options: Props) => {
 
   // Check if the license is valid
   await checkLicense(options.licenseKey);
-
+  await checkForPackageUpdate(pkgJSON.name);
   const {
     getDomain,
     versionDomain,
