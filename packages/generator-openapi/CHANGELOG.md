@@ -1,5 +1,11 @@
 # @eventcatalog/generator-openapi
 
+## 4.0.4
+
+### Patch Changes
+
+- bab80ff: feat(core): added cli logs to let users know about updates
+
 ## 4.0.3
 
 ### Patch Changes
