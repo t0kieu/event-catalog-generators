@@ -1,5 +1,11 @@
 # @eventcatalog/generator-federation
 
+## 1.0.4
+
+### Patch Changes
+
+- 69d1698: fix(plugins): fixed broken checks for newest version
+
 ## 1.0.3
 
 ### Patch Changes
