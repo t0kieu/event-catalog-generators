@@ -1,12 +1,11 @@
 import boxen from 'boxen';
-import updateNotifier from 'update-notifier';
 import fs from 'fs';
-import { join } from 'path';
+import path from 'path';
 
 const getInstalledVersionOfPackage = (packageName: string) => {
   try {
     const PROJECT_DIR = process.env.PROJECT_DIR || process.cwd();
-    const pkg = fs.readFileSync(join(PROJECT_DIR, 'package.json'), 'utf8');
+    const pkg = fs.readFileSync(path.join(PROJECT_DIR, 'package.json'), 'utf8');
     const json = JSON.parse(pkg);
     return json.dependencies[packageName];
   } catch (error) {
@@ -17,10 +16,12 @@ const getInstalledVersionOfPackage = (packageName: string) => {
 export async function checkForPackageUpdate(packageName: string) {
   const installedVersion = getInstalledVersionOfPackage(packageName);
 
-  if (!installedVersion) return;
+  if (!installedVersion || installedVersion === 'latest') return;
 
-  const pkg = { name: packageName, version: '3.0.0' };
-  const notifier = updateNotifier({ pkg, updateCheckInterval: 0, shouldNotifyInNpmScript: true });
+  const pkg = { name: packageName, version: installedVersion };
+  const updateNotifierModule = await import('update-notifier');
+  const notifier = updateNotifierModule.default({ pkg, updateCheckInterval: 0, shouldNotifyInNpmScript: true });
+
   const info = await notifier.fetchInfo();
 
   if (info?.type !== 'latest') {

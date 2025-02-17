@@ -36,6 +36,7 @@
     "@eventcatalog/sdk": "^1.4.8",
     "chalk": "^4",
     "front-matter": "^4.0.2",
-    "fs-extra": "^11.2.0"
+    "fs-extra": "^11.2.0",
+    "update-notifier": "^7.3.1"
   }
 }
