@@ -1,5 +1,11 @@
 # @eventcatalog/sdk
 
+## 3.0.3
+
+### Patch Changes
+
+- 69d1698: fix(plugins): fixed broken checks for newest version
+
 ## 3.0.2
 
 ### Patch Changes

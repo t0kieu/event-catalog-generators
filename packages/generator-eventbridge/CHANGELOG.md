@@ -1,5 +1,11 @@
 # @eventcatalog/generator-eventbridge
 
+## 2.0.2
+
+### Patch Changes
+
+- 69d1698: fix(plugins): fixed broken checks for newest version
+
 ## 2.0.1
 
 ### Patch Changes

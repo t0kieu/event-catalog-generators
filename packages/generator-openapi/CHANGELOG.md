@@ -1,5 +1,11 @@
 # @eventcatalog/generator-openapi
 
+## 4.0.5
+
+### Patch Changes
+
+- 69d1698: fix(plugins): fixed broken checks for newest version
+
 ## 4.0.4
 
 ### Patch Changes
