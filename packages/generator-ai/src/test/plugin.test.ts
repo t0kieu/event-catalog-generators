@@ -30,7 +30,7 @@ describe('generator-ai', () => {
         });
 
         //  Find all objects with metadata.id = PaymentProcessed
-        const documents = await fs.readFile(path.join(catalogDir, 'generated-ai/documents.json'), 'utf8');
+        const documents = await fs.readFile(path.join(catalogDir, 'public/ai/documents.json'), 'utf8');
         const documentsJson = JSON.parse(documents);
         const paymentProcessed = documentsJson.filter((document: any) => document.metadata.id === 'PaymentProcessed');
         const expectedChunks = os.platform() === 'win32' ? 10 : 8;
@@ -48,7 +48,7 @@ describe('generator-ai', () => {
       });
 
       //  Find all objects with metadata.id = PaymentProcessed, should have 8 of them
-      const documents = await fs.readFile(path.join(catalogDir, 'generated-ai/documents.json'), 'utf8');
+      const documents = await fs.readFile(path.join(catalogDir, 'public/ai/documents.json'), 'utf8');
       const documentsJson = JSON.parse(documents);
       const paymentProcessed = documentsJson.filter((document: any) => document.metadata.id === 'PaymentProcessed');
       expect(paymentProcessed).toHaveLength(2);
@@ -63,7 +63,7 @@ describe('generator-ai', () => {
         splitMarkdownFiles: true,
       });
 
-      const files = await fs.readdir(path.join(catalogDir, 'generated-ai'));
+      const files = await fs.readdir(path.join(catalogDir, 'public/ai'));
       expect(files).toContain('embeddings.json');
       expect(files).toContain('documents.json');
       expect(files).toContain('README.md');
@@ -79,7 +79,7 @@ describe('generator-ai', () => {
       });
 
       const gitignore = await fs.readFile(path.join(catalogDir, '.gitignore'), 'utf8');
-      expect(gitignore).toContain('generated-ai/');
+      expect(gitignore).toContain('public/ai/');
     },
     { timeout: 20000 }
   );

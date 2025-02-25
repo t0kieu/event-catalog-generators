@@ -120,25 +120,25 @@ export default async (_: EventCatalogConfig, options: GeneratorProps) => {
   );
 
   // ensure the ai directory exists in the users catalog
-  await fs.ensureDir(path.join(process.env.PROJECT_DIR, 'generated-ai'));
+  await fs.ensureDir(path.join(process.env.PROJECT_DIR, 'public/ai'));
 
   // Write the file to embeddings.json
   // remove the old file if it exists
-  if (fs.existsSync(path.join(process.env.PROJECT_DIR, 'generated-ai/documents.json'))) {
-    await fs.unlink(path.join(process.env.PROJECT_DIR, 'generated-ai/documents.json'));
+  if (fs.existsSync(path.join(process.env.PROJECT_DIR, 'public/ai/documents.json'))) {
+    await fs.unlink(path.join(process.env.PROJECT_DIR, 'public/ai/documents.json'));
   }
 
-  await fs.writeJSON(path.join(process.env.PROJECT_DIR, 'generated-ai/documents.json'), flattenedDocuments);
+  await fs.writeJSON(path.join(process.env.PROJECT_DIR, 'public/ai/documents.json'), flattenedDocuments);
 
   // Write the file to embeddings.json
   // remove the old file if it exists
-  if (fs.existsSync(path.join(process.env.PROJECT_DIR, 'generated-ai/embeddings.json'))) {
-    await fs.unlink(path.join(process.env.PROJECT_DIR, 'generated-ai/embeddings.json'));
+  if (fs.existsSync(path.join(process.env.PROJECT_DIR, 'public/ai/embeddings.json'))) {
+    await fs.unlink(path.join(process.env.PROJECT_DIR, 'public/ai/embeddings.json'));
   }
-  await fs.writeJSON(path.join(process.env.PROJECT_DIR, 'generated-ai/embeddings.json'), embeddings);
+  await fs.writeJSON(path.join(process.env.PROJECT_DIR, 'public/ai/embeddings.json'), embeddings);
 
   // Add README.md to generated-ai folder
-  const readmePath = path.join(process.env.PROJECT_DIR, 'generated-ai/README.md');
+  const readmePath = path.join(process.env.PROJECT_DIR, 'public/ai/README.md');
   const readmeContent = `# Generated AI Content
 
 This directory contains auto-generated files used by the @eventcatalog/ai plugin. These files are automatically created and updated when running the AI generator plugin.
@@ -161,11 +161,11 @@ This directory contains auto-generated files used by the @eventcatalog/ai plugin
     gitignoreContent = await fs.readFile(gitignorePath, 'utf8');
   }
 
-  if (!gitignoreContent.includes('generated-ai/')) {
-    const aiEntry = gitignoreContent.endsWith('\n') ? 'generated-ai/' : '\ngenerated-ai/';
+  if (!gitignoreContent.includes('public/ai/')) {
+    const aiEntry = gitignoreContent.endsWith('\n') ? 'public/ai/' : '\npublic/ai/';
     await fs.appendFile(gitignorePath, aiEntry);
-    console.log(chalk.green(`Added generated ai/ directory to .gitignore`));
+    console.log(chalk.green(`Added public/ai/ directory to .gitignore`));
   }
 
-  console.log(chalk.green(`  - Generated embeddings and documents. Saved to generated-ai/`));
+  console.log(chalk.green(`  - Generated embeddings and documents. Saved to public/ai/`));
 };
