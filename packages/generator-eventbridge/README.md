@@ -129,7 +129,7 @@ Thank you to our project sponsors.
 ## Gold sponsors
 
 <div align="center">
-  <img alt="gravitee" src="./images/sponsors/gravitee-logo-black.svg" width="50%" />
+  <img alt="gravitee" src="../../images/sponsors/gravitee-logo-black.svg" width="50%" />
   <p style="margin: 0; padding: 0;">Manage, secure, and govern every API in your organization</p>
   <a href="https://gravitee.io?utm_source=eventcatalog&utm_medium=web&utm_campaign=sponsorship" target="_blank" >Learn more</a>
 </div>
@@ -137,7 +137,7 @@ Thank you to our project sponsors.
 <hr />
 
 <div align="center">
-  <img alt="oso" src="./images/sponsors/oso-logo-green.png" width="40%" />
+  <img alt="oso" src="../../images/sponsors/oso-logo-green.png" width="40%" />
   <p style="margin: 0; padding: 0;">Delivering Apache Kafka professional services to your business</p>
   <a href="https://oso.sh/?utm_source=eventcatalog&utm_medium=web&utm_campaign=sponsorship" target="_blank" >Learn more</a>
 </div>
