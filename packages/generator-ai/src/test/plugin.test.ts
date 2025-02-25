@@ -20,31 +20,39 @@ describe('generator-ai', () => {
     process.env.PROJECT_DIR = catalogDir;
   });
 
-  describe('splitMarkdownFiles', () => {
-    it('when splitMarkdownFiles is true the markdown is split into smaller chunks', async () => {
+  describe(
+    'splitMarkdownFiles',
+    () => {
+      it('when splitMarkdownFiles is true the markdown is split into smaller chunks', async () => {
+        await plugin(eventCatalogConfig, {
+          splitMarkdownFiles: true,
+        });
+
+        //  Find all objects with metadata.id = PaymentProcessed, should have 8 of them
+        const documents = await fs.readFile(path.join(catalogDir, 'generated-ai/documents.json'), 'utf8');
+        const documentsJson = JSON.parse(documents);
+        const paymentProcessed = documentsJson.filter((document: any) => document.metadata.id === 'PaymentProcessed');
+        expect(paymentProcessed).toHaveLength(8);
+      });
+    },
+    { timeout: 20000 }
+  );
+
+  it(
+    'The plugin does not split the markdown into smaller chunks when splitMarkdownFiles is false',
+    async () => {
       await plugin(eventCatalogConfig, {
-        splitMarkdownFiles: true,
+        splitMarkdownFiles: false,
       });
 
       //  Find all objects with metadata.id = PaymentProcessed, should have 8 of them
       const documents = await fs.readFile(path.join(catalogDir, 'generated-ai/documents.json'), 'utf8');
       const documentsJson = JSON.parse(documents);
       const paymentProcessed = documentsJson.filter((document: any) => document.metadata.id === 'PaymentProcessed');
-      expect(paymentProcessed).toHaveLength(8);
-    });
-  }, { timeout: 20000 });
-
-  it('The plugin does not split the markdown into smaller chunks when splitMarkdownFiles is false', async () => {
-    await plugin(eventCatalogConfig, {
-      splitMarkdownFiles: false,
-    });
-
-    //  Find all objects with metadata.id = PaymentProcessed, should have 8 of them
-    const documents = await fs.readFile(path.join(catalogDir, 'generated-ai/documents.json'), 'utf8');
-    const documentsJson = JSON.parse(documents);
-    const paymentProcessed = documentsJson.filter((document: any) => document.metadata.id === 'PaymentProcessed');
-    expect(paymentProcessed).toHaveLength(2);
-  }, { timeout: 20000 });
+      expect(paymentProcessed).toHaveLength(2);
+    },
+    { timeout: 20000 }
+  );
 
   it('The plugin generates embeddings and documents, and a readme for the given catalog', async () => {
     await plugin(eventCatalogConfig, {
@@ -57,12 +65,16 @@ describe('generator-ai', () => {
     expect(files).toContain('README.md');
   });
 
-  it('The generated-ai folder is added to the .gitignore file', async () => {
-    await plugin(eventCatalogConfig, {
-      splitMarkdownFiles: true,
-    });
+  it(
+    'The generated-ai folder is added to the .gitignore file',
+    async () => {
+      await plugin(eventCatalogConfig, {
+        splitMarkdownFiles: true,
+      });
 
-    const gitignore = await fs.readFile(path.join(catalogDir, '.gitignore'), 'utf8');
-    expect(gitignore).toContain('generated-ai/');
-  }, { timeout: 20000 });
+      const gitignore = await fs.readFile(path.join(catalogDir, '.gitignore'), 'utf8');
+      expect(gitignore).toContain('generated-ai/');
+    },
+    { timeout: 20000 }
+  );
 });
