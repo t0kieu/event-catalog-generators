@@ -10,6 +10,8 @@ This repository contains the generators for the EventCatalog project.
 - [AsyncAPI](./packages/generator-asyncapi/README.md)
   - [Documentation](https://www.eventcatalog.dev/integrations/asyncapi)
   - [Example Projects](./examples/generator-asyncapi/)
+- [EventCatalog AI](./packages/generator-ai/README.md)
+  - [Documentation](https://www.eventcatalog.dev/integrations/ai)
 - [EventCatalog Federation](./packages/generator-federation/README.md)
   - [Documentation](https://www.eventcatalog.dev/federation)
 - [Amazon EventBridge](./packages/generator-eventbridge/README.md)
