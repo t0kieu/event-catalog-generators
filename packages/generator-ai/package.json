@@ -1,6 +1,6 @@
 {
   "name": "@eventcatalog/generator-ai",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Add EventCatalog AI Assistant to your project",
   "scripts": {
     "build": "tsup",
