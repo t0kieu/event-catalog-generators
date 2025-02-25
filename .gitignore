@@ -67,6 +67,8 @@ examples/**/**/dependencies
 !examples/generator-federation/basic/payment-team/services/**/events
 !examples/generator-federation/basic/payment-team/services/**/commands
 
+!packages/generator-ai/src/test/catalog/domains
+
 examples/**/**/build
 examples/**/**/package-lock.json
 examples/**/**/dist
