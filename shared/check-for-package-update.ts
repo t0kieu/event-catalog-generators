@@ -7,7 +7,9 @@ const getInstalledVersionOfPackage = (packageName: string) => {
     const PROJECT_DIR = process.env.PROJECT_DIR || process.cwd();
     const pkg = fs.readFileSync(path.join(PROJECT_DIR, 'package.json'), 'utf8');
     const json = JSON.parse(pkg);
-    return json.dependencies[packageName];
+    const version = json.dependencies[packageName];
+    // Clean up the version string by removing ^, ~ and other special characters
+    return version?.replace(/[\^~><=]/g, '');
   } catch (error) {
     return null;
   }
