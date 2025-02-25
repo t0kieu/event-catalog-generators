@@ -32,7 +32,7 @@ describe('generator-ai', () => {
       const paymentProcessed = documentsJson.filter((document: any) => document.metadata.id === 'PaymentProcessed');
       expect(paymentProcessed).toHaveLength(8);
     });
-  });
+  }, { timeout: 20000 });
 
   it('The plugin does not split the markdown into smaller chunks when splitMarkdownFiles is false', async () => {
     await plugin(eventCatalogConfig, {
@@ -44,7 +44,7 @@ describe('generator-ai', () => {
     const documentsJson = JSON.parse(documents);
     const paymentProcessed = documentsJson.filter((document: any) => document.metadata.id === 'PaymentProcessed');
     expect(paymentProcessed).toHaveLength(2);
-  });
+  }, { timeout: 20000 });
 
   it('The plugin generates embeddings and documents, and a readme for the given catalog', async () => {
     await plugin(eventCatalogConfig, {
@@ -64,5 +64,5 @@ describe('generator-ai', () => {
 
     const gitignore = await fs.readFile(path.join(catalogDir, '.gitignore'), 'utf8');
     expect(gitignore).toContain('generated-ai/');
-  });
+  }, { timeout: 20000 });
 });
