@@ -1,15 +1,15 @@
 <div align="center">
 
-<h1>⚡️ Amazon EventBridge generator for EventCatalog</h1>
-<p>Bring discoverability to teams with the Amazon EventBridge plugin for EventCatalog</p>
+<h1>⚡️ EventCatalog AI Assistant - Generator </h1>
+<p>Talk to your architecture with the EventCatalog AI Assistant</p>
 
 [![PRs Welcome][prs-badge]][prs]
 <img src="https://img.shields.io/github/actions/workflow/status/event-catalog/generator-eventbridge/verify-build.yml"/>
 [![](https://dcbadge.limes.pink/api/server/https://discord.gg/3rjaZMmrAm?style=flat)](https://discord.gg/3rjaZMmrAm) [<img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white" height="20px" />](https://www.linkedin.com/in/david-boyne/) [![blog](https://img.shields.io/badge/blog-EDA--Visuals-brightgreen)](https://eda-visuals.boyney.io/?utm_source=event-catalog-gihub) [![blog](https://img.shields.io/badge/license-Dual--License-brightgreen)](https://github.com/event-catalog/generator-eventbridge/blob/main/LICENSE.md)
 
-<img alt="header" src="https://github.com/event-catalog/generators/blob/main/images/eventbridge.png?raw=true" />
+<img alt="header" src="https://github.com/event-catalog/generators/blob/main/images/ai.png?raw=true" />
 
-<h4>Features: Generate EventCatalogs with your EventBridge schema registries, Auto versioning, download schema downloads, open AWS console directly from your catalogs, map to domains and more... </h4>
+<h4>Features: Use natural language to ask questions about your EventCatalog, use the AI Assistant to get answers. Local first, no data leaves your computer. </h4>
 
 [Read the Docs](https://eventcatalog.dev/) | [Edit the Docs](https://github.com/event-catalog/docs) | [View Demo](https://demo.eventcatalog.dev/docs)
 
@@ -19,13 +19,11 @@
 
 # Core Features
 
-- 📃 Document domains, services and messages from your Amazon EventBridge schema registries ([example](https://github.com/event-catalog/eventcatalog-eventbridge-example))
-- 📊 Visualise your architecture ([demo](https://demo.eventcatalog.dev/visualiser))
-- ⭐ Download your event schemas from EventCatalog (e.g JSONDraft, OpenAPI) ([demo](https://demo.eventcatalog.dev/docs/events/InventoryAdjusted/0.0.4))
-- 💅 Custom MDX components ([read more](https://eventcatalog.dev/docs/development/components/using-components))
-- 🗄️ Auto versioning of your domains, services and events
-- 🗄️ Matches versioning from your EventBridge registry
-- ⭐ Discoverability feature (search, filter and more) ([demo](https://demo.eventcatalog.dev/discover/events))
+- 🗣️ Use natural language to ask questions about your EventCatalog
+- 🔐 Local first, no data leaves your computer
+- 🔐 Private and secure, your data is yours
+- 📚 Unlimited questions and answers (no token limits, or API keys required)
+- 📚 Reduce the time it takes to learn and understand your architecture
 - ⭐ And much more...
 
 # How it works
@@ -35,62 +33,37 @@
 EventCatalog supports [generators](https://www.eventcatalog.dev/docs/development/plugins/generators).
 Generators are scripts are run to pre build to generate content in your catalog. Generators can use the [EventCatalog SDK](https://www.eventcatalog.dev/docs/sdk).
 
-With this EventBridge plugin you can connect your schema registries to your catalog. You can map your events to your domains and services and also filter (suffix, prefix, exact matching, source filtering) for your events.
+With this EventCatalog plugin embeddings are generated based on your EventCatalog. These embeddings are stored and use by EventCatalog, all locally in your project and on your computer. Once you generate the embeddings with this generator, and configure your EventCatalog project, you can use the AI Assistant to ask questions about your catalog.
 
-This is done by defining your generators in your `eventcatlaog.config.js` file.
+EventCatalog uses [Webllm](https://webllm.mlc.ai/) to run the models in your browser and [Transformers.js](https://huggingface.co/docs/transformers.js/en/index) to do vector searches in your browser.
+
+You can pick which model you want to use, and EventCatalog will download the model for you enabling you to use the AI Assistant.
 
 ```js
 ...
 generators: [
     [
-      '@eventcatalog/generator-eventbridge',
+      '@eventcatalog/generator-ai',
       {
-        region: 'us-east-1',
-        registryName: 'discovered-schemas',
-        services: [
-          // Maps exact events to the service
-          { id: 'Orders Service', version: '1.0.0', sends: [{ detailType: ['OrderPlaced', 'OrderUpdated'], receives:["InventoryAdjusted"]}] },
-          // Filter by source (all events that match the source get assigned). This example shows any event matching the source
-          // "myapp.orders" will be assigned to the inventory service. The inventory service will publish these events.
-          { id: 'Inventory Service', version: '1.0.0', sends: [{ source: "myapp.orders"}], receives:[{ detailType: "UserCheckedOut"}] },
-          // This service sends events that match the SchemaName prefixing myapp, and will receive events that end with Payment
-          { id: 'Payment Service', version: '1.0.0', sends: [{ prefix: "myapp"}], receives:[{ suffix: "Payment" }] }
-        ],
-        domain: { id: 'orders', name: 'Orders', version: '0.0.1' },
+        // This will split the markdown files into smaller chunks, this is optional and defaults to false
+        // This uses MarkdownTextSplitter under the hood
+        splitMarkdownFiles: false,
+
+        // optional embedding model to use, defaults to Xenova/all-MiniLM-L6-v2 (https://huggingface.co/Xenova/all-MiniLM-L6-v2)
+        // shouldnt need to change this, unless you want to play with models and embeddings
+        embedingModel: 'Xenova/all-MiniLM-L6-v2'
+
       },
-    ],
-    // Example of saving all messages directly into EventCatalog without services or domains
-    // All events in registry will be added to the Catalog.
-    [
-      '@eventcatalog/generator-eventbridge',
-      {
-        region: 'us-east-1',
-        registryName: 'discovered-schemas'
-      },
-    ],
-    // Example using optional credentials
-    [
-      '@eventcatalog/generator-eventbridge',
-      {
-        region: 'us-east-1',
-        registryName: 'discovered-schemas',
-        credentials: {
-          accessKeyId: 'X',
-          secretAccessKey: 'X',
-          accountId: 'X',
-        },
-      },
-    ],
+    ]
   ],
 ...
 ```
 
-In this example we have two types of usecases for the generator:
+In this example we install and setup the generator. This will parse all our catalogs files and create a new folder called `/generated-ai` with the following files:
 
-1. Map events to services and domains using custom filters.
-2. Add all events to EventCatalog regardless of the service or domain.
-
-You can see an example in the [eventcatalog-eventbridge-example](https://github.com/event-catalog/eventcatalog-eventbridge-example/blob/main/eventcatalog.config.js) repo
+- `documents.json` - Contains the processed documents and their metadata for the LLM model in EventCatalog
+- `embeddings.json` - Contains vector embeddings for the documents. These are used by EventCatalog to do vector searches.
+- `README.md` - This file just tells you that these files are generated, and not to edit them
 
 # Getting started
 
@@ -101,10 +74,10 @@ _Make sure you are on the latest version of EventCatalog_.
 1. Install the package
 
 ```sh
-@eventcatalog/generator-eventbridge
+@eventcatalog/generator-ai
 ```
 
-2. Configure your `eventcatalog.config.js` file [(see example)](https://github.com/event-catalog/eventcatalog-eventbridge-example/blob/main/eventcatalog.config.js)
+2. Configure your `eventcatalog.config.js` file [(see example)](https://github.com/event-catalog/eventcatalog-ai-example/blob/main/eventcatalog.config.js)
 
 3. Run the generate command
 
@@ -112,7 +85,17 @@ _Make sure you are on the latest version of EventCatalog_.
 npm run generate
 ```
 
-4. See your new domains, services and messages, run
+4. Configure your EventCatalog project, turn on the chat feature.
+
+```js
+{
+    chat: {
+        enabled: true,
+    }
+}
+```
+
+5. Start your project and go to `/chat` to see the AI Assistant or use the link on the sidebar.
 
 ```sh
 npm run dev
