@@ -1,5 +1,11 @@
 # @eventcatalog/sdk
 
+## 3.0.4
+
+### Patch Changes
+
+- b9735ff: fix(plugins): fixed bug for checking for latest version
+
 ## 3.0.3
 
 ### Patch Changes
