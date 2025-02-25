@@ -1,5 +1,11 @@
 # @eventcatalog/generator-eventbridge
 
+## 2.0.3
+
+### Patch Changes
+
+- b9735ff: fix(plugins): fixed bug for checking for latest version
+
 ## 2.0.2
 
 ### Patch Changes
