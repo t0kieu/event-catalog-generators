@@ -1,5 +1,11 @@
 # @eventcatalog/generator-ai
 
+## 0.1.2
+
+### Patch Changes
+
+- af1e911: fix(plugin): moved the generated ai file location to public dir
+
 ## 0.1.1
 
 ### Patch Changes
