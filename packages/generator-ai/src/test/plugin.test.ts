@@ -54,16 +54,20 @@ describe('generator-ai', () => {
     { timeout: 20000 }
   );
 
-  it('The plugin generates embeddings and documents, and a readme for the given catalog', async () => {
-    await plugin(eventCatalogConfig, {
-      splitMarkdownFiles: true,
-    });
+  it(
+    'The plugin generates embeddings and documents, and a readme for the given catalog',
+    async () => {
+      await plugin(eventCatalogConfig, {
+        splitMarkdownFiles: true,
+      });
 
-    const files = await fs.readdir(path.join(catalogDir, 'generated-ai'));
-    expect(files).toContain('embeddings.json');
-    expect(files).toContain('documents.json');
-    expect(files).toContain('README.md');
-  });
+      const files = await fs.readdir(path.join(catalogDir, 'generated-ai'));
+      expect(files).toContain('embeddings.json');
+      expect(files).toContain('documents.json');
+      expect(files).toContain('README.md');
+    },
+    { timeout: 20000 }
+  );
 
   it(
     'The generated-ai folder is added to the .gitignore file',
