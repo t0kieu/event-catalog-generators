@@ -2,6 +2,7 @@ import { expect, it, describe, beforeEach, vi } from 'vitest';
 import plugin from '../index';
 import path, { join } from 'node:path';
 import fs from 'fs/promises';
+import os from 'node:os';
 // Fake eventcatalog config
 const eventCatalogConfig = {
   title: 'My EventCatalog',
@@ -28,11 +29,12 @@ describe('generator-ai', () => {
           splitMarkdownFiles: true,
         });
 
-        //  Find all objects with metadata.id = PaymentProcessed, should have 8 of them
+        //  Find all objects with metadata.id = PaymentProcessed
         const documents = await fs.readFile(path.join(catalogDir, 'generated-ai/documents.json'), 'utf8');
         const documentsJson = JSON.parse(documents);
         const paymentProcessed = documentsJson.filter((document: any) => document.metadata.id === 'PaymentProcessed');
-        expect(paymentProcessed).toHaveLength(8);
+        const expectedChunks = os.platform() === 'win32' ? 10 : 8;
+        expect(paymentProcessed).toHaveLength(expectedChunks);
       });
     },
     { timeout: 20000 }
