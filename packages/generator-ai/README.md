@@ -49,6 +49,11 @@ generators: [
         // This uses MarkdownTextSplitter under the hood
         splitMarkdownFiles: false,
 
+
+        // Set this to true if you want to include users and teams in the embeddings for your AI Assistant
+        // This can bloat the embeddings and may effect the results you get back, false by default
+        includeUsersAndTeams: false,
+
         // optional embedding model to use, defaults to Llama-3.2-3B-Instruct-q4f16_1-MLC
         // shouldnt need to change this, unless you want to play with models and embeddings
         // Find list of models here: https://www.eventcatalog.dev/docs/development/guides/eventcatlaog-chat/models
