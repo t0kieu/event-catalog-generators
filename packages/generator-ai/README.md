@@ -49,9 +49,16 @@ generators: [
         // This uses MarkdownTextSplitter under the hood
         splitMarkdownFiles: false,
 
-        // optional embedding model to use, defaults to Xenova/all-MiniLM-L6-v2 (https://huggingface.co/Xenova/all-MiniLM-L6-v2)
+        // optional embedding model to use, defaults to Llama-3.2-3B-Instruct-q4f16_1-MLC
         // shouldnt need to change this, unless you want to play with models and embeddings
-        embedingModel: 'Xenova/all-MiniLM-L6-v2'
+        // Find list of models here: https://www.eventcatalog.dev/docs/development/guides/eventcatlaog-chat/models
+        embedingModel: 'Xenova/all-MiniLM-L6-v2',
+
+        // optional similarity results to use, defaults to 10
+        similarityResults: 40,
+
+        // optional max tokens to use, defaults to 4096, map to your model
+        maxTokens: 4096,
 
       },
     ]
