@@ -1,5 +1,11 @@
 # @eventcatalog/generator-ai
 
+## 0.1.3
+
+### Patch Changes
+
+- 010cb22: feat(plugin): users and teams are optional in embeddings
+
 ## 0.1.2
 
 ### Patch Changes
