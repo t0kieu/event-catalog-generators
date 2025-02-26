@@ -145,7 +145,7 @@ export default async (_: EventCatalogConfig, options: GeneratorProps) => {
   const readmePath = path.join(process.env.PROJECT_DIR, 'public/ai/README.md');
   const readmeContent = `# Generated AI Content
 
-This directory contains auto-generated files used by the @eventcatalog/ai plugin. These files are automatically created and updated when running the AI generator plugin.
+This directory contains auto-generated files used by the @eventcatalog/ai plugin. These files are automatically created and updated when running the AI generator plugin
 
 ## Files
 
