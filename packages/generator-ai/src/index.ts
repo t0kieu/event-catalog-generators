@@ -16,6 +16,7 @@ type GeneratorProps = {
   licenseKey?: string;
   splitMarkdownFiles?: boolean;
   embedingModel?: string;
+  includeUsersAndTeams?: boolean;
 };
 
 // Function to generate embeddings using Hugging Face (Xenova)
@@ -45,6 +46,9 @@ export default async (_: EventCatalogConfig, options: GeneratorProps) => {
 
   console.log(chalk.cyan(`@eventcatalog/generator-ai processing your catalog...`));
 
+  // users and teams can bloat the embeddings and may not provide much value, let the user decide if they want to include them
+  const includeUsersAndTeams = options.includeUsersAndTeams ?? false;
+
   // await checkLicense(options.licenseKey);
   await checkForPackageUpdate(pkgJSON.name);
 
@@ -52,13 +56,15 @@ export default async (_: EventCatalogConfig, options: GeneratorProps) => {
 
   const [events, users, services, domains, commands, queries, teams] = await Promise.all([
     getEvents(),
-    getUsers(),
+    includeUsersAndTeams ? getUsers() : [],
     getServices(),
     getDomains(),
     getCommands({}),
     getQueries({}),
-    getTeams(),
+    includeUsersAndTeams ? getTeams() : [],
   ]);
+
+  console.log('users', users);
 
   const resourceTypes = [
     { items: events, type: 'event' },
@@ -71,6 +77,8 @@ export default async (_: EventCatalogConfig, options: GeneratorProps) => {
   ];
 
   const resources = resourceTypes.flatMap(({ items, type }) => items.map((item) => ({ ...item, type })));
+
+  console.log('resources', resources);
 
   let documents: Document[] = [];
 
