@@ -1,5 +1,11 @@
 # @eventcatalog/generator-ai
 
+## 0.1.5
+
+### Patch Changes
+
+- 1b9e2c7: chore(plugin): bump sdk version for ai plugin
+
 ## 0.1.4
 
 ### Patch Changes
