@@ -64,8 +64,6 @@ export default async (_: EventCatalogConfig, options: GeneratorProps) => {
     includeUsersAndTeams ? getTeams() : [],
   ]);
 
-  console.log('users', users);
-
   const resourceTypes = [
     { items: events, type: 'event' },
     { items: users, type: 'user' },
@@ -77,8 +75,6 @@ export default async (_: EventCatalogConfig, options: GeneratorProps) => {
   ];
 
   const resources = resourceTypes.flatMap(({ items, type }) => items.map((item) => ({ ...item, type })));
-
-  console.log('resources', resources);
 
   let documents: Document[] = [];
 
