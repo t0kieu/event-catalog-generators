@@ -1,5 +1,11 @@
 # @eventcatalog/generator-ai
 
+## 0.1.6
+
+### Patch Changes
+
+- 1c893e2: fix(plugin): ai plugin now works with missing catalog resources
+
 ## 0.1.5
 
 ### Patch Changes
