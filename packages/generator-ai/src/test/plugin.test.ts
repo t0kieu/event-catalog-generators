@@ -83,4 +83,19 @@ describe('generator-ai', () => {
     },
     { timeout: 20000 }
   );
+
+  it('If the folder contains no resources, the generator still runs and does not throw an error', async () => {
+    // Set the catalog dir to a new folder
+    catalogDir = join(__dirname, 'catalog-no-resources');
+    process.env.PROJECT_DIR = catalogDir;
+
+    await plugin(eventCatalogConfig, {
+      splitMarkdownFiles: true,
+    });
+
+    const files = await fs.readdir(path.join(catalogDir, 'public/ai'));
+    expect(files).toContain('embeddings.json');
+    expect(files).toContain('documents.json');
+    expect(files).toContain('README.md');
+  });
 });

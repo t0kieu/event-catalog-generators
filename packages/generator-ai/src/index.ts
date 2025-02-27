@@ -13,6 +13,7 @@ type EventCatalogConfig = any;
 
 // Configuration the users give your catalog
 type GeneratorProps = {
+  debug?: boolean;
   licenseKey?: string;
   splitMarkdownFiles?: boolean;
   embedingModel?: string;
@@ -48,13 +49,14 @@ export default async (_: EventCatalogConfig, options: GeneratorProps) => {
 
   // users and teams can bloat the embeddings and may not provide much value, let the user decide if they want to include them
   const includeUsersAndTeams = options.includeUsersAndTeams ?? false;
+  const debug = options.debug ?? false;
 
   // await checkLicense(options.licenseKey);
   await checkForPackageUpdate(pkgJSON.name);
 
   const { getEvents, getUsers, getServices, getDomains, getCommands, getQueries, getTeams } = utils(process.env.PROJECT_DIR);
 
-  const [events, users, services, domains, commands, queries, teams] = await Promise.all([
+  const [events = [], users = [], services = [], domains = [], commands = [], queries = [], teams = []] = await Promise.all([
     getEvents(),
     includeUsersAndTeams ? getUsers() : [],
     getServices(),
@@ -73,6 +75,16 @@ export default async (_: EventCatalogConfig, options: GeneratorProps) => {
     { items: queries, type: 'query' },
     { items: teams, type: 'team' },
   ];
+
+  if (debug) {
+    console.log('Events:', events.length);
+    console.log('Users:', users.length);
+    console.log('Services:', services.length);
+    console.log('Domains:', domains.length);
+    console.log('Commands:', commands.length);
+    console.log('Queries:', queries.length);
+    console.log('Teams:', teams.length);
+  }
 
   const resources = resourceTypes.flatMap(({ items, type }) => items.map((item) => ({ ...item, type })));
 
