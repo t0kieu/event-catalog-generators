@@ -1,5 +1,11 @@
 # @eventcatalog/sdk
 
+## 3.0.5
+
+### Patch Changes
+
+- 8d61f9f: fix(plugin): asyncapi plugin now parses messages without payloads
+
 ## 3.0.4
 
 ### Patch Changes
