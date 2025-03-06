@@ -1395,5 +1395,25 @@ describe('AsyncAPI EventCatalog Plugin', () => {
         expect(file).toBeDefined();
       });
     });
+
+    it('when a messages has no payload, the message is still parsed and added to the catalog', async () => {
+      const { getEvent } = utils(catalogDir);
+
+      await plugin(config, {
+        services: [{ path: join(asyncAPIExamplesDir, 'asyncapi-without-payload.yml'), id: 'my-service' }],
+      });
+
+      const event = await getEvent('messageprojectdeleted', '1.0.0');
+      expect(event).toEqual(
+        expect.objectContaining({
+          id: 'messageprojectdeleted',
+          version: '1.0.0',
+          name: 'Message.ProjectDeleted',
+          summary: 'Message summary',
+          badges: [],
+          markdown: '## Architecture\n<NodeGraph />',
+        })
+      );
+    });
   });
 });

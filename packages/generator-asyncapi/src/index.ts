@@ -341,7 +341,7 @@ export default async (config: any, options: Props) => {
               summary: getMessageSummary(message),
               markdown: messageMarkdown,
               badges: badges.map((badge) => ({ content: badge.name(), textColor: 'blue', backgroundColor: 'blue' })),
-              schemaPath: messageHasSchema(message) ? getSchemaFileName(message) : undefined,
+              ...(messageHasSchema(message) && { schemaPath: getSchemaFileName(message) }),
               ...(owners && { owners }),
               ...(channelsForMessage.length > 0 && { channels: channelsForMessage }),
             },

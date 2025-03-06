@@ -1,0 +1,24 @@
+asyncapi: 3.0.0
+info:
+  title: my-service
+  version: 1.0.0
+  description: my service description
+defaultContentType: application/json
+operations:
+  projectDeleted:
+    action: receive
+    channel:
+      $ref: '#/channels/projectDeletedChannel'
+channels:
+  projectDeletedChannel:
+    address: /Message.ProjectDeleted
+    messages:
+      messageProjectDeleted:
+        $ref: '#/components/messages/messageProjectDeleted'
+components:
+  messages:
+    messageProjectDeleted:
+      title: Message.ProjectDeleted
+      description: Event description
+      summary: Message summary
+      x-eventcatalog-message-type: event
