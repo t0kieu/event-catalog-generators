@@ -1,5 +1,11 @@
 # @eventcatalog/generator-openapi
 
+## 4.0.7
+
+### Patch Changes
+
+- c1c21e6: fix(plugin): openapi plugin now supports circular references in respo…
+
 ## 4.0.6
 
 ### Patch Changes
