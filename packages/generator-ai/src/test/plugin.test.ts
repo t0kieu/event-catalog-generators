@@ -21,24 +21,20 @@ describe('generator-ai', () => {
     process.env.PROJECT_DIR = catalogDir;
   });
 
-  describe(
-    'splitMarkdownFiles',
-    () => {
-      it('when splitMarkdownFiles is true the markdown is split into smaller chunks', async () => {
-        await plugin(eventCatalogConfig, {
-          splitMarkdownFiles: true,
-        });
-
-        //  Find all objects with metadata.id = PaymentProcessed
-        const documents = await fs.readFile(path.join(catalogDir, 'public/ai/documents.json'), 'utf8');
-        const documentsJson = JSON.parse(documents);
-        const paymentProcessed = documentsJson.filter((document: any) => document.metadata.id === 'PaymentProcessed');
-        const expectedChunks = os.platform() === 'win32' ? 10 : 8;
-        expect(paymentProcessed).toHaveLength(expectedChunks);
+  describe('splitMarkdownFiles', () => {
+    it('when splitMarkdownFiles is true the markdown is split into smaller chunks', async () => {
+      await plugin(eventCatalogConfig, {
+        splitMarkdownFiles: true,
       });
-    },
-    { timeout: 20000 }
-  );
+
+      //  Find all objects with metadata.id = PaymentProcessed
+      const documents = await fs.readFile(path.join(catalogDir, 'public/ai/documents.json'), 'utf8');
+      const documentsJson = JSON.parse(documents);
+      const paymentProcessed = documentsJson.filter((document: any) => document.metadata.id === 'PaymentProcessed');
+      const expectedChunks = os.platform() === 'win32' ? 10 : 8;
+      expect(paymentProcessed).toHaveLength(expectedChunks);
+    });
+  });
 
   it(
     'The plugin does not split the markdown into smaller chunks when splitMarkdownFiles is false',

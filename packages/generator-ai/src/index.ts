@@ -28,7 +28,7 @@ async function generateEmbeddings(texts: string[], model = 'Xenova/all-MiniLM-L6
   const embeddings = await Promise.all(
     texts.map(async (text) => {
       const output = await embedder(text, { pooling: 'mean', normalize: true });
-      return Array.from(output.data); // Convert to regular array
+      return Array.from(output.data) as any;
     })
   );
 
