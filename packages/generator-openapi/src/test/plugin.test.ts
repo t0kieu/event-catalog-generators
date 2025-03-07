@@ -1015,5 +1015,32 @@ describe('OpenAPI EventCatalog Plugin', () => {
         })
       );
     });
+
+    it('when a spec file contains circular references, the plugin adds [Circular] to the schema', async () => {
+      await plugin(config, {
+        services: [{ path: join(openAPIExamples, 'circlular-ref.yml'), id: 'circular-ref-service' }],
+      });
+
+      const schema = await fs.readFile(
+        join(catalogDir, 'services', 'circular-ref-service', 'queries', 'employees-api_GET_employees', 'response-200.json'),
+        'utf8'
+      );
+      expect(schema).toEqual(`{
+  "type": "array",
+  "items": {
+    "type": "object",
+    "properties": {
+      "id": {
+        "type": "string"
+      },
+      "name": {
+        "type": "string"
+      },
+      "manager": "[Circular]"
+    }
+  },
+  "isSchema": true
+}`);
+    });
   });
 });
