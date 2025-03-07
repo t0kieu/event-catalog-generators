@@ -266,11 +266,31 @@ const processMessagesForOpenAPISpec = async (
 
     if (requestBodiesAndResponses?.responses) {
       for (const [statusCode, schema] of Object.entries(requestBodiesAndResponses.responses)) {
+        const getContent = () => {
+          try {
+            return JSON.stringify(schema, null, 2);
+          } catch (error) {
+            // Handle circular references in JSON.stringify
+            const seen = new WeakSet();
+            return JSON.stringify(
+              schema,
+              (key, value) => {
+                if (typeof value === 'object' && value !== null) {
+                  if (seen.has(value)) return '[Circular]'; // Handle circular references
+                  seen.add(value);
+                }
+                return value;
+              },
+              2
+            );
+          }
+        };
+
         await addFileToMessage(
           message.id,
           {
             fileName: `response-${statusCode}.json`,
-            content: JSON.stringify(schema, null, 2),
+            content: getContent(),
           },
           message.version
         );
