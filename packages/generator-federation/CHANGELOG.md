@@ -1,5 +1,11 @@
 # @eventcatalog/generator-federation
 
+## 2.0.0
+
+### Major Changes
+
+- 49cb626: chore(plugin): updated to sdk v2
+
 ## 1.0.5
 
 ### Patch Changes

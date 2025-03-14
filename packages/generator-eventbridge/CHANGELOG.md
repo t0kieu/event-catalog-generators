@@ -1,5 +1,11 @@
 # @eventcatalog/generator-eventbridge
 
+## 3.0.0
+
+### Major Changes
+
+- 49cb626: chore(plugin): updated to sdk v2
+
 ## 2.0.3
 
 ### Patch Changes
