@@ -33,7 +33,7 @@
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
   "dependencies": {
-    "@eventcatalog/sdk": "^1.4.9",
+    "@eventcatalog/sdk": "^2.0.0",
     "@huggingface/transformers": "^3.3.3",
     "chalk": "^4",
     "fs-extra": "^11.2.0",
