@@ -888,21 +888,21 @@ describe('EventBridge EventCatalog Plugin', () => {
 
       const orderPlacedFiles = await fs.readdir(path.join(catalogDir, 'events', 'OrderPlaced'));
       expect(orderPlacedFiles).toEqual([
-        'index.md',
+        'index.mdx',
         'myapp.orders@OrderPlaced-jsondraft.json',
         'myapp.orders@OrderPlaced-openapi.json',
       ]);
 
       const userSignedUpFiles = await fs.readdir(path.join(catalogDir, 'events', 'UserSignedUp'));
       expect(userSignedUpFiles).toEqual([
-        'index.md',
+        'index.mdx',
         'myapp.users@UserSignedUp-jsondraft.json',
         'myapp.users@UserSignedUp-openapi.json',
       ]);
 
       const userLoggedInFiles = await fs.readdir(path.join(catalogDir, 'events', 'UserLoggedIn'));
       expect(userLoggedInFiles).toEqual([
-        'index.md',
+        'index.mdx',
         'myapp.users@UserLoggedIn-jsondraft.json',
         'myapp.users@UserLoggedIn-openapi.json',
       ]);

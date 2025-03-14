@@ -616,7 +616,7 @@ describe('OpenAPI EventCatalog Plugin', () => {
 
         const command = await getQuery('list-pets');
 
-        const file = await fs.readFile(join(catalogDir, 'services', 'swagger-petstore', 'queries', 'list-pets', 'index.md'));
+        const file = await fs.readFile(join(catalogDir, 'services', 'swagger-petstore', 'queries', 'list-pets', 'index.mdx'));
         expect(file).toBeDefined();
 
         expect(command).toEqual(
@@ -958,22 +958,22 @@ describe('OpenAPI EventCatalog Plugin', () => {
         expect(eventsDir).toEqual(['petAdopted']);
 
         const eventFiles = await fs.readdir(join(catalogDir, 'events', 'petAdopted'));
-        expect(eventFiles).toEqual(['index.md', 'request-body.json', 'response-default.json']);
+        expect(eventFiles).toEqual(['index.mdx', 'request-body.json', 'response-default.json']);
 
         const commandsDir = await fs.readdir(join(catalogDir, 'commands'));
         expect(commandsDir).toEqual(['createPets']);
 
         const commandFiles = await fs.readdir(join(catalogDir, 'commands', 'createPets'));
-        expect(commandFiles).toEqual(['index.md', 'request-body.json', 'response-default.json']);
+        expect(commandFiles).toEqual(['index.mdx', 'request-body.json', 'response-default.json']);
 
         const queriesDir = await fs.readdir(join(catalogDir, 'queries'));
         expect(queriesDir).toEqual(['list-pets', 'petVaccinated', 'showPetById']);
 
         const queryFiles = await fs.readdir(join(catalogDir, 'queries', 'list-pets'));
-        expect(queryFiles).toEqual(['index.md', 'response-200.json', 'response-default.json']);
+        expect(queryFiles).toEqual(['index.mdx', 'response-200.json', 'response-default.json']);
 
         const serviceFiles = await fs.readdir(join(catalogDir, 'services', 'swagger-petstore'));
-        expect(serviceFiles).toEqual(['index.md', 'petstore.yml']);
+        expect(serviceFiles).toEqual(['index.mdx', 'petstore.yml']);
       });
     });
 

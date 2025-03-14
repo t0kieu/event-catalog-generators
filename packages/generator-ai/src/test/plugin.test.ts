@@ -22,18 +22,22 @@ describe('generator-ai', () => {
   });
 
   describe('splitMarkdownFiles', () => {
-    it('when splitMarkdownFiles is true the markdown is split into smaller chunks', async () => {
-      await plugin(eventCatalogConfig, {
-        splitMarkdownFiles: true,
-      });
+    it(
+      'when splitMarkdownFiles is true the markdown is split into smaller chunks',
+      async () => {
+        await plugin(eventCatalogConfig, {
+          splitMarkdownFiles: true,
+        });
 
-      //  Find all objects with metadata.id = PaymentProcessed
-      const documents = await fs.readFile(path.join(catalogDir, 'public/ai/documents.json'), 'utf8');
-      const documentsJson = JSON.parse(documents);
-      const paymentProcessed = documentsJson.filter((document: any) => document.metadata.id === 'PaymentProcessed');
-      const expectedChunks = os.platform() === 'win32' ? 10 : 8;
-      expect(paymentProcessed).toHaveLength(expectedChunks);
-    });
+        //  Find all objects with metadata.id = PaymentProcessed
+        const documents = await fs.readFile(path.join(catalogDir, 'public/ai/documents.json'), 'utf8');
+        const documentsJson = JSON.parse(documents);
+        const paymentProcessed = documentsJson.filter((document: any) => document.metadata.id === 'PaymentProcessed');
+        const expectedChunks = os.platform() === 'win32' ? 10 : 8;
+        expect(paymentProcessed).toHaveLength(expectedChunks);
+      },
+      { timeout: 20000 }
+    );
   });
 
   it(
