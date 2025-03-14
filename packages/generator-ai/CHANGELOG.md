@@ -1,5 +1,11 @@
 # @eventcatalog/generator-ai
 
+## 1.0.0
+
+### Major Changes
+
+- 49cb626: chore(plugin): updated to sdk v2
+
 ## 0.1.6
 
 ### Patch Changes

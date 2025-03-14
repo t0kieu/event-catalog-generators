@@ -1,5 +1,11 @@
 # @eventcatalog/sdk
 
+## 4.0.0
+
+### Major Changes
+
+- 49cb626: chore(plugin): updated to sdk v2
+
 ## 3.0.5
 
 ### Patch Changes
