@@ -23,6 +23,7 @@ type Props = {
   saveParsedSpecFile?: boolean;
   licenseKey?: string;
   writeFilesToRoot?: boolean;
+  sidebarBadgeType?: 'HTTP_METHOD' | 'MESSAGE_TYPE';
 };
 
 export default async (_: any, options: Props) => {
@@ -194,13 +195,14 @@ const processMessagesForOpenAPISpec = async (
   options: Props & { owners: string[] }
 ) => {
   const operations = await getOperationsByType(pathToSpec);
+  const sidebarBadgeType = options.sidebarBadgeType || 'HTTP_METHOD';
   const version = document.info.version;
   let receives = [],
     sends = [];
 
   // Go through all messages
   for (const operation of operations) {
-    const { requestBodiesAndResponses, ...message } = await buildMessage(pathToSpec, document, operation);
+    const { requestBodiesAndResponses, sidebar, ...message } = await buildMessage(pathToSpec, document, operation);
     let messageMarkdown = message.markdown;
     const messageType = operation.type;
     const messageAction = operation.action;
@@ -235,7 +237,13 @@ const processMessagesForOpenAPISpec = async (
 
     // Write the message to the catalog
     await writeMessage(
-      { ...message, markdown: messageMarkdown, ...(options.owners ? { owners: options.owners } : {}) },
+      {
+        ...message,
+        markdown: messageMarkdown,
+        ...(options.owners ? { owners: options.owners } : {}),
+        // only if its defined add it to the sidebar
+        ...(sidebarBadgeType === 'HTTP_METHOD' ? { sidebar } : {}),
+      },
       { path: messagePath, override: true }
     );
 

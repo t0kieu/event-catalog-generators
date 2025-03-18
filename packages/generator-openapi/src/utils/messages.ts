@@ -155,6 +155,8 @@ export const buildMessage = async (pathToFile: string, document: OpenAPI.Documen
     uniqueIdentifier = uniqueIdentifier.concat(`_${path}`);
   }
 
+  const httpVerb = operation.method.toUpperCase() || '';
+
   return {
     id: extensions['x-eventcatalog-message-id'] || uniqueIdentifier,
     version: extensions['x-eventcatalog-message-version'] || document.info.version,
@@ -164,5 +166,8 @@ export const buildMessage = async (pathToFile: string, document: OpenAPI.Documen
     schemaPath: requestBodiesAndResponses?.requestBody ? 'request-body.json' : '',
     badges,
     requestBodiesAndResponses,
+    sidebar: {
+      badge: httpVerb,
+    },
   };
 };
