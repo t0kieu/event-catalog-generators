@@ -2,4 +2,4 @@
 "@eventcatalog/generator-federation": patch
 ---
 
-chore(plugin): force release to fix bug with federation
+chore(plugin): fixed issue reaching markdown files, now reads .mdx files
