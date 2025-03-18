@@ -64,7 +64,7 @@ async function checkForExistingPaths(contents: string | string[], destination: s
     for (const item of items) {
       // If enforceUniqueResources, then check if the resource is already in the catalog
       // depending on the catalog size this could take a while
-      if (item.name.endsWith('.md') && enforceUniqueResources) {
+      if ((item.name.endsWith('.md') || item.name.endsWith('.mdx')) && enforceUniqueResources) {
         const { id } = await getFrontmatter(join(sourcePath, item.name));
 
         if (!id) {
