@@ -509,11 +509,13 @@ describe('OpenAPI EventCatalog Plugin', () => {
 
         const service = await getService('swagger-petstore', '1.0.0');
 
-        expect(service.receives).toHaveLength(4);
+        expect(service.receives).toHaveLength(6);
         expect(service.receives).toEqual([
           { id: 'list-pets', version: '5.0.0' },
           { id: 'createPets', version: '1.0.0' },
           { id: 'showPetById', version: '1.0.0' },
+          { id: 'updatePet', version: '1.0.0' },
+          { id: 'deletePet', version: '1.0.0' },
           { id: 'petAdopted', version: '1.0.0' },
         ]);
       });
@@ -538,12 +540,14 @@ describe('OpenAPI EventCatalog Plugin', () => {
         await plugin(config, { services: [{ path: join(openAPIExamples, 'petstore.yml'), id: 'swagger-petstore-3' }] });
 
         const service = await getService('swagger-petstore-3', '1.0.0');
-        expect(service.receives).toHaveLength(5);
+        expect(service.receives).toHaveLength(7);
         expect(service.receives).toEqual([
           { id: 'userloggedin', version: '1.0.0' },
           { id: 'list-pets', version: '5.0.0' },
           { id: 'createPets', version: '1.0.0' },
           { id: 'showPetById', version: '1.0.0' },
+          { id: 'updatePet', version: '1.0.0' },
+          { id: 'deletePet', version: '1.0.0' },
           { id: 'petAdopted', version: '1.0.0' },
         ]);
       });
@@ -569,12 +573,14 @@ describe('OpenAPI EventCatalog Plugin', () => {
         await plugin(config, { services: [{ path: join(openAPIExamples, 'petstore.yml'), id: 'swagger-petstore-5' }] });
 
         const service = await getService('swagger-petstore-5', '1.0.0');
-        expect(service.receives).toHaveLength(4);
+        expect(service.receives).toHaveLength(6);
 
         expect(service.receives).toEqual([
           { id: 'list-pets', version: '5.0.0' },
           { id: 'createPets', version: '1.0.0' },
           { id: 'showPetById', version: '1.0.0' },
+          { id: 'updatePet', version: '1.0.0' },
+          { id: 'deletePet', version: '1.0.0' },
           { id: 'petAdopted', version: '1.0.0' },
         ]);
       });
@@ -961,7 +967,7 @@ describe('OpenAPI EventCatalog Plugin', () => {
         expect(eventFiles).toEqual(['index.mdx', 'request-body.json', 'response-default.json']);
 
         const commandsDir = await fs.readdir(join(catalogDir, 'commands'));
-        expect(commandsDir).toEqual(['createPets']);
+        expect(commandsDir).toEqual(['createPets', 'deletePet', 'updatePet']);
 
         const commandFiles = await fs.readdir(join(catalogDir, 'commands', 'createPets'));
         expect(commandFiles).toEqual(['index.mdx', 'request-body.json', 'response-default.json']);
@@ -974,6 +980,50 @@ describe('OpenAPI EventCatalog Plugin', () => {
 
         const serviceFiles = await fs.readdir(join(catalogDir, 'services', 'swagger-petstore'));
         expect(serviceFiles).toEqual(['index.mdx', 'petstore.yml']);
+      });
+    });
+
+    describe('sidebarBadgeType', () => {
+      it('if no sidebarBadgeType is set, the default is `HTTP_METHOD`', async () => {
+        const { getCommand } = utils(catalogDir);
+
+        await plugin(config, {
+          services: [{ path: join(openAPIExamples, 'petstore.yml'), id: 'swagger-petstore' }],
+        });
+
+        const createPets = await getCommand('createPets');
+        expect(createPets.sidebar?.badge).toEqual('POST');
+      });
+
+      it('when sidebarBadgeType is set to `HTTP_METHOD`, the http methods are added to the messages as sidebar badges', async () => {
+        const { getCommand, getQuery } = utils(catalogDir);
+
+        await plugin(config, {
+          services: [{ path: join(openAPIExamples, 'petstore.yml'), id: 'swagger-petstore' }],
+          sidebarBadgeType: 'HTTP_METHOD',
+        });
+
+        const createPets = await getCommand('createPets');
+        const deletePet = await getCommand('deletePet');
+        const putPet = await getCommand('updatePet');
+        const listPets = await getQuery('list-pets');
+
+        expect(createPets.sidebar?.badge).toEqual('POST');
+        expect(deletePet.sidebar?.badge).toEqual('DELETE');
+        expect(putPet.sidebar?.badge).toEqual('PUT');
+        expect(listPets.sidebar?.badge).toEqual('GET');
+      });
+
+      it('when sidebarBadgeType is set to `MESSAGE_TYPE`, no sidebar badge is added (EventCatalog handles messages by default)', async () => {
+        const { getCommand } = utils(catalogDir);
+
+        await plugin(config, {
+          services: [{ path: join(openAPIExamples, 'petstore.yml'), id: 'swagger-petstore' }],
+          sidebarBadgeType: 'MESSAGE_TYPE',
+        });
+
+        const createPets = await getCommand('createPets');
+        expect(createPets.sidebar?.badge).toBeUndefined();
       });
     });
 
