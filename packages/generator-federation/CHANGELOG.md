@@ -1,5 +1,11 @@
 # @eventcatalog/generator-federation
 
+## 2.0.1
+
+### Patch Changes
+
+- aedd1f5: chore(plugin): fixed issue reaching markdown files, now reads .mdx files
+
 ## 2.0.0
 
 ### Major Changes

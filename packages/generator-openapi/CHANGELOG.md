@@ -1,5 +1,11 @@
 # @eventcatalog/generator-openapi
 
+## 5.0.1
+
+### Patch Changes
+
+- 1343149: feat(plugin): openapi plugin now renders sidebar badges as http methods
+
 ## 5.0.0
 
 ### Major Changes
