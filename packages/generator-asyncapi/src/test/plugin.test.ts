@@ -1415,5 +1415,38 @@ describe('AsyncAPI EventCatalog Plugin', () => {
         })
       );
     });
+
+    it('when the message payload specifies a schema format, the schema written to EventCatalog just documents the schema values', async () => {
+      await plugin(config, {
+        services: [{ path: join(asyncAPIExamplesDir, 'async-file-with-schema-format.yml'), id: 'my-service' }],
+      });
+
+      // Get the schema
+      const schema = await fs.readFile(
+        join(catalogDir, 'services', 'my-service', 'events', 'messageProjectDeleted', 'schema.json'),
+        'utf-8'
+      );
+
+      const schemaParsed = JSON.parse(schema);
+
+      expect(schemaParsed).toEqual({
+        type: 'object',
+        properties: {
+          projectId: {
+            type: 'string',
+            description: 'The project id',
+            example: 12345,
+            'x-parser-schema-id': '<anonymous-schema-2>',
+          },
+          projectName: {
+            type: 'string',
+            description: 'The project name',
+            example: 'My Project',
+            'x-parser-schema-id': '<anonymous-schema-3>',
+          },
+        },
+        'x-parser-schema-id': 'ProjectDeleted',
+      });
+    });
   });
 });
