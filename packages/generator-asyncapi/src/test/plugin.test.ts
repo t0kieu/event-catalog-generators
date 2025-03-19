@@ -1141,36 +1141,33 @@ describe('AsyncAPI EventCatalog Plugin', () => {
         );
         const parsedSchema = JSON.parse(schema);
         expect(parsedSchema).toEqual({
-          schemaFormat: 'application/vnd.apache.avro;version=1.9.0',
-          schema: {
-            type: 'record',
-            name: 'UserCreated',
-            namespace: 'com.example.events',
-            fields: [
-              {
-                name: 'id',
-                type: 'string',
-                doc: 'User identifier',
-              },
-              {
-                name: 'email',
-                type: 'string',
-                doc: "User's email address",
-              },
-              {
-                name: 'createdAt',
-                type: 'long',
-                doc: 'Timestamp of user creation',
-                logicalType: 'timestamp-millis',
-              },
-              {
-                name: 'isActive',
-                type: 'boolean',
-                default: true,
-              },
-            ],
-            'x-parser-schema-id': '<anonymous-schema-1>',
-          },
+          type: 'record',
+          name: 'UserCreated',
+          namespace: 'com.example.events',
+          fields: [
+            {
+              name: 'id',
+              type: 'string',
+              doc: 'User identifier',
+            },
+            {
+              name: 'email',
+              type: 'string',
+              doc: "User's email address",
+            },
+            {
+              name: 'createdAt',
+              type: 'long',
+              doc: 'Timestamp of user creation',
+              logicalType: 'timestamp-millis',
+            },
+            {
+              name: 'isActive',
+              type: 'boolean',
+              default: true,
+            },
+          ],
+          'x-parser-schema-id': '<anonymous-schema-1>',
         });
 
         // Schema is now parsed, added as it was defined.
