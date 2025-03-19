@@ -1,5 +1,11 @@
 # @eventcatalog/sdk
 
+## 4.0.1
+
+### Patch Changes
+
+- 28409cf: fix(plugin): fixed issue with broken schema in EventCatalog if schema…
+
 ## 4.0.0
 
 ### Major Changes
