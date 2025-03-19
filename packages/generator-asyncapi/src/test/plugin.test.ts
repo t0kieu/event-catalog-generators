@@ -1141,36 +1141,33 @@ describe('AsyncAPI EventCatalog Plugin', () => {
         );
         const parsedSchema = JSON.parse(schema);
         expect(parsedSchema).toEqual({
-          schemaFormat: 'application/vnd.apache.avro;version=1.9.0',
-          schema: {
-            type: 'record',
-            name: 'UserCreated',
-            namespace: 'com.example.events',
-            fields: [
-              {
-                name: 'id',
-                type: 'string',
-                doc: 'User identifier',
-              },
-              {
-                name: 'email',
-                type: 'string',
-                doc: "User's email address",
-              },
-              {
-                name: 'createdAt',
-                type: 'long',
-                doc: 'Timestamp of user creation',
-                logicalType: 'timestamp-millis',
-              },
-              {
-                name: 'isActive',
-                type: 'boolean',
-                default: true,
-              },
-            ],
-            'x-parser-schema-id': '<anonymous-schema-1>',
-          },
+          type: 'record',
+          name: 'UserCreated',
+          namespace: 'com.example.events',
+          fields: [
+            {
+              name: 'id',
+              type: 'string',
+              doc: 'User identifier',
+            },
+            {
+              name: 'email',
+              type: 'string',
+              doc: "User's email address",
+            },
+            {
+              name: 'createdAt',
+              type: 'long',
+              doc: 'Timestamp of user creation',
+              logicalType: 'timestamp-millis',
+            },
+            {
+              name: 'isActive',
+              type: 'boolean',
+              default: true,
+            },
+          ],
+          'x-parser-schema-id': '<anonymous-schema-1>',
         });
 
         // Schema is now parsed, added as it was defined.
@@ -1414,6 +1411,39 @@ describe('AsyncAPI EventCatalog Plugin', () => {
           markdown: '## Architecture\n<NodeGraph />',
         })
       );
+    });
+
+    it('when the message payload specifies a schema format, the schema written to EventCatalog just documents the schema values', async () => {
+      await plugin(config, {
+        services: [{ path: join(asyncAPIExamplesDir, 'async-file-with-schema-format.yml'), id: 'my-service' }],
+      });
+
+      // Get the schema
+      const schema = await fs.readFile(
+        join(catalogDir, 'services', 'my-service', 'events', 'messageProjectDeleted', 'schema.json'),
+        'utf-8'
+      );
+
+      const schemaParsed = JSON.parse(schema);
+
+      expect(schemaParsed).toEqual({
+        type: 'object',
+        properties: {
+          projectId: {
+            type: 'string',
+            description: 'The project id',
+            example: 12345,
+            'x-parser-schema-id': '<anonymous-schema-2>',
+          },
+          projectName: {
+            type: 'string',
+            description: 'The project name',
+            example: 'My Project',
+            'x-parser-schema-id': '<anonymous-schema-3>',
+          },
+        },
+        'x-parser-schema-id': 'ProjectDeleted',
+      });
     });
   });
 });

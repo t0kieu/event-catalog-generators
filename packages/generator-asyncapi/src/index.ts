@@ -355,7 +355,13 @@ export default async (config: any, options: Props) => {
           // Check if the message has a payload, if it does then document in EventCatalog
           if (messageHasSchema(message)) {
             // Get the schema from the original payload if it exists
-            const schema = message.payload()?.extensions()?.get('x-parser-original-payload')?.json() || message.payload()?.json();
+            let schema = message.payload()?.extensions()?.get('x-parser-original-payload')?.json() || message.payload()?.json();
+
+            // Sometimes the payload comes back with the schema nested in the payload
+            // if thats the case, we need to extract the schema from the payload (e.g async-file-with-schema-format.yml in tests folder)
+            if (schema?.schema) {
+              schema = schema.schema;
+            }
 
             await addSchemaToMessage(
               messageId,

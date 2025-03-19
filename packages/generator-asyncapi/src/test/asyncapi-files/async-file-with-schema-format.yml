@@ -1,0 +1,44 @@
+asyncapi: 3.0.0
+info:
+  title: my-service
+  version: 1.0.0
+  description: my service description
+defaultContentType: application/json
+operations:
+  projectDeleted:
+    action: receive
+    channel:
+      $ref: '#/channels/projectDeletedChannel'
+channels:
+  projectDeletedChannel:
+    address: /Message.ProjectDeleted
+    messages:
+      messageProjectDeleted:
+        $ref: '#/components/messages/messageProjectDeleted'
+components:
+  schemas:
+    ProjectHeader:
+      type: object
+      properties:
+        __TypeId__:
+          type: string
+          description: Spring Type Id Header
+    ProjectDeleted:
+      type: object
+      properties:
+        projectId:
+          type: string
+          description: The project id
+          example: 12345
+        projectName:
+          type: string
+          description: The project name
+          example: My Project
+  messages:
+    messageProjectDeleted:
+      headers:
+        $ref: '#/components/schemas/ProjectHeader'
+      payload:
+        schemaFormat: application/vnd.aai.asyncapi+json;version=3.0.0
+        schema:
+          $ref: '#/components/schemas/ProjectDeleted'
