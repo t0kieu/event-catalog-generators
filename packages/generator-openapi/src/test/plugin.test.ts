@@ -1027,6 +1027,52 @@ describe('OpenAPI EventCatalog Plugin', () => {
       });
     });
 
+    describe('httpMethodsToMessages', () => {
+      it('when httpMethodsToMessages is set, the HTTP methods are mapped to the given message type', async () => {
+        await plugin(config, {
+          services: [{ path: join(openAPIExamples, 'petstore-without-extensions.yml'), id: 'swagger-petstore' }],
+          httpMethodsToMessages: {
+            GET: 'query',
+            POST: 'command',
+            PUT: 'command',
+            DELETE: 'command',
+            PATCH: 'command',
+            HEAD: 'command',
+          },
+        });
+
+        //createPets (POST)
+        const createPetsFile = await fs.readFile(
+          join(catalogDir, 'services', 'swagger-petstore', 'commands', 'createPets', 'index.mdx')
+        );
+        expect(createPetsFile).toBeDefined();
+
+        //listPets (GET)
+        const listPetsFile = await fs.readFile(
+          join(catalogDir, 'services', 'swagger-petstore', 'queries', 'listPets', 'index.mdx')
+        );
+        expect(listPetsFile).toBeDefined();
+
+        //petAdopted (PUT)
+        const updatePetFile = await fs.readFile(
+          join(catalogDir, 'services', 'swagger-petstore', 'commands', 'updatePet', 'index.mdx')
+        );
+        expect(updatePetFile).toBeDefined();
+
+        // deletePet (DELETE)
+        const deletePetFile = await fs.readFile(
+          join(catalogDir, 'services', 'swagger-petstore', 'commands', 'deletePet', 'index.mdx')
+        );
+        expect(deletePetFile).toBeDefined();
+
+        //patchPet (PATCH)
+        const patchPetFile = await fs.readFile(
+          join(catalogDir, 'services', 'swagger-petstore', 'commands', 'patchPet', 'index.mdx')
+        );
+        expect(patchPetFile).toBeDefined();
+      });
+    });
+
     it('when the OpenAPI service is already defined in the EventCatalog and the versions match, the owners and repository are persisted', async () => {
       // Create a service with the same name and version as the OpenAPI file for testing
       const { writeService, getService } = utils(catalogDir);

@@ -1,5 +1,6 @@
 import SwaggerParser from '@apidevtools/swagger-parser';
 import { OpenAPIDocument, OpenAPIOperation, OpenAPIParameter, Operation } from '../types';
+import { HTTP_METHOD, HTTP_METHOD_TO_MESSAGE_TYPE } from '../index';
 
 const DEFAULT_MESSAGE_TYPE = 'query';
 
@@ -58,7 +59,7 @@ export async function getSchemasByOperationId(filePath: string, operationId: str
   }
 }
 
-export async function getOperationsByType(openApiPath: string) {
+export async function getOperationsByType(openApiPath: string, httpMethodsToMessages?: HTTP_METHOD_TO_MESSAGE_TYPE) {
   try {
     // Parse the OpenAPI document
     const api = await SwaggerParser.validate(openApiPath);
@@ -74,8 +75,11 @@ export async function getOperationsByType(openApiPath: string) {
         // @ts-ignore
         const openAPIOperation = pathItem[method];
 
+        const defaultMessageType = httpMethodsToMessages?.[method.toUpperCase() as HTTP_METHOD] || DEFAULT_MESSAGE_TYPE;
+
         // Check if the x-eventcatalog-message-type field is set
-        const messageType = openAPIOperation['x-eventcatalog-message-type'] || DEFAULT_MESSAGE_TYPE;
+        const messageType = openAPIOperation['x-eventcatalog-message-type'] || defaultMessageType;
+
         const messageAction = openAPIOperation['x-eventcatalog-message-action'] === 'sends' ? 'sends' : 'receives';
         const extensions = Object.keys(openAPIOperation).reduce((acc: { [key: string]: any }, key) => {
           if (key.startsWith('x-eventcatalog-')) {

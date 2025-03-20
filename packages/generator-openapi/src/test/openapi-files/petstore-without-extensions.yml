@@ -1,0 +1,500 @@
+openapi: '3.0.0'
+info:
+  version: 1.0.0
+  title: Swagger Petstore
+  description: This is a sample server Petstore server.
+  license:
+    name: MIT
+externalDocs:
+  url: http://swagger.io
+  description: Find out more about Swagger
+tags:
+  - name: Pets
+    description: Everything about your Pets
+    externalDocs:
+      description: Find out more
+      url: http://swagger.io
+  - name: Store
+    description: Pet store operations
+servers:
+  - url: http://petstore.swagger.io/v1
+paths:
+  /pets:
+    get:
+      summary: List all pets
+      operationId: listPets
+      tags:
+        - pets
+      parameters:
+        - name: limit
+          in: query
+          description: How many items to return at one time (max 100)
+          required: false
+          schema:
+            type: integer
+            maximum: 100
+            format: int32
+      responses:
+        '200':
+          description: A paged array of pets
+          headers:
+            x-next:
+              description: A link to the next page of responses
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pets'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    post:
+      summary: Create a pet
+      operationId: createPets
+      tags:
+        - pets
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Pet'
+        required: true
+      responses:
+        '201':
+          description: Null response
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    options:
+      summary: Get available operations on pets collection
+      operationId: getPetsOptions
+      tags:
+        - pets
+      responses:
+        '200':
+          description: Available operations for pets collection
+          headers:
+            Allow:
+              description: Allowed methods
+              schema:
+                type: string
+                example: 'GET, POST, OPTIONS'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiOptions'
+  /pets/{petId}:
+    get:
+      summary: Info for a specific pet
+      operationId: showPetById
+      tags:
+        - pets
+      parameters:
+        - name: petId
+          in: path
+          required: true
+          description: The id of the pet to retrieve
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Expected response to a valid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pet'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    put:
+      summary: Update an existing pet
+      operationId: updatePet
+      tags:
+        - pets
+      parameters:
+        - name: petId
+          in: path
+          required: true
+          description: The id of the pet to update
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Pet'
+        required: true
+      responses:
+        '200':
+          description: Pet updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pet'
+        '400':
+          description: Invalid ID supplied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Pet not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    patch:
+      summary: Partially update an existing pet
+      operationId: patchPet
+      tags:
+        - pets
+      parameters:
+        - name: petId
+          in: path
+          required: true
+          description: The id of the pet to update
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PetPatch'
+        required: true
+      responses:
+        '200':
+          description: Pet updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pet'
+        '400':
+          description: Invalid ID supplied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Pet not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      summary: Delete a pet
+      operationId: deletePet
+      tags:
+        - pets
+      parameters:
+        - name: petId
+          in: path
+          required: true
+          description: The id of the pet to delete
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Pet deleted successfully
+        '400':
+          description: Invalid ID supplied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Pet not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    options:
+      summary: Get available operations for a specific pet
+      operationId: getPetByIdOptions
+      tags:
+        - pets
+      parameters:
+        - name: petId
+          in: path
+          required: true
+          description: The id of the pet to get options for
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Available operations for a specific pet
+          headers:
+            Allow:
+              description: Allowed methods
+              schema:
+                type: string
+                example: 'GET, PUT, PATCH, DELETE, OPTIONS'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiOptions'
+  /pets/{petId}/adopted:
+    post:
+      summary: Notify that a pet has been adopted
+      operationId: petAdopted
+      tags:
+        - pets
+      parameters:
+        - name: petId
+          in: path
+          required: true
+          description: The id of the pet that was adopted
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Adoption'
+        required: true
+      responses:
+        '200':
+          description: Notification that the pet has been adopted successfully
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /pets/{petId}/vaccinated:
+    post:
+      summary: Notify that a pet has been vaccinated
+      operationId: petVaccinated
+      tags:
+        - pets
+      parameters:
+        - name: petId
+          in: path
+          required: true
+          description: The id of the pet that was vaccinated
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Vaccination'
+        required: true
+      responses:
+        '200':
+          description: Notification that the pet has been vaccinated successfully
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /store/inventory:
+    get:
+      summary: Returns pet inventories by status
+      operationId: getInventory
+      tags:
+        - store
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: integer
+                  format: int32
+  /store/order/{orderId}:
+    delete:
+      summary: Delete purchase order by ID
+      operationId: deleteOrder
+      tags:
+        - store
+      parameters:
+        - name: orderId
+          in: path
+          required: true
+          description: ID of the order to delete
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Order deleted successfully
+        '400':
+          description: Invalid ID supplied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Order not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /store/order:
+    post:
+      summary: Place an order for a pet
+      operationId: placeOrder
+      tags:
+        - store
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Order'
+        required: true
+      responses:
+        '200':
+          description: Order placed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+        '400':
+          description: Invalid order
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  schemas:
+    Pet:
+      type: object
+      required:
+        - id
+        - name
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        tag:
+          type: string
+        status:
+          type: string
+          description: pet status in the store
+          enum:
+            - available
+            - pending
+            - sold
+    PetPatch:
+      type: object
+      properties:
+        name:
+          type: string
+        tag:
+          type: string
+        status:
+          type: string
+          description: pet status in the store
+          enum:
+            - available
+            - pending
+            - sold
+    Pets:
+      type: array
+      maxItems: 100
+      items:
+        $ref: '#/components/schemas/Pet'
+    Adoption:
+      type: object
+      required:
+        - petId
+        - adopterName
+      properties:
+        petId:
+          type: integer
+          format: int64
+        adopterName:
+          type: string
+          description: Name of the person who adopted the pet
+    Vaccination:
+      type: object
+      required:
+        - petId
+        - vaccine
+      properties:
+        petId:
+          type: integer
+          format: int64
+        vaccine:
+          type: string
+          description: Name of the vaccine administered
+    Order:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        petId:
+          type: integer
+          format: int64
+        quantity:
+          type: integer
+          format: int32
+          default: 1
+        shipDate:
+          type: string
+          format: date-time
+        status:
+          type: string
+          description: Order Status
+          enum:
+            - placed
+            - approved
+            - delivered
+            - cancelled
+        complete:
+          type: boolean
+          default: false
+    ApiOptions:
+      type: object
+      properties:
+        methods:
+          type: array
+          items:
+            type: string
+        description:
+          type: string
+    Error:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
