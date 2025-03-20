@@ -16,6 +16,10 @@ import { join } from 'node:path';
 import pkgJSON from '../package.json';
 import { checkForPackageUpdate } from '../../../shared/check-for-package-update';
 
+type MESSAGE_TYPE = 'command' | 'query' | 'event';
+export type HTTP_METHOD = 'POST' | 'GET' | 'PUT' | 'DELETE' | 'PATCH' | 'HEAD' | 'OPTIONS';
+export type HTTP_METHOD_TO_MESSAGE_TYPE = Partial<Record<HTTP_METHOD, MESSAGE_TYPE>>;
+
 type Props = {
   services: Service[];
   domain?: Domain;
@@ -24,6 +28,7 @@ type Props = {
   licenseKey?: string;
   writeFilesToRoot?: boolean;
   sidebarBadgeType?: 'HTTP_METHOD' | 'MESSAGE_TYPE';
+  httpMethodsToMessages?: HTTP_METHOD_TO_MESSAGE_TYPE;
 };
 
 export default async (_: any, options: Props) => {
@@ -194,7 +199,7 @@ const processMessagesForOpenAPISpec = async (
   servicePath: string,
   options: Props & { owners: string[] }
 ) => {
-  const operations = await getOperationsByType(pathToSpec);
+  const operations = await getOperationsByType(pathToSpec, options.httpMethodsToMessages);
   const sidebarBadgeType = options.sidebarBadgeType || 'HTTP_METHOD';
   const version = document.info.version;
   let receives = [],
@@ -203,6 +208,7 @@ const processMessagesForOpenAPISpec = async (
   // Go through all messages
   for (const operation of operations) {
     const { requestBodiesAndResponses, sidebar, ...message } = await buildMessage(pathToSpec, document, operation);
+    // console.log('operation', operation);
     let messageMarkdown = message.markdown;
     const messageType = operation.type;
     const messageAction = operation.action;
