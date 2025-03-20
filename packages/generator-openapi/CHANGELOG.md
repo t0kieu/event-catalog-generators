@@ -1,5 +1,11 @@
 # @eventcatalog/generator-openapi
 
+## 5.0.2
+
+### Patch Changes
+
+- b963b45: feat(plugin): openapi - can now map http methods to message types
+
 ## 5.0.1
 
 ### Patch Changes
