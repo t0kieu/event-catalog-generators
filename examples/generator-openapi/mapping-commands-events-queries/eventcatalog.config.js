@@ -36,6 +36,16 @@ export default {
           { path: path.join(__dirname, "openapi-files", "product-api.yml") },
         ],
         domain: { id: "products", name: "Products", version: "0.0.1" },
+        // This is an optional mapping of http methods to event types.
+        // e.g All GET requests will be mapped to queries and all POST requests will be mapped to commands.
+
+        // If you specify the `x-eventcatalog-message-type` header then it will be used instead.
+        httpMethodsToMessages: {
+          GET: 'query',
+          POST: 'command',
+          PUT: 'command',
+          DELETE: 'command',
+        }
       },
     ],
     [
