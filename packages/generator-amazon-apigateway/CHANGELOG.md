@@ -1,5 +1,12 @@
 # @eventcatalog/generator-amazon-apigateway
 
+## 1.0.6
+
+### Patch Changes
+
+- 5d4e9fc: fix(plugin): added missing dependency for apigateway
+- 4cf652d: fix(plugin): removed lock file for api gateway plugin
+
 ## 1.0.5
 
 ### Patch Changes
