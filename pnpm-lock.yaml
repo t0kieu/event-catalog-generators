@@ -87,6 +87,9 @@ importers:
       chalk:
         specifier: ^4
         version: 4.1.2
+      update-notifier:
+        specifier: ^7.3.1
+        version: 7.3.1
     devDependencies:
       '@smithy/types':
         specifier: ^3.5.0
