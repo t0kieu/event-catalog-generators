@@ -39,6 +39,7 @@ yarn-error.log*
 
 packages/**/examples/**/catalog/*
 packages/**/pnpm-lock.yaml
+packages/**/package-lock.yaml
 
 packages/**/src/test/catalog/*
 packages/**/src/test/tmp/*
