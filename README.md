@@ -15,7 +15,7 @@ This repository contains the generators for the EventCatalog project.
 - [EventCatalog Federation](./packages/generator-federation/README.md)
   - [Documentation](https://www.eventcatalog.dev/federation)
 - [Amazon EventBridge](./packages/generator-eventbridge/README.md)
-  - [Documentation](https://www.eventcatalog.dev/integrations/eventbridge)
+  - [Documentation](https://www.eventcatalog.dev/integrations/amazon-eventbridge)
 - [Backstage](https://github.com/event-catalog/backstage-plugin-eventcatalog)
   - [Documentation](https://www.eventcatalog.dev/integrations/backstage)
 

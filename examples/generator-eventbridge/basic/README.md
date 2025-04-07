@@ -34,7 +34,7 @@ This gives you the ability to add semantic meaning to your events in EventBridge
 - Auto versioning of domains, services and messages
 - And much more...
 
-To dive into how this plugin can help you, you can read the [EventBridge Plugin Docs](https://www.eventcatalog.dev/integrations/eventbridge)
+To dive into how this plugin can help you, you can read the [EventBridge Plugin Docs](https://www.eventcatalog.dev/integrations/amazon-eventbridge)
 
 
 
