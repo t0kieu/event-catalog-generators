@@ -1,5 +1,11 @@
 # @eventcatalog/generator-openapi
 
+## 5.0.3
+
+### Patch Changes
+
+- 45d277a: feat(plugin): plugins now persist styles between generation
+
 ## 5.0.2
 
 ### Patch Changes
