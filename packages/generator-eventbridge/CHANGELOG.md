@@ -1,5 +1,11 @@
 # @eventcatalog/generator-eventbridge
 
+## 3.0.1
+
+### Patch Changes
+
+- 45d277a: feat(plugin): plugins now persist styles between generation
+
 ## 3.0.0
 
 ### Major Changes

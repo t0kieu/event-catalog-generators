@@ -1,5 +1,11 @@
 # @eventcatalog/sdk
 
+## 4.0.2
+
+### Patch Changes
+
+- 45d277a: feat(plugin): plugins now persist styles between generation
+
 ## 4.0.1
 
 ### Patch Changes
