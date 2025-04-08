@@ -239,6 +239,7 @@ export default async (config: EventCatalogConfig, options: GeneratorProps) => {
     // Check if service is already defined... if the versions do not match then create service.
     const latestServiceInCatalog = await getService(service.id, 'latest');
     let serviceMarkdown = generateMarkdownForService();
+    let styles = null;
     let serviceSpecifications = {};
     let serviceSpecificationsFiles = [];
     let sends = sendsEvents.map((event) => ({ id: event.detailType || event.schemaName, version: event.version || 'latest' }));
@@ -253,6 +254,7 @@ export default async (config: EventCatalogConfig, options: GeneratorProps) => {
     if (latestServiceInCatalog) {
       serviceMarkdown = latestServiceInCatalog.markdown;
       owners = latestServiceInCatalog.owners || [];
+      styles = latestServiceInCatalog.styles || null;
       // Found a service, and versions do not match, we need to version the one already there
       if (latestServiceInCatalog.version !== service.version) {
         await versionService(service.id);
@@ -284,6 +286,7 @@ export default async (config: EventCatalogConfig, options: GeneratorProps) => {
         receives,
         specifications: serviceSpecifications,
         owners: owners,
+        ...(styles && { styles }),
       },
       { path: servicePath, override: true }
     );

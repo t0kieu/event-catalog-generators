@@ -119,8 +119,8 @@ importers:
         specifier: ^3.3.0
         version: 3.4.0
       '@eventcatalog/sdk':
-        specifier: ^2.0.0
-        version: 2.0.0
+        specifier: ^2.2.4
+        version: 2.2.4
       chalk:
         specifier: ^4
         version: 4.1.2
@@ -198,8 +198,8 @@ importers:
         specifier: ^2.27.8
         version: 2.27.12
       '@eventcatalog/sdk':
-        specifier: ^2.0.0
-        version: 2.0.0
+        specifier: ^2.2.4
+        version: 2.2.4
       chalk:
         specifier: ^4
         version: 4.1.2
@@ -275,8 +275,8 @@ importers:
         specifier: ^2.27.7
         version: 2.27.12
       '@eventcatalog/sdk':
-        specifier: ^2.0.1
-        version: 2.0.1
+        specifier: ^2.2.4
+        version: 2.2.4
       chalk:
         specifier: ^4
         version: 4.1.2
@@ -874,8 +874,8 @@ packages:
   '@eventcatalog/sdk@2.0.0':
     resolution: { integrity: sha512-2qrYit3psOWWT29xDY+KuHOLkXw5fMpfU+/LgZSRZI6ZDB1pyxlqP/3ibJmL9RW7atgSzxHT7sIrHswjkbbuKg== }
 
-  '@eventcatalog/sdk@2.0.1':
-    resolution: { integrity: sha512-inNPpEtRRHmH29LVh1jLlZYRFxYNF8BgOmpp9kGULCty3ZMl9XkKcLKYgdYiRze0INvY/i0gVInosKfnGm2HGg== }
+  '@eventcatalog/sdk@2.2.4':
+    resolution: { integrity: sha512-+98Bi/+Zb75vsptQgIKuIZpVUMWMudo++1TKCRJI8z4UT3hyFRQ+GxqaLDYehBQ4Gu+Y8pp18m5uleg67Pz0ZQ== }
 
   '@huggingface/jinja@0.3.3':
     resolution: { integrity: sha512-vQQr2JyWvVFba3Lj9es4q9vCl1sAc74fdgnEMoX8qHrXtswap9ge9uO3ONDzQB0cQ0PUyaKY2N6HaVbTBvSXvw== }
@@ -4371,7 +4371,7 @@ snapshots:
       proper-lockfile: 4.1.2
       semver: 7.6.3
 
-  '@eventcatalog/sdk@2.0.1':
+  '@eventcatalog/sdk@2.2.4':
     dependencies:
       '@changesets/cli': 2.27.12
       fs-extra: 11.3.0
@@ -4379,6 +4379,7 @@ snapshots:
       gray-matter: 4.0.3
       proper-lockfile: 4.1.2
       semver: 7.6.3
+      slugify: 1.6.6
 
   '@huggingface/jinja@0.3.3': {}
 

@@ -182,7 +182,7 @@ export default async (config: any, options: Props) => {
     let serviceSpecifications = {};
     let serviceSpecificationsFiles = [];
     let serviceMarkdown = generateMarkdownForService(document);
-
+    let styles = null;
     // Have to ../ as the SDK will put the files into hard coded folders
     let servicePath = options.domain
       ? path.join('../', 'domains', options.domain.id, 'services', service.id)
@@ -393,7 +393,7 @@ export default async (config: any, options: Props) => {
       serviceMarkdown = latestServiceInCatalog.markdown;
       owners = latestServiceInCatalog.owners || owners;
       repository = latestServiceInCatalog.repository || null;
-
+      styles = latestServiceInCatalog.styles || null;
       // Found a service, and versions do not match, we need to version the one already there
       if (latestServiceInCatalog.version !== version) {
         await versionService(serviceId);
@@ -430,6 +430,7 @@ export default async (config: any, options: Props) => {
         },
         ...(owners && { owners }),
         ...(repository && { repository }),
+        ...(styles && { styles }),
       },
       {
         path: servicePath,
