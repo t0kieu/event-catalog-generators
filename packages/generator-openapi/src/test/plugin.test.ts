@@ -1138,5 +1138,56 @@ describe('OpenAPI EventCatalog Plugin', () => {
   "isSchema": true
 }`);
     });
+
+    describe('persisted data', () => {
+      it('when the OpenAPI service is already defined in EventCatalog and the versions match, the styles are persisted and not overwritten', async () => {
+        // Create a service with the same name and version as the OpenAPI file for testing
+        const { writeService, getService } = utils(catalogDir);
+
+        await writeService(
+          {
+            id: 'swagger-petstore-2',
+            version: '1.0.0',
+            name: 'Random Name',
+            markdown: 'Here is my original markdown, please do not override this!',
+            styles: {
+              icon: 'BellIcon',
+              node: {
+                color: 'red',
+                label: 'Custom Label',
+              },
+            },
+          },
+          { path: 'Swagger Petstore' }
+        );
+
+        await plugin(config, { services: [{ path: join(openAPIExamples, 'petstore.yml'), id: 'swagger-petstore-2' }] });
+
+        const service = await getService('swagger-petstore-2', '1.0.0');
+        expect(service).toEqual(
+          expect.objectContaining({
+            id: 'swagger-petstore-2',
+            name: 'Swagger Petstore',
+            version: '1.0.0',
+            summary: 'This is a sample server Petstore server.',
+            markdown: 'Here is my original markdown, please do not override this!',
+            badges: [
+              {
+                content: 'Pets',
+                textColor: 'blue',
+                backgroundColor: 'blue',
+              },
+            ],
+            styles: {
+              icon: 'BellIcon',
+              node: {
+                color: 'red',
+                label: 'Custom Label',
+              },
+            },
+          })
+        );
+      });
+    });
   });
 });

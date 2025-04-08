@@ -1169,5 +1169,48 @@ describe('EventBridge EventCatalog Plugin', () => {
 
       expect(event).toBeDefined();
     });
+
+    describe('persisted data', () => {
+      it('when the service is already defined in EventCatalog and the versions match, the styles are persisted and not overwritten', async () => {
+        const { writeService, getService } = utils(catalogDir);
+
+        await writeService({
+          id: 'Orders Service',
+          version: '1.0.0',
+          name: 'Random Name',
+          markdown: 'old markdown',
+          styles: {
+            icon: 'BellIcon',
+            node: {
+              color: 'red',
+              label: 'Custom Label',
+            },
+          },
+        });
+        await plugin(config, {
+          region: 'us-east-1',
+          registryName: 'discovered-schemas',
+          services: [{ id: 'Orders Service', version: '1.0.0' }],
+        });
+
+        const service = await getService('Orders Service');
+
+        expect(service).toEqual(
+          expect.objectContaining({
+            id: 'Orders Service',
+            name: 'Orders Service',
+            version: '1.0.0',
+            markdown: 'old markdown',
+            styles: {
+              icon: 'BellIcon',
+              node: {
+                color: 'red',
+                label: 'Custom Label',
+              },
+            },
+          })
+        );
+      });
+    });
   });
 });

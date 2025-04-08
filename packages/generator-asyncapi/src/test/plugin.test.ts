@@ -1445,5 +1445,58 @@ describe('AsyncAPI EventCatalog Plugin', () => {
         'x-parser-schema-id': 'ProjectDeleted',
       });
     });
+
+    describe('persisted data', () => {
+      it('when the AsyncAPI service is already defined in EventCatalog and the versions match, the markdown is persisted and not overwritten', async () => {
+        // Create a service with the same name and version as the AsyncAPI file for testing
+        const { writeService, getService } = utils(catalogDir);
+
+        await writeService({
+          id: 'account-service',
+          version: '1.0.0',
+          name: 'Random Name',
+          markdown: 'Here is my original markdown, please do not override this!',
+          styles: {
+            icon: 'BellIcon',
+            node: {
+              color: 'red',
+              label: 'Custom Label',
+            },
+          },
+        });
+
+        await plugin(config, { services: [{ path: join(asyncAPIExamplesDir, 'simple.asyncapi.yml'), id: 'account-service' }] });
+
+        const service = await getService('account-service', '1.0.0');
+        expect(service).toEqual(
+          expect.objectContaining({
+            id: 'account-service',
+            name: 'Account Service',
+            version: '1.0.0',
+            summary: 'This service is in charge of processing user signups',
+            markdown: 'Here is my original markdown, please do not override this!',
+            badges: [
+              {
+                content: 'Events',
+                textColor: 'blue',
+                backgroundColor: 'blue',
+              },
+              {
+                content: 'Authentication',
+                textColor: 'blue',
+                backgroundColor: 'blue',
+              },
+            ],
+            styles: {
+              icon: 'BellIcon',
+              node: {
+                color: 'red',
+                label: 'Custom Label',
+              },
+            },
+          })
+        );
+      });
+    });
   });
 });

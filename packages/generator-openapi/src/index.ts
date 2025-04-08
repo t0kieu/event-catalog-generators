@@ -126,6 +126,7 @@ export default async (_: any, options: Props) => {
 
     let owners = service.owners || [];
     let repository = null;
+    let styles = null;
 
     // Check if service is already defined... if the versions do not match then create service.
     const latestServiceInCatalog = await getService(service.id, 'latest');
@@ -137,6 +138,7 @@ export default async (_: any, options: Props) => {
       sends = latestServiceInCatalog.sends || ([] as any);
       owners = latestServiceInCatalog.owners || ([] as any);
       repository = latestServiceInCatalog.repository || null;
+      styles = latestServiceInCatalog.styles || null;
       // persist any specifications that are already in the catalog
       serviceSpecifications = {
         ...serviceSpecifications,
@@ -164,6 +166,7 @@ export default async (_: any, options: Props) => {
         receives,
         ...(owners ? { owners } : {}),
         ...(repository ? { repository } : {}),
+        ...(styles ? { styles } : {}),
       },
       { path: join(servicePath), override: true }
     );
