@@ -821,6 +821,28 @@ describe('OpenAPI EventCatalog Plugin', () => {
         expect(getCommandMessage.owners).toEqual(['John Doe', 'Jane Doe']);
       });
 
+      it('when the message has been marked as deprecated (with x-eventcatalog-deprecated-date and x-eventcatalog-deprecated-message), the message is marked as deprecated in EventCatalog', async () => {
+        const { getCommand } = utils(catalogDir);
+
+        await plugin(config, { services: [{ path: join(openAPIExamples, 'petstore.yml'), id: 'swagger-petstore' }] });
+
+        const command = await getCommand('list-pets');
+        expect(command.deprecated).toEqual({
+          date: '2025-04-09',
+          message: 'This operation is deprecated because it is not used in the codebase',
+        });
+      });
+
+      it('when the message has been marked as deprecated (native support as boolean), the message is marked as deprecated in EventCatalog', async () => {
+        const { getCommand } = utils(catalogDir);
+
+        await plugin(config, { services: [{ path: join(openAPIExamples, 'petstore.yml'), id: 'swagger-petstore' }] });
+
+        const command = await getCommand('createPets');
+
+        expect(command.deprecated).toEqual(true);
+      });
+
       describe('schemas', () => {
         it('when a message has a request body, the request body is the schema of the message', async () => {
           const { getCommand } = utils(catalogDir);

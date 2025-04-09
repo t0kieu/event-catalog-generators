@@ -27,6 +27,12 @@ export type Operation = {
   extensions?: {
     [key: string]: any;
   };
+  deprecated?:
+    | boolean
+    | {
+        date?: string;
+        message?: string;
+      };
 };
 
 export interface OpenAPIParameter {

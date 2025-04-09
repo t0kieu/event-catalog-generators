@@ -1,7 +1,6 @@
 import SwaggerParser from '@apidevtools/swagger-parser';
 import { OpenAPIDocument, OpenAPIOperation, OpenAPIParameter, Operation } from '../types';
 import { HTTP_METHOD, HTTP_METHOD_TO_MESSAGE_TYPE } from '../index';
-
 const DEFAULT_MESSAGE_TYPE = 'query';
 
 export async function getSchemasByOperationId(filePath: string, operationId: string): Promise<OpenAPIOperation | undefined> {
@@ -59,6 +58,22 @@ export async function getSchemasByOperationId(filePath: string, operationId: str
   }
 }
 
+function getDeprecatedValues(openAPIOperation: any) {
+  const deprecatedDate = openAPIOperation['x-eventcatalog-deprecated-date'] || null;
+  const deprecatedMessage = openAPIOperation['x-eventcatalog-deprecated-message'] || null;
+  const isNativeDeprecated = openAPIOperation.deprecated;
+  let deprecated = isNativeDeprecated;
+
+  if (deprecatedDate) {
+    deprecated = {
+      date: deprecatedDate,
+      message: deprecatedMessage,
+    };
+  }
+
+  return deprecated;
+}
+
 export async function getOperationsByType(openApiPath: string, httpMethodsToMessages?: HTTP_METHOD_TO_MESSAGE_TYPE) {
   try {
     // Parse the OpenAPI document
@@ -76,6 +91,8 @@ export async function getOperationsByType(openApiPath: string, httpMethodsToMess
         const openAPIOperation = pathItem[method];
 
         const defaultMessageType = httpMethodsToMessages?.[method.toUpperCase() as HTTP_METHOD] || DEFAULT_MESSAGE_TYPE;
+
+        const deprecated = getDeprecatedValues(openAPIOperation);
 
         // Check if the x-eventcatalog-message-type field is set
         const messageType = openAPIOperation['x-eventcatalog-message-type'] || defaultMessageType;
@@ -99,6 +116,7 @@ export async function getOperationsByType(openApiPath: string, httpMethodsToMess
           summary: openAPIOperation.summary,
           tags: openAPIOperation.tags || [],
           extensions,
+          ...(deprecated ? { deprecated } : {}),
         } as Operation;
 
         operations.push(operation);
