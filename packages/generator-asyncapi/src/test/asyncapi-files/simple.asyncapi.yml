@@ -115,6 +115,8 @@ components:
       description: 'Sign up a user'
       x-eventcatalog-message-type: command
       x-eventcatalog-message-version: 2.0.0
+      x-eventcatalog-deprecated-date: 2025-04-09
+      x-eventcatalog-deprecated-message: This operation is deprecated because it is not used in the codebase
       tags:
         - name: 'New'
           description: 'New event'

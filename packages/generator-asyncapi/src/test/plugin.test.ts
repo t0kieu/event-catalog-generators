@@ -923,6 +923,19 @@ describe('AsyncAPI EventCatalog Plugin', () => {
         expect(event.schemaPath).toEqual('schema.json');
       });
 
+      it('when the `x-eventcatalog-deprecated-date` is defined on a message, the message is deprecated in EventCatalog', async () => {
+        const { getEvent } = utils(catalogDir);
+
+        await plugin(config, { services: [{ path: join(asyncAPIExamplesDir, 'simple.asyncapi.yml'), id: 'account-service' }] });
+
+        const event = await getEvent('signupuser', 'latest');
+
+        expect(event.deprecated).toEqual({
+          date: '2025-04-09',
+          message: 'This operation is deprecated because it is not used in the codebase',
+        });
+      });
+
       it('when the service has owners, the messages are given the same owners', async () => {
         const { getEvent } = utils(catalogDir);
         const { getService } = utils(catalogDir);
