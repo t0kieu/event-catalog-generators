@@ -346,7 +346,9 @@ export default async (config: any, options: Props) => {
               ...(messageHasSchema(message) && { schemaPath: getSchemaFileName(message) }),
               ...(owners && { owners }),
               ...(channelsForMessage.length > 0 && { channels: channelsForMessage }),
-              ...(deprecatedDate && { deprecated: { date: deprecatedDate, ...(deprecatedMessage && { message: deprecatedMessage }) } }),
+              ...(deprecatedDate && {
+                deprecated: { date: deprecatedDate, ...(deprecatedMessage && { message: deprecatedMessage }) },
+              }),
             },
             {
               override: true,
