@@ -1,5 +1,11 @@
 # @eventcatalog/generator-openapi
 
+## 5.0.4
+
+### Patch Changes
+
+- 48de722: feat(plugin): openapi now supports deprecated fields
+
 ## 5.0.3
 
 ### Patch Changes
