@@ -285,6 +285,8 @@ export default async (config: any, options: Props) => {
       for (const message of operation.messages()) {
         const eventType = (message.extensions().get('x-eventcatalog-message-type')?.value() as EventType) || 'event';
         const messageVersion = message.extensions().get('x-eventcatalog-message-version')?.value() || version;
+        const deprecatedDate = message.extensions().get('x-eventcatalog-deprecated-date')?.value() || null;
+        const deprecatedMessage = message.extensions().get('x-eventcatalog-deprecated-message')?.value() || null;
 
         // does this service own or just consume the message?
         const serviceOwnsMessageContract = isServiceMessageOwner(message);
@@ -344,6 +346,7 @@ export default async (config: any, options: Props) => {
               ...(messageHasSchema(message) && { schemaPath: getSchemaFileName(message) }),
               ...(owners && { owners }),
               ...(channelsForMessage.length > 0 && { channels: channelsForMessage }),
+              ...(deprecatedDate && { deprecated: { date: deprecatedDate, ...(deprecatedMessage && { message: deprecatedMessage }) } }),
             },
             {
               override: true,
