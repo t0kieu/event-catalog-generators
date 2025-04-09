@@ -23,6 +23,8 @@ paths:
       operationId: listPets
       tags:
         - pets
+      x-eventcatalog-deprecated-date: 2025-04-09
+      x-eventcatalog-deprecated-message: This operation is deprecated because it is not used in the codebase
       x-eventcatalog-message-type: query # This is a query operation
       x-eventcatalog-message-name: List Pets # Name used in EventCatalog
       x-eventcatalog-message-id: list-pets # ID value used in EventCatalog
@@ -59,6 +61,7 @@ paths:
       operationId: createPets
       tags:
         - pets
+      deprecated: true
       x-eventcatalog-message-type: command # This is a command operation
       requestBody:
         content:

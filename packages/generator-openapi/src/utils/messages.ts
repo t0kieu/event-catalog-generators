@@ -169,5 +169,6 @@ export const buildMessage = async (pathToFile: string, document: OpenAPI.Documen
     sidebar: {
       badge: httpVerb,
     },
+    ...(operation.deprecated ? { deprecated: operation.deprecated } : {}),
   };
 };
