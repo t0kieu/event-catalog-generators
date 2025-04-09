@@ -1,5 +1,11 @@
 # @eventcatalog/sdk
 
+## 4.0.3
+
+### Patch Changes
+
+- c3c6310: feat(plugin): asyncapi now supports deprecated fields
+
 ## 4.0.2
 
 ### Patch Changes
