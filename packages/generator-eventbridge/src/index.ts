@@ -140,6 +140,7 @@ export default async (config: EventCatalogConfig, options: GeneratorProps) => {
   const eventCatalogDirectory = process.env.PROJECT_DIR;
   const { services, region, mapEventsBy = 'detail-type' } = options;
   const schemasClient = new SchemasClient({ region, credentials: options.credentials });
+  const format = options.format || 'mdx';
 
   if (!eventCatalogDirectory) {
     throw new Error('Please provide catalog url (env variable PROJECT_DIR)');
@@ -218,13 +219,16 @@ export default async (config: EventCatalogConfig, options: GeneratorProps) => {
 
       // Do we need to create a new domain?
       if (!domain || (domain && domain.version !== domainVersion)) {
-        await writeDomain({
-          id: domainId,
-          name: domainName,
-          version: domainVersion,
-          markdown: generateMarkdownForDomain(),
-          // services: [{ id: serviceId, version: version }],
-        });
+        await writeDomain(
+          {
+            id: domainId,
+            name: domainName,
+            version: domainVersion,
+            markdown: generateMarkdownForDomain(),
+            // services: [{ id: serviceId, version: version }],
+          },
+          { format }
+        );
         console.log(chalk.cyan(` - Domain (v${domainVersion}) created`));
       }
 
@@ -288,7 +292,7 @@ export default async (config: EventCatalogConfig, options: GeneratorProps) => {
         owners: owners,
         ...(styles && { styles }),
       },
-      { path: servicePath, override: true }
+      { path: servicePath, override: true, format }
     );
   }
 
@@ -299,7 +303,7 @@ const processEvents = async (events: Event[], options: GeneratorProps, servicePa
   // This is set by EventCatalog. This is the directory where the catalog is stored
   const eventCatalogDirectory = process.env.PROJECT_DIR;
   const eventBridgeClient = new EventBridgeClient({ region: options.region, credentials: options.credentials });
-
+  const format = options.format || 'mdx';
   if (!eventCatalogDirectory) {
     throw new Error('Please provide catalog url (env variable PROJECT_DIR)');
   }
@@ -357,15 +361,18 @@ const processEvents = async (events: Event[], options: GeneratorProps, servicePa
           // Do nothing, fall back.
         }
 
-        await writeChannel({
-          id: event.eventBusName,
-          name: `EventBridge: ${name}`,
-          markdown,
-          version: '1.0.0', // hardcode for now, what would this be?
-          address,
-          protocols: ['eventbridge'],
-          summary,
-        });
+        await writeChannel(
+          {
+            id: event.eventBusName,
+            name: `EventBridge: ${name}`,
+            markdown,
+            version: '1.0.0', // hardcode for now, what would this be?
+            address,
+            protocols: ['eventbridge'],
+            summary,
+          },
+          { format }
+        );
       }
 
       eventChannel = [{ id: event.eventBusName, version: 'latest' }];
@@ -388,7 +395,7 @@ const processEvents = async (events: Event[], options: GeneratorProps, servicePa
         badges: getBadgesForMessage(event, options.eventBusName),
         ...(eventChannel.length > 0 && { channels: eventChannel }),
       },
-      { path: messagePath }
+      { path: messagePath, format }
     );
 
     console.log(chalk.cyan(` - Event (${event.id} v${event.version}) created`));
