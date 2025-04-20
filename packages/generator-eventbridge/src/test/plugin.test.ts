@@ -120,6 +120,49 @@ describe('EventBridge EventCatalog Plugin', () => {
     await fs.rm(join(catalogDir), { recursive: true });
   });
 
+  describe('format', () => {
+    it('when format is set to "md" all files are written as ".md" and not ".mdx"', async () => {
+      await plugin(config, {
+        region: 'us-east-1',
+        registryName: 'discovered-schemas',
+        writeFilesToRoot: true,
+        services: [{ id: 'Orders Service', version: '1.0.0', sends: [{ prefix: 'myapp' }] }],
+        domain: { id: 'Orders Domain', version: '1.0.0', name: 'Orders Domain' },
+        format: 'md',
+      });
+
+      const domains = await fs.readdir(path.join(catalogDir, 'domains'));
+      expect(domains).toEqual(['Orders Domain']);
+
+      const services = await fs.readdir(path.join(catalogDir, 'services'));
+      expect(services).toEqual(['Orders Service']);
+
+      const events = await fs.readdir(path.join(catalogDir, 'events'));
+      expect(events).toEqual(['OrderPlaced', 'UserLoggedIn', 'UserSignedUp']);
+
+      const orderPlacedFiles = await fs.readdir(path.join(catalogDir, 'events', 'OrderPlaced'));
+      expect(orderPlacedFiles).toContain('index.md');
+      expect(orderPlacedFiles).not.toContain('index.mdx');
+
+      const userSignedUpFiles = await fs.readdir(path.join(catalogDir, 'events', 'UserSignedUp'));
+      expect(userSignedUpFiles).toContain('index.md');
+
+      const userLoggedInFiles = await fs.readdir(path.join(catalogDir, 'events', 'UserLoggedIn'));
+      expect(userLoggedInFiles).toContain('index.md');
+      expect(userLoggedInFiles).not.toContain('index.mdx');
+
+      // Service
+      const serviceFiles = await fs.readdir(path.join(catalogDir, 'services', 'Orders Service'));
+      expect(serviceFiles).toContain('index.md');
+      expect(serviceFiles).not.toContain('index.mdx');
+
+      // Domain
+      const domainFiles = await fs.readdir(path.join(catalogDir, 'domains', 'Orders Domain'));
+      expect(domainFiles).toContain('index.md');
+      expect(domainFiles).not.toContain('index.mdx');
+    });
+  });
+
   describe('domains', () => {
     it('if a domain is defined in the EventBridge generator and it does not exist it is created and the service is mapped to the domain', async () => {
       const { getDomain } = utils(catalogDir);
