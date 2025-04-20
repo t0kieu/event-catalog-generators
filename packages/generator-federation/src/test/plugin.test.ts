@@ -98,7 +98,7 @@ describe('generator-federation', () => {
       console.log(files);
 
       const domains = await fs.readdir(path.join(catalogDir, 'domains'));
-      expect(domains).toHaveLength(3);
+      expect(domains).toHaveLength(4);
 
       const teams = await fs.readdir(path.join(catalogDir, 'teams'));
       expect(teams).toHaveLength(4);
