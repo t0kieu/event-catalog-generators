@@ -1,5 +1,11 @@
 # @eventcatalog/generator-eventbridge
 
+## 3.0.2
+
+### Patch Changes
+
+- ca54125: feat(plugin): eventbridge now has `format` parameter, letting users write `.md` files
+
 ## 3.0.1
 
 ### Patch Changes
