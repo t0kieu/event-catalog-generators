@@ -131,35 +131,35 @@ describe('EventBridge EventCatalog Plugin', () => {
         format: 'md',
       });
 
-      // const domains = await fs.readdir(path.join(catalogDir, 'domains'));
-      // expect(domains).toEqual(['Orders Domain']);
+      const domains = await fs.readdir(path.join(catalogDir, 'domains'));
+      expect(domains).toEqual(['Orders Domain']);
 
-      // const services = await fs.readdir(path.join(catalogDir, 'services'));
-      // expect(services).toEqual(['Orders Service']);
+      const services = await fs.readdir(path.join(catalogDir, 'services'));
+      expect(services).toEqual(['Orders Service']);
 
-      // const events = await fs.readdir(path.join(catalogDir, 'events'));
-      // expect(events).toEqual(['OrderPlaced', 'UserLoggedIn', 'UserSignedUp']);
+      const events = await fs.readdir(path.join(catalogDir, 'events'));
+      expect(events).toEqual(['OrderPlaced', 'UserLoggedIn', 'UserSignedUp']);
 
-      // const orderPlacedFiles = await fs.readdir(path.join(catalogDir, 'events', 'OrderPlaced'));
-      // expect(orderPlacedFiles).toContain('index.md');
-      // expect(orderPlacedFiles).not.toContain('index.mdx');
+      const orderPlacedFiles = await fs.readdir(path.join(catalogDir, 'events', 'OrderPlaced'));
+      expect(orderPlacedFiles).toContain('index.md');
+      expect(orderPlacedFiles).not.toContain('index.mdx');
 
-      // const userSignedUpFiles = await fs.readdir(path.join(catalogDir, 'events', 'UserSignedUp'));
-      // expect(userSignedUpFiles).toContain('index.md');
+      const userSignedUpFiles = await fs.readdir(path.join(catalogDir, 'events', 'UserSignedUp'));
+      expect(userSignedUpFiles).toContain('index.md');
 
-      // const userLoggedInFiles = await fs.readdir(path.join(catalogDir, 'events', 'UserLoggedIn'));
-      // expect(userLoggedInFiles).toContain('index.md');
-      // expect(userLoggedInFiles).not.toContain('index.mdx');
+      const userLoggedInFiles = await fs.readdir(path.join(catalogDir, 'events', 'UserLoggedIn'));
+      expect(userLoggedInFiles).toContain('index.md');
+      expect(userLoggedInFiles).not.toContain('index.mdx');
 
-      // // Service
-      // const serviceFiles = await fs.readdir(path.join(catalogDir, 'services', 'Orders Service'));
-      // expect(serviceFiles).toContain('index.md');
-      // expect(serviceFiles).not.toContain('index.mdx');
+      // Service
+      const serviceFiles = await fs.readdir(path.join(catalogDir, 'services', 'Orders Service'));
+      expect(serviceFiles).toContain('index.md');
+      expect(serviceFiles).not.toContain('index.mdx');
 
-      // // Domain
-      // const domainFiles = await fs.readdir(path.join(catalogDir, 'domains', 'Orders Domain'));
-      // expect(domainFiles).toContain('index.md');
-      // expect(domainFiles).not.toContain('index.mdx');
+      // Domain
+      const domainFiles = await fs.readdir(path.join(catalogDir, 'domains', 'Orders Domain'));
+      expect(domainFiles).toContain('index.md');
+      expect(domainFiles).not.toContain('index.mdx');
     });
   });
 
