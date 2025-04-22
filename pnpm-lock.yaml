@@ -33,8 +33,8 @@ importers:
   packages/generator-ai:
     dependencies:
       '@eventcatalog/sdk':
-        specifier: ^2.0.0
-        version: 2.0.0
+        specifier: ^2.3.2
+        version: 2.3.2
       '@huggingface/transformers':
         specifier: ^3.3.3
         version: 3.3.3
@@ -879,6 +879,9 @@ packages:
 
   '@eventcatalog/sdk@2.3.0':
     resolution: { integrity: sha512-x8HkfA+yO54cECQhdeRTOs8LOhg1yYkd8nSN0p/giQPe4Gc1tixdm0JeUWwHYaERL8zrjbslvP3a1HkyoeXkbg== }
+
+  '@eventcatalog/sdk@2.3.2':
+    resolution: { integrity: sha512-POiX4Iu7NBA01uIbBqKYjxDkKPtTJa9dF2pH+YBwm7SFn+uKlw4QCi9lXpcJnpXshpjguOoyAMzt3dvQf6gCdw== }
 
   '@huggingface/jinja@0.3.3':
     resolution: { integrity: sha512-vQQr2JyWvVFba3Lj9es4q9vCl1sAc74fdgnEMoX8qHrXtswap9ge9uO3ONDzQB0cQ0PUyaKY2N6HaVbTBvSXvw== }
@@ -4385,6 +4388,16 @@ snapshots:
       slugify: 1.6.6
 
   '@eventcatalog/sdk@2.3.0':
+    dependencies:
+      '@changesets/cli': 2.27.12
+      fs-extra: 11.3.0
+      glob: 11.0.1
+      gray-matter: 4.0.3
+      proper-lockfile: 4.1.2
+      semver: 7.6.3
+      slugify: 1.6.6
+
+  '@eventcatalog/sdk@2.3.2':
     dependencies:
       '@changesets/cli': 2.27.12
       fs-extra: 11.3.0

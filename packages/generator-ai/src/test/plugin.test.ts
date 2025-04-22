@@ -84,18 +84,98 @@ describe('generator-ai', () => {
     { timeout: 20000 }
   );
 
-  it('If the folder contains no resources, the generator still runs and does not throw an error', async () => {
-    // Set the catalog dir to a new folder
-    catalogDir = join(__dirname, 'catalog-no-resources');
-    process.env.PROJECT_DIR = catalogDir;
+  it(
+    'If the folder contains no resources, the generator still runs and does not throw an error',
+    async () => {
+      // Set the catalog dir to a new folder
+      catalogDir = join(__dirname, 'catalog-no-resources');
+      process.env.PROJECT_DIR = catalogDir;
 
-    await plugin(eventCatalogConfig, {
-      splitMarkdownFiles: true,
-    });
+      await plugin(eventCatalogConfig, {
+        splitMarkdownFiles: true,
+      });
 
-    const files = await fs.readdir(path.join(catalogDir, 'public/ai'));
-    expect(files).toContain('embeddings.json');
-    expect(files).toContain('documents.json');
-    expect(files).toContain('README.md');
+      const files = await fs.readdir(path.join(catalogDir, 'public/ai'));
+      expect(files).toContain('embeddings.json');
+      expect(files).toContain('documents.json');
+      expect(files).toContain('README.md');
+    },
+    { timeout: 20000 }
+  );
+
+  describe('includeUsersAndTeams', () => {
+    it(
+      'when includeUsersAndTeams is true the users and teams are included in the embeddings',
+      async () => {
+        await plugin(eventCatalogConfig, {
+          splitMarkdownFiles: false,
+          includeUsersAndTeams: true,
+        });
+
+        const documents = await fs.readFile(path.join(catalogDir, 'public/ai/documents.json'), 'utf8');
+        const documentsJson = JSON.parse(documents);
+        const fullStackTeam = documentsJson.filter((document: any) => document.metadata.id === 'full-stack');
+        const userExample = documentsJson.filter((document: any) => document.metadata.id === 'dboyne');
+        expect(fullStackTeam).toHaveLength(1);
+        expect(userExample).toHaveLength(1);
+      },
+      { timeout: 20000 }
+    );
+
+    it(
+      'when includeUsersAndTeams is false the users and teams are not included in the embeddings',
+      async () => {
+        await plugin(eventCatalogConfig, {
+          splitMarkdownFiles: false,
+          includeUsersAndTeams: false,
+        });
+
+        const documents = await fs.readFile(path.join(catalogDir, 'public/ai/documents.json'), 'utf8');
+        const documentsJson = JSON.parse(documents);
+        const fullStackTeam = documentsJson.filter((document: any) => document.metadata.id === 'full-stack');
+        const userExample = documentsJson.filter((document: any) => document.metadata.id === 'dboyne');
+        expect(fullStackTeam).toHaveLength(0);
+        expect(userExample).toHaveLength(0);
+      },
+      { timeout: 20000 }
+    );
+  });
+
+  describe('includeCustomDocumentationPages', () => {
+    it(
+      'by default the custom documentation pages are included in the embeddings',
+      async () => {
+        await plugin(eventCatalogConfig, {
+          splitMarkdownFiles: false,
+          includeCustomDocumentationPages: true,
+        });
+
+        const documents = await fs.readFile(path.join(catalogDir, 'public/ai/documents.json'), 'utf8');
+        const documentsJson = JSON.parse(documents);
+        const customDocumentationPage = documentsJson.filter(
+          (document: any) => document.metadata.type === 'custom-documentation-page'
+        );
+        expect(customDocumentationPage).toHaveLength(1);
+      },
+      { timeout: 20000 }
+    );
+
+    it(
+      'when includeCustomDocumentationPages is false the custom documentation pages are not included in the embeddings',
+      async () => {
+        await plugin(eventCatalogConfig, {
+          splitMarkdownFiles: false,
+          includeCustomDocumentationPages: false,
+        });
+
+        const documents = await fs.readFile(path.join(catalogDir, 'public/ai/documents.json'), 'utf8');
+        const documentsJson = JSON.parse(documents);
+        const customDocumentationPage = documentsJson.filter(
+          (document: any) => document.metadata.type === 'custom-documentation-page'
+        );
+        expect(customDocumentationPage).toHaveLength(0);
+      },
+      { timeout: 20000 }
+    );
   });
 });

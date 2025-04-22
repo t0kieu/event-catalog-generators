@@ -69,6 +69,9 @@ examples/**/**/dependencies
 !examples/generator-federation/basic/payment-team/services/**/commands
 
 !packages/generator-ai/src/test/catalog/domains
+!packages/generator-ai/src/test/catalog/teams
+!packages/generator-ai/src/test/catalog/users
+!packages/generator-ai/src/test/catalog/docs
 packages/generator-ai/src/test/catalog-no-resources
 
 examples/**/**/build
