@@ -61,5 +61,19 @@ export default {
         debug: true
       },
     ],
+    [
+      "@eventcatalog/generator-ai", {
+        debug: true,
+        splitMarkdownFiles: false,
+        includeUsersAndTeams: false
+      }
+    ],
   ],
+  output: 'server',
+  chat: {
+    enabled: true,
+    similarityResults: 50,
+    max_tokens: 4096,
+    model: 'o4-mini'
+  },
 };
