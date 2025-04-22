@@ -98,4 +98,64 @@ describe('generator-ai', () => {
     expect(files).toContain('documents.json');
     expect(files).toContain('README.md');
   });
+
+  describe('includeUsersAndTeams', () => {
+    it('when includeUsersAndTeams is true the users and teams are included in the embeddings', async () => {
+      await plugin(eventCatalogConfig, {
+        splitMarkdownFiles: false,
+        includeUsersAndTeams: true,
+      });
+
+      const documents = await fs.readFile(path.join(catalogDir, 'public/ai/documents.json'), 'utf8');
+      const documentsJson = JSON.parse(documents);
+      const fullStackTeam = documentsJson.filter((document: any) => document.metadata.id === 'full-stack');
+      const userExample = documentsJson.filter((document: any) => document.metadata.id === 'dboyne');
+      expect(fullStackTeam).toHaveLength(1);
+      expect(userExample).toHaveLength(1);
+    });
+
+    it('when includeUsersAndTeams is false the users and teams are not included in the embeddings', async () => {
+      await plugin(eventCatalogConfig, {
+        splitMarkdownFiles: false,
+        includeUsersAndTeams: false,
+      });
+
+      const documents = await fs.readFile(path.join(catalogDir, 'public/ai/documents.json'), 'utf8');
+      const documentsJson = JSON.parse(documents);
+      const fullStackTeam = documentsJson.filter((document: any) => document.metadata.id === 'full-stack');
+      const userExample = documentsJson.filter((document: any) => document.metadata.id === 'dboyne');
+      expect(fullStackTeam).toHaveLength(0);
+      expect(userExample).toHaveLength(0);
+    });
+  });
+
+  describe('includeCustomDocumentationPages', () => {
+    it('by default the custom documentation pages are included in the embeddings', async () => {
+      await plugin(eventCatalogConfig, {
+        splitMarkdownFiles: false,
+        includeCustomDocumentationPages: true,
+      });
+
+      const documents = await fs.readFile(path.join(catalogDir, 'public/ai/documents.json'), 'utf8');
+      const documentsJson = JSON.parse(documents);
+      const customDocumentationPage = documentsJson.filter(
+        (document: any) => document.metadata.type === 'custom-documentation-page'
+      );
+      expect(customDocumentationPage).toHaveLength(1);
+    });
+
+    it('when includeCustomDocumentationPages is false the custom documentation pages are not included in the embeddings', async () => {
+      await plugin(eventCatalogConfig, {
+        splitMarkdownFiles: false,
+        includeCustomDocumentationPages: false,
+      });
+
+      const documents = await fs.readFile(path.join(catalogDir, 'public/ai/documents.json'), 'utf8');
+      const documentsJson = JSON.parse(documents);
+      const customDocumentationPage = documentsJson.filter(
+        (document: any) => document.metadata.type === 'custom-documentation-page'
+      );
+      expect(customDocumentationPage).toHaveLength(0);
+    });
+  });
 });

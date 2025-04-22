@@ -18,6 +18,7 @@ type GeneratorProps = {
   splitMarkdownFiles?: boolean;
   embedingModel?: string;
   includeUsersAndTeams?: boolean;
+  includeCustomDocumentationPages?: boolean;
 };
 
 // Function to generate embeddings using Hugging Face (Xenova)
@@ -49,22 +50,27 @@ export default async (_: EventCatalogConfig, options: GeneratorProps) => {
 
   // users and teams can bloat the embeddings and may not provide much value, let the user decide if they want to include them
   const includeUsersAndTeams = options.includeUsersAndTeams ?? false;
+  const includeCustomDocumentationPages = options.includeCustomDocumentationPages ?? true;
   const debug = options.debug ?? false;
 
   // await checkLicense(options.licenseKey);
   await checkForPackageUpdate(pkgJSON.name);
 
-  const { getEvents, getUsers, getServices, getDomains, getCommands, getQueries, getTeams } = utils(process.env.PROJECT_DIR);
+  const { getEvents, getUsers, getServices, getDomains, getCommands, getQueries, getTeams, getCustomDocs } = utils(
+    process.env.PROJECT_DIR
+  );
 
-  const [events = [], users = [], services = [], domains = [], commands = [], queries = [], teams = []] = await Promise.all([
-    getEvents(),
-    includeUsersAndTeams ? getUsers() : [],
-    getServices(),
-    getDomains(),
-    getCommands({}),
-    getQueries({}),
-    includeUsersAndTeams ? getTeams() : [],
-  ]);
+  const [events = [], users = [], services = [], domains = [], commands = [], queries = [], teams = [], customDocs = []] =
+    await Promise.all([
+      getEvents(),
+      includeUsersAndTeams ? getUsers() : [],
+      getServices(),
+      getDomains(),
+      getCommands({}),
+      getQueries({}),
+      includeUsersAndTeams ? getTeams() : [],
+      includeCustomDocumentationPages ? getCustomDocs() : [],
+    ]);
 
   const resourceTypes = [
     { items: events, type: 'event' },
@@ -74,6 +80,7 @@ export default async (_: EventCatalogConfig, options: GeneratorProps) => {
     { items: commands, type: 'command' },
     { items: queries, type: 'query' },
     { items: teams, type: 'team' },
+    { items: customDocs, type: 'custom-documentation-page' },
   ];
 
   if (debug) {
@@ -84,6 +91,7 @@ export default async (_: EventCatalogConfig, options: GeneratorProps) => {
     console.log('Commands:', commands.length);
     console.log('Queries:', queries.length);
     console.log('Teams:', teams.length);
+    console.log('Custom Documentation Pages:', customDocs.length);
   }
 
   const resources = resourceTypes.flatMap(({ items, type }) => items.map((item) => ({ ...item, type })));
@@ -97,6 +105,8 @@ export default async (_: EventCatalogConfig, options: GeneratorProps) => {
       chunkSize: 500,
       chunkOverlap: 50,
     });
+
+    // console.log('resources', resources)
     // Process each event and create documents with split content
     // @ts-ignore
     documents = await Promise.all(
@@ -130,6 +140,7 @@ export default async (_: EventCatalogConfig, options: GeneratorProps) => {
   }
 
   const flattenedDocuments = documents.flat();
+
   const embeddings = await generateEmbeddings(
     flattenedDocuments.map((d) => d.pageContent),
     options.embedingModel
