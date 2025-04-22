@@ -1,5 +1,11 @@
 # @eventcatalog/generator-ai
 
+## 1.0.1
+
+### Patch Changes
+
+- d9f1d5b: feat(plugin): added custom docs property to ai generator
+
 ## 1.0.0
 
 ### Major Changes
