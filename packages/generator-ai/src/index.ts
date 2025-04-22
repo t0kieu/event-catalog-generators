@@ -23,7 +23,9 @@ type GeneratorProps = {
 
 // Function to generate embeddings using Hugging Face (Xenova)
 async function generateEmbeddings(texts: string[], model = 'Xenova/all-MiniLM-L6-v2'): Promise<number[][]> {
-  const embedder = await pipeline('feature-extraction', model);
+  const embedder = await pipeline('feature-extraction', model, {
+    dtype: 'fp32',
+  });
 
   console.log(chalk.cyan(`  - Generating embeddings...`));
   const embeddings = await Promise.all(
