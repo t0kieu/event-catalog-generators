@@ -1,5 +1,11 @@
 # @eventcatalog/generator-ai
 
+## 1.0.3
+
+### Patch Changes
+
+- 7a4bc98: feat(plugin): removed openai embeddings console log
+
 ## 1.0.2
 
 ### Patch Changes
