@@ -3,6 +3,8 @@ import plugin from '../index';
 import path, { join } from 'node:path';
 import fs from 'fs/promises';
 import os from 'node:os';
+// No longer importing the original openai directly in the test file
+
 // Fake eventcatalog config
 const eventCatalogConfig = {
   title: 'My EventCatalog',
@@ -15,8 +17,32 @@ vi.mock('../utils/checkLicense', () => ({
   default: () => Promise.resolve(),
 }));
 
+// 1. Fake API key before importing the module
+process.env.OPENAI_API_KEY = 'fake-key';
+
+vi.mock('openai', () => {
+  const mockCreate = vi.fn().mockResolvedValue({
+    data: [{ embedding: [1, 2, 3] }],
+  });
+  return {
+    // Mock the default export (the OpenAI class constructor)
+    default: vi.fn().mockImplementation(() => ({
+      embeddings: {
+        create: mockCreate,
+      },
+    })),
+    // Export the mock function itself so we can access it in tests
+    __esModule: true, // Required when mocking modules with default/named exports this way
+    mockEmbeddingsCreate: mockCreate,
+  };
+});
+
+import * as OpenAIMock from 'openai';
+const { mockEmbeddingsCreate } = OpenAIMock as any;
+
 describe('generator-ai', () => {
   beforeEach(async () => {
+    process.env.OPENAI_API_KEY = 'FAKE_KEY';
     catalogDir = join(__dirname, 'catalog') || '';
     process.env.PROJECT_DIR = catalogDir;
   });
@@ -177,5 +203,57 @@ describe('generator-ai', () => {
       },
       { timeout: 20000 }
     );
+  });
+
+  describe('embedding', () => {
+    beforeEach(() => {
+      // Reset the mock before each test
+      // Use the imported mock function
+      mockEmbeddingsCreate.mockClear();
+    });
+
+    it('when the embedding is openai, the embeddings are generated using the openai model', async () => {
+      await plugin(eventCatalogConfig, {
+        embedding: {
+          provider: 'openai',
+          model: 'text-embedding-3-large',
+        },
+      });
+
+      // Verify documents.json and embeddings.json are created
+      const documents = await fs.readFile(path.join(catalogDir, 'public/ai/documents.json'), 'utf8');
+      const documentsJson = JSON.parse(documents);
+      expect(documentsJson).toHaveLength(39);
+
+      const embeddings = await fs.readFile(path.join(catalogDir, 'public/ai/embeddings.json'), 'utf8');
+      const embeddingsJson = JSON.parse(embeddings);
+      expect(embeddingsJson).toHaveLength(39);
+
+      // Verify the mock was called with the correct model and expected number of times
+      // Use the imported mock function
+      expect(mockEmbeddingsCreate).toHaveBeenCalledTimes(39);
+      expect(mockEmbeddingsCreate).toHaveBeenCalledWith(
+        expect.objectContaining({
+          model: 'text-embedding-3-large',
+          encoding_format: 'float',
+        })
+      );
+    });
+
+    it('when no embedding provider is provided, the embeddings are generated using the huggingface model', async () => {
+      await plugin(eventCatalogConfig, {});
+
+      // Verify documents.json and embeddings.json are created
+      const documents = await fs.readFile(path.join(catalogDir, 'public/ai/documents.json'), 'utf8');
+      const documentsJson = JSON.parse(documents);
+      expect(documentsJson).toHaveLength(39);
+
+      const embeddings = await fs.readFile(path.join(catalogDir, 'public/ai/embeddings.json'), 'utf8');
+      const embeddingsJson = JSON.parse(embeddings);
+      expect(embeddingsJson).toHaveLength(39);
+
+      // Make sure openai was not called
+      expect(mockEmbeddingsCreate).toHaveBeenCalledTimes(0);
+    });
   });
 });

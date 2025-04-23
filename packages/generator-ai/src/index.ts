@@ -1,12 +1,13 @@
 import utils from '@eventcatalog/sdk';
 import chalk from 'chalk';
-import { pipeline } from '@huggingface/transformers';
 import fs from 'fs-extra';
 import path from 'path';
 import { Document } from 'langchain/document';
 import { checkForPackageUpdate } from '../../../shared/check-for-package-update';
 import pkgJSON from '../package.json';
 import { MarkdownTextSplitter } from 'langchain/text_splitter';
+
+import { HuggingFaceEmbedder, OpenAIEmbedder, type Embedder } from './embedders';
 
 // The event.catalog.js values for your plugin
 type EventCatalogConfig = any;
@@ -16,28 +17,15 @@ type GeneratorProps = {
   debug?: boolean;
   licenseKey?: string;
   splitMarkdownFiles?: boolean;
-  embedingModel?: string;
   includeUsersAndTeams?: boolean;
   includeCustomDocumentationPages?: boolean;
+  embedding?: {
+    provider: 'openai' | 'huggingface';
+    model?: string;
+  };
+  // Deprecated
+  embedingModel?: string;
 };
-
-// Function to generate embeddings using Hugging Face (Xenova)
-async function generateEmbeddings(texts: string[], model = 'Xenova/all-MiniLM-L6-v2'): Promise<number[][]> {
-  const embedder = await pipeline('feature-extraction', model, {
-    dtype: 'fp32',
-  });
-
-  console.log(chalk.cyan(`  - Generating embeddings...`));
-  const embeddings = await Promise.all(
-    texts.map(async (text) => {
-      const output = await embedder(text, { pooling: 'mean', normalize: true });
-      return Array.from(output.data) as any;
-    })
-  );
-
-  console.log(chalk.green(`  - Embeddings generated successfully!`));
-  return embeddings;
-}
 
 export default async (_: EventCatalogConfig, options: GeneratorProps) => {
   if (!process.env.PROJECT_DIR) {
@@ -143,10 +131,15 @@ export default async (_: EventCatalogConfig, options: GeneratorProps) => {
 
   const flattenedDocuments = documents.flat();
 
-  const embeddings = await generateEmbeddings(
-    flattenedDocuments.map((d) => d.pageContent),
-    options.embedingModel
-  );
+  let embedder: Embedder;
+
+  if (options.embedding?.provider === 'openai') {
+    embedder = new OpenAIEmbedder(options.embedding?.model);
+  } else {
+    embedder = new HuggingFaceEmbedder(options.embedding?.model);
+  }
+
+  const embeddings = await embedder.generateEmbeddings(flattenedDocuments.map((d) => d.pageContent));
 
   // ensure the ai directory exists in the users catalog
   await fs.ensureDir(path.join(process.env.PROJECT_DIR, 'public/ai'));
