@@ -1,5 +1,11 @@
 # @eventcatalog/generator-ai
 
+## 1.0.2
+
+### Patch Changes
+
+- eb5508e: feat(plugin): added openai embeddings option for generator-ai
+
 ## 1.0.1
 
 ### Patch Changes
