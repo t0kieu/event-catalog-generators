@@ -28,7 +28,6 @@ export class OpenAIEmbedder implements Embedder {
         });
       })
     );
-    console.log(embeddings);
     console.log(chalk.green(`  - Embeddings generated successfully!`));
     return embeddings.map((embedding) => embedding.data[0].embedding);
   }
