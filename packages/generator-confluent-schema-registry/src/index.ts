@@ -30,15 +30,8 @@ export default async (config: EventCatalogConfig, options: GeneratorProps) => {
     throw new Error('Please provide catalog url (env variable PROJECT_DIR)');
   }
 
-  const {
-    writeService,
-    getService,
-    versionService,
-    getDomain,
-    versionDomain,
-    writeDomain,
-    addServiceToDomain,
-  } = utils(eventCatalogDirectory);
+  const { writeService, getService, versionService, getDomain, versionDomain, writeDomain, addServiceToDomain } =
+    utils(eventCatalogDirectory);
 
   // Check for license and package update
   await checkLicense(options.licenseKey);
