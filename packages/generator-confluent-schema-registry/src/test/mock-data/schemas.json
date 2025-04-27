@@ -1,0 +1,170 @@
+[
+  {
+    "subject": "analytics-event-click-value",
+    "version": 1,
+    "id": 7,
+    "schemaType": "PROTOBUF",
+    "schema": "syntax = \"proto3\";\npackage com.example;\n\nmessage analytics_event_click_value_v1 {\n  string id = 1;\n}\n"
+  },
+  {
+    "subject": "analytics-event-click-value",
+    "version": 2,
+    "id": 19,
+    "schemaType": "PROTOBUF",
+    "schema": "syntax = \"proto3\";\npackage com.example;\n\nmessage analytics_event_click_value {\n  string id = 1;\n}\n"
+  },
+  {
+    "subject": "analytics-event-click-value",
+    "version": 3,
+    "id": 20,
+    "schemaType": "PROTOBUF",
+    "schema": "syntax = \"proto3\";\npackage com.example;\n\nmessage analytics_event_click_value {\n  string id = 1;\n  string name = 2;\n}\n"
+  },
+  {
+    "subject": "analytics-event-convert-value",
+    "version": 1,
+    "id": 9,
+    "schemaType": "PROTOBUF",
+    "schema": "syntax = \"proto3\";\npackage com.example;\n\nmessage analytics_event_convert_value_v1 {\n  string id = 1;\n}\n"
+  },
+  {
+    "subject": "analytics-event-convert-value",
+    "version": 2,
+    "id": 25,
+    "schemaType": "PROTOBUF",
+    "schema": "syntax = \"proto3\";\npackage com.example;\n\nmessage analytics_event_convert_value {\n  string id = 1;\n}\n"
+  },
+  {
+    "subject": "analytics-event-view-value",
+    "version": 1,
+    "id": 8,
+    "schemaType": "PROTOBUF",
+    "schema": "syntax = \"proto3\";\npackage com.example;\n\nmessage analytics_event_view_value_v1 {\n  string id = 1;\n}\n"
+  },
+  {
+    "subject": "analytics-event-view-value",
+    "version": 2,
+    "id": 21,
+    "schemaType": "PROTOBUF",
+    "schema": "syntax = \"proto3\";\npackage com.example;\n\nmessage analytics_event_view_value {\n  string id = 1;\n}\n"
+  },
+  {
+    "subject": "analytics-event-view-value",
+    "version": 3,
+    "id": 22,
+    "schemaType": "PROTOBUF",
+    "schema": "syntax = \"proto3\";\npackage com.example;\n\nmessage analytics_event_view_value {\n  string id = 1;\n  string name = 2;\n}\n"
+  },
+  {
+    "subject": "analytics-event-view-value",
+    "version": 4,
+    "id": 23,
+    "schemaType": "PROTOBUF",
+    "schema": "syntax = \"proto3\";\npackage com.example;\n\nmessage analytics_event_view_value {\n  string id = 1;\n  string name = 2;\n  int64 timestamp = 3;\n}\n"
+  },
+  {
+    "subject": "analytics-event-view-value",
+    "version": 5,
+    "id": 24,
+    "schemaType": "PROTOBUF",
+    "schema": "syntax = \"proto3\";\npackage com.example;\n\nmessage analytics_event_view_value {\n  string id = 1;\n  string name = 2;\n  int64 timestamp = 3;\n  bool active = 4;\n}\n"
+  },
+  {
+    "subject": "customer-deleted-value",
+    "version": 1,
+    "id": 6,
+    "schema": "{\"type\":\"record\",\"name\":\"customer_deleted_value_v1\",\"fields\":[{\"name\":\"id\",\"type\":\"string\"}]}"
+  },
+  {
+    "subject": "customer-deleted-value",
+    "version": 2,
+    "id": 18,
+    "schema": "{\"type\":\"record\",\"name\":\"customer_deleted_value_v2\",\"fields\":[{\"name\":\"id\",\"type\":\"string\"},{\"name\":\"name\",\"type\":\"string\"}]}"
+  },
+  {
+    "subject": "inventory-updated-value",
+    "version": 1,
+    "id": 5,
+    "schema": "{\"type\":\"record\",\"name\":\"inventory_updated_value_v1\",\"fields\":[{\"name\":\"id\",\"type\":\"string\"}]}"
+  },
+  {
+    "subject": "inventory-updated-value",
+    "version": 2,
+    "id": 16,
+    "schema": "{\"type\":\"record\",\"name\":\"inventory_updated_value_v2\",\"fields\":[{\"name\":\"id\",\"type\":\"string\"},{\"name\":\"name\",\"type\":\"string\"}]}"
+  },
+  {
+    "subject": "inventory-updated-value",
+    "version": 3,
+    "id": 17,
+    "schema": "{\"type\":\"record\",\"name\":\"inventory_updated_value_v3\",\"fields\":[{\"name\":\"id\",\"type\":\"string\"},{\"name\":\"name\",\"type\":\"string\"},{\"name\":\"timestamp\",\"type\":\"string\"}]}"
+  },
+  {
+    "subject": "order-created-value",
+    "version": 1,
+    "id": 2,
+    "schemaType": "JSON",
+    "schema": "{\"$schema\":\"http://json-schema.org/draft-07/schema#\",\"title\":\"order-created-value_v1\",\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"string\"}},\"required\":[\"id\"]}"
+  },
+  {
+    "subject": "order-created-value",
+    "version": 2,
+    "id": 11,
+    "schemaType": "JSON",
+    "schema": "{\"$schema\":\"http://json-schema.org/draft-07/schema#\",\"title\":\"order-created-value_v2\",\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"string\"},\"timestamp\":{\"type\":\"string\"}},\"required\":[\"id\"]}"
+  },
+  {
+    "subject": "order-created-value",
+    "version": 3,
+    "id": 12,
+    "schemaType": "JSON",
+    "schema": "{\"$schema\":\"http://json-schema.org/draft-07/schema#\",\"title\":\"order-created-value_v3\",\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"string\"},\"timestamp\":{\"type\":\"string\"},\"status\":{\"type\":\"string\"}},\"required\":[\"id\"]}"
+  },
+  {
+    "subject": "payment-received-value",
+    "version": 1,
+    "id": 3,
+    "schemaType": "JSON",
+    "schema": "{\"$schema\":\"http://json-schema.org/draft-07/schema#\",\"title\":\"payment-received-value_v1\",\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"string\"}},\"required\":[\"id\"]}"
+  },
+  {
+    "subject": "payment-received-value",
+    "version": 2,
+    "id": 13,
+    "schemaType": "JSON",
+    "schema": "{\"$schema\":\"http://json-schema.org/draft-07/schema#\",\"title\":\"payment-received-value_v2\",\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"string\"},\"timestamp\":{\"type\":\"string\"}},\"required\":[\"id\"]}"
+  },
+  {
+    "subject": "payment-received-value",
+    "version": 3,
+    "id": 14,
+    "schemaType": "JSON",
+    "schema": "{\"$schema\":\"http://json-schema.org/draft-07/schema#\",\"title\":\"payment-received-value_v3\",\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"string\"},\"timestamp\":{\"type\":\"string\"},\"status\":{\"type\":\"string\"}},\"required\":[\"id\"]}"
+  },
+  {
+    "subject": "shipment-created-value",
+    "version": 1,
+    "id": 4,
+    "schema": "{\"type\":\"record\",\"name\":\"shipment_created_value_v1\",\"fields\":[{\"name\":\"id\",\"type\":\"string\"}]}"
+  },
+  {
+    "subject": "shipment-created-value",
+    "version": 2,
+    "id": 15,
+    "schema": "{\"type\":\"record\",\"name\":\"shipment_created_value_v2\",\"fields\":[{\"name\":\"id\",\"type\":\"string\"},{\"name\":\"name\",\"type\":\"string\"}]}"
+  },
+  {
+    "subject": "user-registered-value",
+    "version": 1,
+    "id": 1,
+    "schemaType": "JSON",
+    "schema": "{\"$schema\":\"http://json-schema.org/draft-07/schema#\",\"title\":\"user-registered-value_v1\",\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"string\"}},\"required\":[\"id\"]}"
+  },
+  {
+    "subject": "user-registered-value",
+    "version": 2,
+    "id": 10,
+    "schemaType": "JSON",
+    "schema": "{\"$schema\":\"http://json-schema.org/draft-07/schema#\",\"title\":\"user-registered-value_v2\",\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"string\"},\"timestamp\":{\"type\":\"string\"}},\"required\":[\"id\"]}"
+  }
+]
