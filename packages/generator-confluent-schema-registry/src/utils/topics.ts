@@ -10,48 +10,93 @@ export const getSchemaFileName = (schema: Schema) => {
   return `${schema.subject}.${extension}`;
 };
 
-export const writeTopicToEventCatalog = async ({
+export const writeMessageToEventCatalog = async ({
   pathToCatalog,
-  topic,
+  message,
   rootPath = '',
   serviceId,
+  messageType,
 }: {
   pathToCatalog: string;
-  topic: Schema;
+  message: Schema;
   rootPath?: string;
   serviceId?: string;
+  messageType: 'event' | 'command';
 }) => {
-  const { writeEvent, getEvent, rmEventById, versionEvent, addSchemaToEvent, writeEventToService } = utils(pathToCatalog);
+  const {
+    writeEvent,
+    writeCommand,
+    getCommand,
+    addSchemaToCommand,
+    writeCommandToService,
+    getEvent,
+    versionEvent,
+    versionCommand,
+    addSchemaToEvent,
+    writeEventToService,
+  } = utils(pathToCatalog);
 
-  const schemaFileName = getSchemaFileName(topic);
-  const collection = 'events';
-  let topicPath = join(rootPath, collection, topic.eventId);
+  // Define the message operations mapping with proper types
+  const MESSAGE_OPERATIONS: Record<'event' | 'command', any> = {
+    event: {
+      write: writeEvent,
+      version: versionEvent,
+      get: getEvent,
+      addSchema: addSchemaToEvent,
+      addSchemaToMessage: addSchemaToEvent,
+      writeMessageToService: writeEventToService,
+      collection: 'events',
+    },
+    command: {
+      write: writeCommand,
+      version: versionCommand,
+      get: getCommand,
+      addSchema: addSchemaToCommand,
+      addSchemaToMessage: addSchemaToCommand,
+      writeMessageToService: writeCommandToService,
+      collection: 'commands',
+    },
+  };
 
-  const topicInCatalog = await getEvent(topic.eventId);
-  const { ...previousTopicInformation } = topicInCatalog || {};
+  const {
+    write: writeMessage,
+    version: versionMessage,
+    get: getMessage,
+    addSchema: addSchemaToMessage,
+    collection,
+    writeMessageToService: writeMessageToService,
+  } = MESSAGE_OPERATIONS[messageType];
 
-  if (topicInCatalog) {
-    if (topic.version.toString() !== topicInCatalog.version.toString()) {
-      await versionEvent(topic.eventId);
-      console.log(chalk.cyan(` - Versioned previous topic: ${topic.eventId} (v${topicInCatalog.version})`));
+  const schemaFileName = getSchemaFileName(message);
+  let topicPath = join(rootPath, collection, message.eventId);
+
+  const messageInCatalog = await getMessage(message.eventId);
+  const { ...previousMessageInformation } = messageInCatalog || {};
+
+  if (messageInCatalog) {
+    if (message.version.toString() !== messageInCatalog.version.toString()) {
+      await versionMessage(message.eventId);
+      console.log(chalk.cyan(` - Versioned previous message: ${message.eventId} (v${messageInCatalog.version})`));
     } else {
       // await rmEventById(topic.eventId, topic.version.toString());
     }
   }
 
-  const event = {
-    ...previousTopicInformation,
+  const messageToWrite = {
+    ...previousMessageInformation,
 
     // these fields are always going to be the same
-    id: topic.eventId,
-    name: topic.eventId,
-    version: topic.version.toString(),
+    id: message.eventId,
+    name: message.eventId,
+    version: message.version.toString(),
     schemaPath: schemaFileName,
 
+    ...(message.topic ? { channels: [{ id: message.topic, version: '0.0.1' }] } : {}),
+
     // If the topic does not already exist we need to add fields for new documented topics
-    ...(!topicInCatalog
+    ...(!messageInCatalog
       ? {
-          markdown: getMarkdownForSchema(topic),
+          markdown: getMarkdownForSchema(message),
           badges: [{ backgroundColor: 'green', textColor: 'white', content: 'Kafka Topic' }],
           summary: 'Kafka Topic from Confluent Schema Registry',
         }
@@ -59,18 +104,21 @@ export const writeTopicToEventCatalog = async ({
   };
 
   if (serviceId) {
-    await writeEventToService(
-      event,
+    await writeMessageToService(
+      messageToWrite,
       { id: serviceId },
-      { override: topicInCatalog?.version.toString() === topic.version.toString() }
+      { override: messageInCatalog?.version.toString() === message.version.toString() }
     );
   } else {
-    await writeEvent(event, { path: topicPath, override: topicInCatalog?.version.toString() === topic.version.toString() });
+    await writeMessage(messageToWrite, {
+      path: topicPath,
+      override: messageInCatalog?.version.toString() === message.version.toString(),
+    });
   }
 
-  await addSchemaToEvent(topic.eventId, { fileName: schemaFileName, schema: topic.schema });
+  await addSchemaToMessage(message.eventId, { fileName: schemaFileName, schema: message.schema });
 
-  if (!topic.latestVersion) {
-    await versionEvent(topic.eventId);
+  if (!message.latestVersion) {
+    await versionMessage(message.eventId);
   }
 };

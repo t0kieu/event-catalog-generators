@@ -35,6 +35,13 @@
     "schema": "syntax = \"proto3\";\npackage com.example;\n\nmessage analytics_event_convert_value {\n  string id = 1;\n}\n"
   },
   {
+    "subject": "analytics-capture-value",
+    "version": 1,
+    "id": 26,
+    "schemaType": "PROTOBUF",
+    "schema": "syntax = \"proto3\";\npackage com.example;\n\nmessage analytics_capture_value {\n  string id = 1;\n}\n"
+  },
+  {
     "subject": "analytics-event-view-value",
     "version": 1,
     "id": 8,
