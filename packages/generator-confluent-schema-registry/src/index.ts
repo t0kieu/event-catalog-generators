@@ -7,13 +7,13 @@ import pkgJSON from '../package.json';
 import path, { join } from 'path';
 import { EventCatalogConfig, GeneratorProps, Schema } from './types';
 import { getSchemasFromRegistry, getLatestVersionFromSubject } from './lib/confluent';
-import { writeTopicToEventCatalog } from './utils/topics';
+import { writeMessageToEventCatalog } from './utils/topics';
 import { getMarkdownForService } from './utils/markdown';
 
 /////////////////////////////////////////////////
 
 export default async (config: EventCatalogConfig, options: GeneratorProps) => {
-  const SCHEMA_REGISTRY_URL = options.url;
+  const SCHEMA_REGISTRY_URL = options.schemaRegistryUrl;
   const INCLUDE_ALL_VERSIONS = options.includeAllVersions;
 
   if (!process.env.PROJECT_DIR) {
@@ -31,8 +31,17 @@ export default async (config: EventCatalogConfig, options: GeneratorProps) => {
     throw new Error('Please provide catalog url (env variable PROJECT_DIR)');
   }
 
-  const { writeService, getService, versionService, getDomain, versionDomain, writeDomain, addServiceToDomain } =
-    utils(eventCatalogDirectory);
+  const {
+    writeService,
+    getService,
+    versionService,
+    getDomain,
+    versionDomain,
+    writeDomain,
+    addServiceToDomain,
+    writeChannel,
+    getChannel,
+  } = utils(eventCatalogDirectory);
 
   // Check for license and package update
   await checkLicense(options.licenseKey);
@@ -55,7 +64,7 @@ export default async (config: EventCatalogConfig, options: GeneratorProps) => {
   console.log(chalk.green(`Fetching latest version for each topic...`));
   // Get the latest version for each subject (schema), and hydrate the latestVersion property
   for (const subject in groupedSchemas) {
-    const latestVersion = await getLatestVersionFromSubject(options.url, subject);
+    const latestVersion = await getLatestVersionFromSubject(options.schemaRegistryUrl, subject);
     // Find the schema in the array that has the same id as the latestVersion.id
     const schema = groupedSchemas[subject].find((s: Schema) => s.version === latestVersion.version);
     if (schema) {
@@ -63,11 +72,11 @@ export default async (config: EventCatalogConfig, options: GeneratorProps) => {
     }
   }
 
-  const allTopicsInSchemaRegistry = Object.keys(groupedSchemas);
+  const allMessagesInSchemaRegistry = Object.keys(groupedSchemas);
 
   // Document all the services
   const services = options.services || [];
-  const documentTopicsWithServices = services.length > 0;
+  const documentMessagesWithService = services.length > 0;
 
   // Create/manage domain if one is configured
   if (options.domain) {
@@ -100,11 +109,42 @@ export default async (config: EventCatalogConfig, options: GeneratorProps) => {
     }
   }
 
-  if (documentTopicsWithServices) {
+  if (options.topics) {
+    for (const topic of options.topics) {
+      const { id: topicId, name: topicName, address: topicAddress } = topic;
+
+      const channel = await getChannel(topicId);
+      const { ...previousChannelInformation } = channel || {};
+      const hasPreviousChannelInformation = Object.keys(previousChannelInformation).length > 0;
+
+      await writeChannel(
+        {
+          // Write any previous information if we have it
+          ...previousChannelInformation,
+
+          id: topicId,
+          name: topicName,
+          address: topicAddress,
+          ...(!hasPreviousChannelInformation
+            ? {
+                protocols: ['kafka'],
+                version: '0.0.1',
+                markdown: '<ChannelInformation /> \n <NodeGraph />',
+              }
+            : {}),
+        },
+        { override: true }
+      );
+
+      console.log(chalk.cyan(` - Topic (EventCatalog Channel) (${topicName}) created`));
+    }
+  }
+
+  if (documentMessagesWithService) {
     for (const service of services) {
-      // Try and find the given topics to match against the service
-      const sends = filterSchemas(groupedSchemas, service.sends || []).filter((topic) => topic !== undefined);
-      const receives = filterSchemas(groupedSchemas, service.receives || []).filter((topic) => topic !== undefined);
+      // Try and find the given messages to match against the service
+      const sends = filterSchemas(groupedSchemas, service.sends || []).filter((message) => message !== undefined);
+      const receives = filterSchemas(groupedSchemas, service.receives || []).filter((message) => message !== undefined);
 
       const serviceInCatalog = await getService(service.id);
       const { sends: previousSends, receives: previousReceives, ...previousServiceInformation } = serviceInCatalog || {};
@@ -143,32 +183,35 @@ export default async (config: EventCatalogConfig, options: GeneratorProps) => {
 
       await writeService(serviceToWrite, { path: servicePath, override: serviceInCatalog?.version === service.version });
 
-      const topics = [...sends, ...receives];
-      for (const topic of topics) {
-        await writeTopicToEventCatalog({
+      const messages = [...sends, ...receives];
+
+      for (const message of messages) {
+        await writeMessageToEventCatalog({
           pathToCatalog: eventCatalogDirectory,
-          topic,
+          message,
           rootPath: pathToService,
           serviceId: service.id,
+          messageType: message.messageType || 'event',
         });
-        console.log(chalk.blue(`  - Processed ${topic.eventId} (v${topic.version}), added schema to event catalog`));
+        console.log(chalk.blue(`  - Processed ${message.eventId} (v${message.version}), added schema to event catalog`));
       }
 
       console.log(chalk.blue(`  - Processed ${service.id} (v${service.version}), added service to event catalog`));
     }
   } else {
     // Just document all the topics
-    for (const subject of allTopicsInSchemaRegistry) {
-      const topics = groupedSchemas[subject];
+    for (const subject of allMessagesInSchemaRegistry) {
+      const messages = groupedSchemas[subject];
 
-      const topicsToWriteToEventCatalog = topics.filter((v: Schema) => (INCLUDE_ALL_VERSIONS ? true : v.latestVersion));
-      for (const topic of topicsToWriteToEventCatalog) {
-        await writeTopicToEventCatalog({
+      const messagesToWriteToEventCatalog = messages.filter((v: Schema) => (INCLUDE_ALL_VERSIONS ? true : v.latestVersion));
+      for (const message of messagesToWriteToEventCatalog) {
+        await writeMessageToEventCatalog({
           pathToCatalog: eventCatalogDirectory,
-          topic,
+          message,
           rootPath: '../',
+          messageType: 'event',
         });
-        console.log(chalk.blue(`  - Processed ${topic.eventId} (v${topic.version}), added schema to event catalog`));
+        console.log(chalk.blue(`  - Processed ${message.eventId} (v${message.version}), added schema to event catalog`));
       }
     }
   }

@@ -8,7 +8,7 @@
 
 <img alt="header" src="https://github.com/event-catalog/generators/blob/main/images/confluent.png?raw=true" />
 
-<h4>Features: Generate EventCatalog from your Confluent Schema Registry. Assign topics to services and domains. Sync with registry and more... </h4>
+<h4>Features: Generate EventCatalog from your Confluent Schema Registry. Sync your message schemas to services and domains, define topics and much more. </h4>
 
 [Read the Docs](https://eventcatalog.dev/) | [Edit the Docs](https://github.com/event-catalog/docs) | [View Demo](https://demo.eventcatalog.dev/docs)
 
@@ -18,11 +18,12 @@
 
 # Core Features
 
-- 📃 Document domains, services and messages from your Confluent Schema Registry ([example](https://github.com/event-catalog/generators/tree/main/examples/generator-confluent-schema-registry))
-- 📊 Visualise your architecture ([demo](https://demo.eventcatalog.dev/visualiser))
+- 📃 Sync your message schemas to services and domains from your Confluent Schema Registry ([example](https://github.com/event-catalog/generators/tree/main/examples/generator-confluent-schema-registry))
+- ⭐ Go beyond a schema registry. Add semantic meaning to your schemas, business logic and much more. Help you developers understand the message schemas and their relationships.
+- 📊 Visualise services and topics in your architecture ([demo](https://demo.eventcatalog.dev/visualiser))
 - ⭐ Download your message schemas from EventCatalog (e.g Avro, Protobuf, JSON) ([demo](https://demo.eventcatalog.dev/docs/events/InventoryAdjusted/0.0.4))
 - 💅 Custom MDX components ([read more](https://eventcatalog.dev/docs/development/components/using-components))
-- 🗄️ Auto versioning of your domains, services and messages, in sync with your registry versions
+- 🗄️ Auto versioning of your schemas in EventCatalog.
 - ⭐ [Document your channels and protocols](https://www.eventcatalog.dev/docs/development/plugins/async-api/features#mapping-channels-into-eventcatalog)
 - ⭐ [Document queries, commands and events with your AsyncAPI file using EventCatalog extensions](https://www.eventcatalog.dev/docs/development/plugins/async-api/features#mapping-messages-events-commands-or-queries)
 - ⭐ Discoverability feature (search, filter and more) ([demo](https://demo.eventcatalog.dev/discover/events))
@@ -36,52 +37,73 @@ EventCatalog supports [generators](https://www.eventcatalog.dev/docs/development
 
 Generators are scripts are run to pre build to generate content in your catalog. Generators can use the [EventCatalog SDK](https://www.eventcatalog.dev/docs/sdk).
 
-With this Confluent Schema Registry plugin you can connect your schema registries to your catalog. You can map your topics to your domains and services and also filter (suffix, prefix, exact matching) for your topics.
+With this Confluent Schema Registry plugin you can connect your schema registries to your catalog. You can map events and commands to your schemas and keep them in sync with your documentation. You can also define topics and visualize your architecture.
 
-This is done by defining your generators in your `eventcatlaog.config.js` file.
+This is done by defining your generators in your `eventcatalog.config.js` file.
 
 ```js
 ...
 generators: [
+    // Basic example mapping schemas from confluent schema registry to services without any topics
     [
-      '@eventcatalog/generator-eventbridge',
+      '@eventcatalog/generator-confluent-schema-registry',
       {
         // The url of your Confluent Schema Registry
-        url: 'http://localhost:8081',
+        schemaRegistryUrl: 'http://localhost:8081',
         services: [
-          // Maps exact events to the service
-          { id: 'Orders Service', version: '1.0.0', sends: [{ topic: "app.orders.created"}], receives:[{ topic: "app.orders.updated"}] },
-          // Filter by topic (all topics that match the filter get assigned to the service). This example shows any event matching the topic
-          // "app.orders.created" will be assigned to the inventory service. The inventory service will publish these events.
-          { id: 'Inventory Service', version: '1.0.0', sends: [{ prefix: "app.orders-"}], receives:[{ suffix: "app.inventory-"}] },
-          // This service sends events that match the SchemaName prefixing myapp, and will receive events that end with Payment
-          { id: 'Payment Service', version: '1.0.0', sends: [{ prefix: "app.orders-"}], receives:[{ suffix: "app.inventory-" }] }
+          // Maps the exact schema names the service
+          // In this example the Orders Service will publish the app.orders.created event and receive the app.orders.updated and app.orders.create commands
+          { id: 'Orders Service', version: '1.0.0', sends: [{ events: ["app.orders.created"]}], receives:[{ events: ["app.orders.updated"]}, { commands: ["app.orders.create"]}] },
+          // Filter by message (all messages that match the filter get assigned to the service). This example shows any event matching the topic
+          { id: 'Inventory Service', version: '1.0.0', sends: [{ events: [{ prefix: "app.orders-"}]}], receives:[{ events: [{ suffix: "app.inventory-"}] }] },
+          // Filter by message name (all messages that match the filter get assigned to the service). This example shows any event matching the topic
+          { id: 'Payment Service', version: '1.0.0', sends: [{ events: [{ prefix: "app.orders-"}]}], receives:[{ events: [{ suffix: "app.inventory-" }] }] }
         ],
         // All the services are assigned to this domain
         domain: { id: 'orders', name: 'Orders', version: '0.0.1' },
       },
     ],
-    // Example of saving all topics directly into EventCatalog without services or domains
-    // All topics in registry will be added to the Catalog.
+    // Example of mapping topics to services and domains
     [
-      '@eventcatalog/generator-eventbridge',
+      '@eventcatalog/generator-confluent-schema-registry',
       {
         // The url of your Confluent Schema Registry
-        url: 'http://localhost:8081',
+        schemaRegistryUrl: 'http://localhost:8081',
+        topics: [
+          { id: 'orders', name: 'Orders Kafka Topic', address: 'broker1.example.com:9092' },
+          { id: 'inventory', name: 'Inventory Kafka Topic', address: 'broker2.example.com:9092' },
+        ],
+        services: [
+          // Maps the exact schema names the service
+          // In this example the Orders Service will publish the app.orders.created event and receive the app.orders.updated and app.orders.create commands
+          { id: 'Orders Service', version: '1.0.0', sends: [{ events: ["app.orders.created"], topic: 'orders' }], receives:[{ events: ["app.orders.updated"], topic: 'orders' }, { commands: ["app.orders.create"], topic: 'orders' }] },
+          // Filter by message (all messages that match the filter get assigned to the service). This example shows any event matching the topic
+          { id: 'Inventory Service', version: '1.0.0', sends: [{ events: [{ prefix: "app.orders-"}, { topic: 'inventory' }] }], receives:[{ events: [{ suffix: "app.inventory-"}] }] },
+          // Filter by message name (all messages that match the filter get assigned to the service). This example shows any event matching the topic
+          { id: 'Payment Service', version: '1.0.0', sends: [{ events: [{ prefix: "app.orders-"}, { topic: 'inventory' }] }], receives:[{ events: [{ suffix: "app.inventory-" }] }] }
+        ],
+        // All the services are assigned to this domain
+        domain: { id: 'orders', name: 'Orders', version: '0.0.1' },
+      },
+    ],
+    // This example saves all messages (schemas) from the registry to EventCatalog without mapping to services or domains
+    [
+      '@eventcatalog/generator-confluent-schema-registry',
+      {
+        // The url of your Confluent Schema Registry
+        schemaRegistryUrl: 'http://localhost:8081',
       },
     ],
   ],
 ...
+
 ```
 
-In this example we have two types of usecases for the generator:
+In the example above we have three types of usecases for the generator:
 
-1. Map topics to services and domains using custom filters.
-2. Add all topics to EventCatalog regardless of the service or domain.
-
-````
-
-This is example schmeas will get fetched from the registry, and applied to your defined service and domain. When schema versions update in the registry, the generator will update the version in the catalog.
+1. Map schemas to events/commands and assign them to producers and consumers (services). Group services into a domain or subdomain.
+1. Same as number 1, but we also create topics in EventCatalog (channels) and document them.
+1. Example number 3, we dont' assign any schemas to services or topics. We just add all schemas to EventCatalog regardless of the service or domain.
 
 # Getting started
 
@@ -93,7 +115,7 @@ _Make sure you are on the latest version of EventCatalog_.
 
 ```sh
 @eventcatalog/generator-confluent-schema-registry
-````
+```
 
 2. Configure your `eventcatalog.config.js` file [(see example)](https://github.com/event-catalog/generators/tree/main/examples/generator-confluent-schema-registry/blob/main/eventcatalog.config.js)
 
