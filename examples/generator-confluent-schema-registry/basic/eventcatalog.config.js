@@ -32,13 +32,22 @@ export default {
     [
       '@eventcatalog/generator-confluent-schema-registry',
       {
-        url: 'http://localhost:8081',
+        registryUrl: 'http://localhost:8081',
+        topics: [{
+          id: 'orders-topic',
+          name: 'Orders Topic',
+          address: 'kafka-cluster-bootstrap:9092',
+        }, {
+          id: 'inventory-topic',
+          name: 'Inventory Topic',
+          address: 'kafka-cluster-bootstrap:9092',
+        }],
         services: [
           {
             id: 'Orders Service',
             version: '1.0.0',
-            sends: [{ topic: ['analytics-event-view'] }],
-            receives: [{ prefix: ['customer-'] }],
+            sends: [{ events: ['order-created'], topic: 'orders-topic', commands: ['order-updated'] }],
+            receives: [{ events: [{ prefix: ['inventory-'] }], topic: 'inventory-topic' }],
           },
         ],
       },
