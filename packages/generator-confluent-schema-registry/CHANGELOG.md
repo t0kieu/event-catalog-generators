@@ -1,5 +1,11 @@
 # @eventcatalog/generator-confluent-schema-registry
 
+## 0.0.4
+
+### Patch Changes
+
+- d6e1aa2: feat(plugin): updated confluent plugin
+
 ## 0.0.3
 
 ### Patch Changes
