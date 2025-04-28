@@ -8,6 +8,7 @@ import path, { join } from 'path';
 import { EventCatalogConfig, GeneratorProps, Schema } from './types';
 import { getSchemasFromRegistry, getLatestVersionFromSubject } from './lib/confluent';
 import { writeTopicToEventCatalog } from './utils/topics';
+import { getMarkdownForService } from './utils/markdown';
 
 /////////////////////////////////////////////////
 
@@ -132,8 +133,8 @@ export default async (config: EventCatalogConfig, options: GeneratorProps) => {
         // If the service does not already exist we need to add fields for new documented topics
         ...(!serviceInCatalog
           ? {
-              markdown: '',
-              summary: '',
+              markdown: getMarkdownForService(service),
+              summary: `${service.id} Service`,
             }
           : {}),
       };

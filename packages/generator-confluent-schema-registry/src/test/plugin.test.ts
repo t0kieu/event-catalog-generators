@@ -237,6 +237,7 @@ message analytics_event_view_value {
           version: '1.0.0',
           sends: [{ id: 'analytics-event-view', version: '5' }],
           receives: [{ id: 'customer-deleted', version: '1' }],
+          markdown: expect.stringContaining('<NodeGraph />'),
         })
       );
     });
