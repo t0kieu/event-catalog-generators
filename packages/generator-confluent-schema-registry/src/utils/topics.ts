@@ -3,7 +3,7 @@ import utils from '@eventcatalog/sdk';
 import chalk from 'chalk';
 import { getMarkdownForSchema } from './markdown';
 import { join } from 'path';
-const getSchemaFileName = (schema: Schema) => {
+export const getSchemaFileName = (schema: Schema) => {
   // default is 'AVRO'
   const schemaType = schema.schemaType || SchemaType.AVRO;
   const extension = schemaType === SchemaType.PROTOBUF ? 'proto' : schemaType.toLowerCase();
@@ -27,19 +27,13 @@ export const writeTopicToEventCatalog = async ({
   const collection = 'events';
   let topicPath = join(rootPath, collection, topic.eventId);
 
-  console.log('ROOT PATH', rootPath);
-  console.log('TOPIC PATH', topicPath);
-  console.log('TOPIC', topic);
-  // versionEvent
-
   const topicInCatalog = await getEvent(topic.eventId);
   const { ...previousTopicInformation } = topicInCatalog || {};
 
   if (topicInCatalog) {
     if (topic.version.toString() !== topicInCatalog.version.toString()) {
-      console.log('VERSION MISMATCH', topic.version.toString(), topicInCatalog.version.toString());
       await versionEvent(topic.eventId);
-      console.log(chalk.cyan(` - Versioned previous topic: (v${topicInCatalog.version})`));
+      console.log(chalk.cyan(` - Versioned previous topic: ${topic.eventId} (v${topicInCatalog.version})`));
     } else {
       // await rmEventById(topic.eventId, topic.version.toString());
     }
