@@ -1,10 +1,16 @@
 export type EventCatalogConfig = any;
 
+export type MessageType = 'event' | 'command';
+
 export type Filter = {
-  topic?: string | string[];
-  prefix?: string | string[];
-  suffix?: string | string[];
-  includes?: string | string[];
+  events?: string | string[] | { prefix?: string | string[]; suffix?: string | string[]; includes?: string | string[] };
+  commands?: string | string[] | { prefix?: string | string[]; suffix?: string | string[]; includes?: string | string[] };
+  topic?: string;
+  // id: number;
+  // schemaType: SchemaType;
+  // schema: string;
+  // latestVersion?: boolean;
+  // messageType?: MessageType;
 };
 
 export type Service = {
@@ -28,6 +34,8 @@ export type Schema = {
   schemaType: SchemaType;
   schema: string;
   latestVersion?: boolean;
+  messageType?: MessageType;
+  topic?: string;
 };
 
 export type Domain = {
@@ -36,12 +44,18 @@ export type Domain = {
   version: string;
 };
 
+export type Channel = {
+  id: string;
+  name: string;
+  address: string;
+};
+
 export type GeneratorProps = {
   licenseKey?: string;
   /**
    * URL of the Confluent Schema Registry
    */
-  url: string;
+  schemaRegistryUrl: string;
 
   /**
    * Include all versions of the schemas in the catalog
@@ -57,4 +71,6 @@ export type GeneratorProps = {
    * Optional domain to add to the catalog and attach the services too
    */
   domain?: Domain;
+
+  topics?: Channel[];
 };

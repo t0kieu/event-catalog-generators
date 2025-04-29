@@ -66,8 +66,8 @@ describe('Confluent Schema Registry EventCatalog Plugin', () => {
     await expect(plugin(config, {})).rejects.toThrow('Please provide a url for the Confluent Schema Registry');
   });
 
-  describe('when no services are configured (topics are written to the root of the catalog)', () => {
-    it('if the topic already exists in the catalog data is persisted (e.g markdown, badges, summary, channels, deprecated)', async () => {
+  describe('when no services are configured (messages (as events) are written to the root of the catalog)', () => {
+    it('if the event already exists in the catalog data is persisted (e.g markdown, badges, summary, channels, deprecated)', async () => {
       const { writeEvent, getEvent } = utils(catalogDir);
 
       await writeEvent({
@@ -81,7 +81,7 @@ describe('Confluent Schema Registry EventCatalog Plugin', () => {
       });
 
       await plugin(config, {
-        url: 'http://localhost:8081',
+        schemaRegistryUrl: 'http://localhost:8081',
       });
 
       const event = await getEvent('analytics-event-view', '5');
@@ -91,7 +91,7 @@ describe('Confluent Schema Registry EventCatalog Plugin', () => {
       expect(event.channels).toEqual([{ id: 'analytics-event-view', version: '5' }]);
     });
 
-    it('if the topic already exists in the catalog and the versions are the same, but the schema is different, the schema is updated', async () => {
+    it('if the event already exists in the catalog and the versions are the same, but the schema is different, the schema is updated', async () => {
       const { writeEvent, addSchemaToEvent } = utils(catalogDir);
 
       await writeEvent({
@@ -110,7 +110,7 @@ describe('Confluent Schema Registry EventCatalog Plugin', () => {
       });
 
       await plugin(config, {
-        url: 'http://localhost:8081',
+        schemaRegistryUrl: 'http://localhost:8081',
       });
 
       // Check the schema is updated
@@ -131,15 +131,15 @@ message analytics_event_view_value {
 `);
 
       await plugin(config, {
-        url: 'http://localhost:8081',
+        schemaRegistryUrl: 'http://localhost:8081',
       });
     });
 
-    it('if the topic does not exist in the catalog, default values are given for the badges, summary and markdown', async () => {
+    it('if the event does not exist in the catalog, default values are given for the badges, summary and markdown', async () => {
       const { getEvent } = utils(catalogDir);
 
       await plugin(config, {
-        url: 'http://localhost:8081',
+        schemaRegistryUrl: 'http://localhost:8081',
         includeAllVersions: false,
       });
 
@@ -149,11 +149,11 @@ message analytics_event_view_value {
       expect(event.summary).toEqual('Kafka Topic from Confluent Schema Registry');
     });
 
-    it('all topics are added to the catalog (within the events directory)', async () => {
+    it('all schemas are added to the catalog as events (within the events directory, when no services are configured)', async () => {
       const { getEvent } = utils(catalogDir);
 
       await plugin(config, {
-        url: 'http://localhost:8081',
+        schemaRegistryUrl: 'http://localhost:8081',
       });
 
       const event = await getEvent('analytics-event-view');
@@ -163,11 +163,11 @@ message analytics_event_view_value {
       expect(eventsFolder).toBeTruthy();
     });
 
-    it('when includeAllVersions is false, only the latest version of the topic is added to the catalog (within the events directory)', async () => {
+    it('when includeAllVersions is false, only the latest version of the message is added to the catalog (within the events directory)', async () => {
       const { getEvent } = utils(catalogDir);
 
       await plugin(config, {
-        url: 'http://localhost:8081',
+        schemaRegistryUrl: 'http://localhost:8081',
         includeAllVersions: false,
       });
 
@@ -197,7 +197,7 @@ message analytics_event_view_value {
       const { getEvent } = utils(catalogDir);
 
       await plugin(config, {
-        url: 'http://localhost:8081',
+        schemaRegistryUrl: 'http://localhost:8081',
         includeAllVersions: true,
       });
 
@@ -215,214 +215,99 @@ message analytics_event_view_value {
   });
 
   describe('services', () => {
-    it('when a service is configured, the service is added to the catalog with the configured topics as publishers and subscribers', async () => {
-      const { getService } = utils(catalogDir);
-
-      await plugin(config, {
-        url: 'http://localhost:8081',
-        services: [
-          {
-            id: 'Orders Service',
-            version: '1.0.0',
-            sends: [{ topic: 'analytics-event-view' }],
-            receives: [{ topic: 'customer-deleted' }],
-          },
-        ],
-      });
-
-      const service = await getService('Orders Service', '1.0.0');
-      expect(service).toEqual(
-        expect.objectContaining({
-          id: 'Orders Service',
-          version: '1.0.0',
-          sends: [{ id: 'analytics-event-view', version: '5' }],
-          receives: [{ id: 'customer-deleted', version: '1' }],
-        })
-      );
-    });
-
-    it('when multiple services are configured, the services are added to the catalog with the configured topics as publishers and subscribers', async () => {
-      const { getService } = utils(catalogDir);
-
-      await plugin(config, {
-        url: 'http://localhost:8081',
-        services: [
-          {
-            id: 'Orders Service',
-            version: '1.0.0',
-            sends: [{ topic: 'analytics-event-view' }],
-            receives: [{ topic: 'customer-deleted' }],
-          },
-          {
-            id: 'Customers Service',
-            version: '1.0.0',
-            sends: [{ topic: 'order-created' }],
-            receives: [{ topic: 'customer-deleted' }],
-          },
-        ],
-      });
-
-      const ordersService = await getService('Orders Service', '1.0.0');
-      expect(ordersService).toEqual(
-        expect.objectContaining({
-          id: 'Orders Service',
-          version: '1.0.0',
-          sends: [{ id: 'analytics-event-view', version: '5' }],
-          receives: [{ id: 'customer-deleted', version: '1' }],
-        })
-      );
-
-      const customersService = await getService('Customers Service', '1.0.0');
-      expect(customersService).toEqual(
-        expect.objectContaining({
-          id: 'Customers Service',
-          version: '1.0.0',
-          sends: [{ id: 'order-created', version: '1' }],
-          receives: [{ id: 'customer-deleted', version: '1' }],
-        })
-      );
-
-      // Verify that the events are added to the service folder
-      const eventsFolder = await existsSync(join(catalogDir, 'services', 'Orders Service', 'events'));
-      expect(eventsFolder).toBeTruthy();
-
-      // const orderCreatedFile = await existsSync(join(catalogDir, 'services', 'Orders Service', 'events', 'order-created', 'index.mdx'));
-      // expect(orderCreatedFile).toBeTruthy();
-    });
-
-    it('when the given topics are an array, the service is added to the catalog with the configured topics as publishers and subscribers', async () => {
-      const { getService } = utils(catalogDir);
-
-      await plugin(config, {
-        url: 'http://localhost:8081',
-        services: [
-          {
-            id: 'Orders Service',
-            version: '1.0.0',
-            sends: [{ topic: ['analytics-event-view', 'customer-deleted'] }],
-            receives: [{ topic: ['customer-deleted'] }],
-          },
-        ],
-      });
-
-      const service = await getService('Orders Service', '1.0.0');
-      expect(service).toEqual(
-        expect.objectContaining({
-          id: 'Orders Service',
-          version: '1.0.0',
-          sends: [
-            { id: 'analytics-event-view', version: '5' },
-            { id: 'customer-deleted', version: '1' },
-          ],
-          receives: [{ id: 'customer-deleted', version: '1' }],
-        })
-      );
-    });
-
-    it('when the service already exists in the catalog, the service information is persisted (e.g markdown, badges, summary) but the sends and receives are updated', async () => {
-      const { writeService, getService } = utils(catalogDir);
-
-      await writeService({
-        id: 'Orders Service',
-        version: '1.0.0',
-        name: 'Orders Service',
-        markdown: 'This markdown is persisted',
-        badges: [{ backgroundColor: 'red', textColor: 'white', content: 'Custom Badge' }],
-        summary: 'This is custom summary',
-        sends: [{ id: 'this-topic-is-removed', version: '1' }],
-        receives: [{ id: 'this-topic-is-removed', version: '1' }],
-        owners: ['John Doe', 'Jane Doe'],
-      });
-
-      await plugin(config, {
-        url: 'http://localhost:8081',
-        services: [
-          {
-            id: 'Orders Service',
-            version: '1.0.0',
-            sends: [{ topic: ['analytics-event-view', 'customer-deleted'] }],
-            receives: [{ topic: ['customer-deleted'] }],
-          },
-        ],
-      });
-
-      const service = await getService('Orders Service', '1.0.0');
-      expect(service).toEqual(
-        expect.objectContaining({
-          id: 'Orders Service',
-          version: '1.0.0',
-          markdown: 'This markdown is persisted',
-          badges: [{ backgroundColor: 'red', textColor: 'white', content: 'Custom Badge' }],
-          summary: 'This is custom summary',
-          sends: [
-            { id: 'analytics-event-view', version: '5' },
-            { id: 'customer-deleted', version: '1' },
-          ],
-          receives: [{ id: 'customer-deleted', version: '1' }],
-          owners: ['John Doe', 'Jane Doe'],
-        })
-      );
-    });
-
-    it('when the service already exists in the catalog, but the versions are different, the service in the catalog is versioned', async () => {
-      const { writeService, getService } = utils(catalogDir);
-
-      await writeService({
-        id: 'Orders Service',
-        version: '1.0.0',
-        name: 'Orders Service',
-        markdown: 'This markdown is persisted',
-        badges: [{ backgroundColor: 'red', textColor: 'white', content: 'Custom Badge' }],
-        summary: 'This is custom summary',
-        sends: [{ id: 'this-topic-is-saved-on-version-1', version: '1' }],
-        receives: [{ id: 'this-topic-is-saved-on-version-1', version: '1' }],
-      });
-
-      await plugin(config, {
-        url: 'http://localhost:8081',
-        services: [
-          {
-            id: 'Orders Service',
-            version: '2.0.0',
-            sends: [{ topic: ['analytics-event-view', 'customer-deleted'] }],
-            receives: [{ topic: ['customer-deleted'] }],
-          },
-        ],
-      });
-
-      const oldService = await getService('Orders Service', '1.0.0');
-      expect(oldService).toEqual(
-        expect.objectContaining({
-          id: 'Orders Service',
-          version: '1.0.0',
-          markdown: 'This markdown is persisted',
-          badges: [{ backgroundColor: 'red', textColor: 'white', content: 'Custom Badge' }],
-          summary: 'This is custom summary',
-          sends: [{ id: 'this-topic-is-saved-on-version-1', version: '1' }],
-          receives: [{ id: 'this-topic-is-saved-on-version-1', version: '1' }],
-        })
-      );
-
-      const newService = await getService('Orders Service', '2.0.0');
-      expect(newService).toEqual(
-        expect.objectContaining({
-          id: 'Orders Service',
-          version: '2.0.0',
-        })
-      );
-
-      // Make sure versioned folder exists
-      const versionedFolder = await existsSync(join(catalogDir, 'services', 'Orders Service', 'versioned'));
-      expect(versionedFolder).toBeTruthy();
-    });
-
-    describe('publishers and subscribers with filters', () => {
-      it('when a prefix filter is in the service config, the topics that match the prefix are added to the service', async () => {
+    describe('with no topics configured', () => {
+      it('when a service is configured, the service is added to the catalog with the configured messages (events or commands) as publishers and subscribers', async () => {
         const { getService } = utils(catalogDir);
 
         await plugin(config, {
-          url: 'http://localhost:8081',
-          services: [{ id: 'Orders Service', version: '1.0.0', sends: [{ prefix: 'analytics-' }] }],
+          schemaRegistryUrl: 'http://localhost:8081',
+          services: [
+            {
+              id: 'Orders Service',
+              version: '1.0.0',
+              sends: [{ events: ['analytics-event-view'] }],
+              receives: [{ events: ['customer-deleted'], commands: ['analytics-capture'] }],
+            },
+          ],
+        });
+
+        const service = await getService('Orders Service', '1.0.0');
+        expect(service).toEqual(
+          expect.objectContaining({
+            id: 'Orders Service',
+            version: '1.0.0',
+            sends: [{ id: 'analytics-event-view', version: '5' }],
+            receives: [
+              { id: 'analytics-capture', version: '1' },
+              { id: 'customer-deleted', version: '1' },
+            ],
+            markdown: expect.stringContaining('<NodeGraph />'),
+          })
+        );
+      });
+
+      it('when multiple services are configured, the services are added to the catalog with the configured messages (events or commands) as publishers and subscribers', async () => {
+        const { getService } = utils(catalogDir);
+
+        await plugin(config, {
+          schemaRegistryUrl: 'http://localhost:8081',
+          services: [
+            {
+              id: 'Orders Service',
+              version: '1.0.0',
+              sends: [{ events: 'analytics-event-view' }],
+              receives: [{ events: 'customer-deleted' }],
+            },
+            {
+              id: 'Customers Service',
+              version: '1.0.0',
+              sends: [{ events: 'order-created' }],
+              receives: [{ events: 'customer-deleted' }],
+            },
+          ],
+        });
+
+        const ordersService = await getService('Orders Service', '1.0.0');
+        expect(ordersService).toEqual(
+          expect.objectContaining({
+            id: 'Orders Service',
+            version: '1.0.0',
+            sends: [{ id: 'analytics-event-view', version: '5' }],
+            receives: [{ id: 'customer-deleted', version: '1' }],
+          })
+        );
+
+        const customersService = await getService('Customers Service', '1.0.0');
+        expect(customersService).toEqual(
+          expect.objectContaining({
+            id: 'Customers Service',
+            version: '1.0.0',
+            sends: [{ id: 'order-created', version: '1' }],
+            receives: [{ id: 'customer-deleted', version: '1' }],
+          })
+        );
+
+        // Verify that the events are added to the service folder
+        const eventsFolder = await existsSync(join(catalogDir, 'services', 'Orders Service', 'events'));
+        expect(eventsFolder).toBeTruthy();
+
+        // const orderCreatedFile = await existsSync(join(catalogDir, 'services', 'Orders Service', 'events', 'order-created', 'index.mdx'));
+        // expect(orderCreatedFile).toBeTruthy();
+      });
+
+      it('when the given messages are an array, the service is added to the catalog with the configured messages as publishers and subscribers', async () => {
+        const { getService } = utils(catalogDir);
+
+        await plugin(config, {
+          schemaRegistryUrl: 'http://localhost:8081',
+          services: [
+            {
+              id: 'Orders Service',
+              version: '1.0.0',
+              sends: [{ events: ['analytics-event-view', 'customer-deleted'] }],
+              receives: [{ events: ['customer-deleted'] }],
+            },
+          ],
         });
 
         const service = await getService('Orders Service', '1.0.0');
@@ -431,56 +316,298 @@ message analytics_event_view_value {
             id: 'Orders Service',
             version: '1.0.0',
             sends: [
-              { id: 'analytics-event-click', version: '1' },
-              { id: 'analytics-event-convert', version: '1' },
               { id: 'analytics-event-view', version: '5' },
+              { id: 'customer-deleted', version: '1' },
             ],
+            receives: [{ id: 'customer-deleted', version: '1' }],
           })
         );
       });
 
-      it('when a suffix filter is in the service config, the topics that match the suffix are added to the service', async () => {
-        const { getService } = utils(catalogDir);
+      it('when the service already exists in the catalog, the service information is persisted (e.g markdown, badges, summary) but the sends and receives are updated', async () => {
+        const { writeService, getService } = utils(catalogDir);
+
+        await writeService({
+          id: 'Orders Service',
+          version: '1.0.0',
+          name: 'Orders Service',
+          markdown: 'This markdown is persisted',
+          badges: [{ backgroundColor: 'red', textColor: 'white', content: 'Custom Badge' }],
+          summary: 'This is custom summary',
+          sends: [{ id: 'this-topic-is-removed', version: '1' }],
+          receives: [{ id: 'this-topic-is-removed', version: '1' }],
+          owners: ['John Doe', 'Jane Doe'],
+        });
 
         await plugin(config, {
-          url: 'http://localhost:8081',
-          services: [{ id: 'Orders Service', version: '1.0.0', receives: [{ suffix: '-click' }] }],
+          schemaRegistryUrl: 'http://localhost:8081',
+          services: [
+            {
+              id: 'Orders Service',
+              version: '1.0.0',
+              sends: [{ events: ['analytics-event-view', 'customer-deleted'] }],
+              receives: [{ events: ['customer-deleted'] }],
+            },
+          ],
         });
 
         const service = await getService('Orders Service', '1.0.0');
-        expect(service.receives).toEqual([{ id: 'analytics-event-click', version: '1' }]);
+        expect(service).toEqual(
+          expect.objectContaining({
+            id: 'Orders Service',
+            version: '1.0.0',
+            markdown: 'This markdown is persisted',
+            badges: [{ backgroundColor: 'red', textColor: 'white', content: 'Custom Badge' }],
+            summary: 'This is custom summary',
+            sends: [
+              { id: 'analytics-event-view', version: '5' },
+              { id: 'customer-deleted', version: '1' },
+            ],
+            receives: [{ id: 'customer-deleted', version: '1' }],
+            owners: ['John Doe', 'Jane Doe'],
+          })
+        );
       });
 
-      it('when a `includes` filter is in the service config, the schemas that match the include filter are added to the service', async () => {
-        const { getService } = utils(catalogDir);
+      it('when the service already exists in the catalog, but the versions are different, the service in the catalog is versioned', async () => {
+        const { writeService, getService } = utils(catalogDir);
 
-        await plugin(config, {
-          url: 'http://localhost:8081',
-          services: [{ id: 'Orders Service', version: '1.0.0', receives: [{ includes: '-event-' }] }],
+        await writeService({
+          id: 'Orders Service',
+          version: '1.0.0',
+          name: 'Orders Service',
+          markdown: 'This markdown is persisted',
+          badges: [{ backgroundColor: 'red', textColor: 'white', content: 'Custom Badge' }],
+          summary: 'This is custom summary',
+          sends: [{ id: 'this-topic-is-saved-on-version-1', version: '1' }],
+          receives: [{ id: 'this-topic-is-saved-on-version-1', version: '1' }],
         });
 
-        const service = await getService('Orders Service', '1.0.0');
-        expect(service.receives).toEqual([
-          { id: 'analytics-event-click', version: '1' },
-          { id: 'analytics-event-convert', version: '1' },
-          { id: 'analytics-event-view', version: '5' },
-        ]);
+        await plugin(config, {
+          schemaRegistryUrl: 'http://localhost:8081',
+          services: [
+            {
+              id: 'Orders Service',
+              version: '2.0.0',
+              sends: [{ events: ['analytics-event-view', 'customer-deleted'] }],
+              receives: [{ events: ['customer-deleted'] }],
+            },
+          ],
+        });
+
+        const oldService = await getService('Orders Service', '1.0.0');
+        expect(oldService).toEqual(
+          expect.objectContaining({
+            id: 'Orders Service',
+            version: '1.0.0',
+            markdown: 'This markdown is persisted',
+            badges: [{ backgroundColor: 'red', textColor: 'white', content: 'Custom Badge' }],
+            summary: 'This is custom summary',
+            sends: [{ id: 'this-topic-is-saved-on-version-1', version: '1' }],
+            receives: [{ id: 'this-topic-is-saved-on-version-1', version: '1' }],
+          })
+        );
+
+        const newService = await getService('Orders Service', '2.0.0');
+        expect(newService).toEqual(
+          expect.objectContaining({
+            id: 'Orders Service',
+            version: '2.0.0',
+          })
+        );
+
+        // Make sure versioned folder exists
+        const versionedFolder = await existsSync(join(catalogDir, 'services', 'Orders Service', 'versioned'));
+        expect(versionedFolder).toBeTruthy();
+      });
+    });
+
+    describe('publishers and subscribers with filters', () => {
+      describe('prefix filter', () => {
+        it('when a prefix filter is a string is in the service config, the messages that match the prefix are added to the service', async () => {
+          const { getService } = utils(catalogDir);
+
+          await plugin(config, {
+            schemaRegistryUrl: 'http://localhost:8081',
+            services: [{ id: 'Orders Service', version: '1.0.0', sends: [{ events: { prefix: 'analytics-' } }] }],
+          });
+
+          const service = await getService('Orders Service', '1.0.0');
+          expect(service).toEqual(
+            expect.objectContaining({
+              id: 'Orders Service',
+              version: '1.0.0',
+              sends: [
+                { id: 'analytics-event-click', version: '1' },
+                { id: 'analytics-event-convert', version: '1' },
+                { id: 'analytics-capture', version: '1' },
+                { id: 'analytics-event-view', version: '5' },
+              ],
+            })
+          );
+        });
+
+        it('when a prefix filter is an array of strings is in the service config, the messages that match the prefix are added to the service', async () => {
+          const { getService } = utils(catalogDir);
+
+          await plugin(config, {
+            schemaRegistryUrl: 'http://localhost:8081',
+            services: [{ id: 'Orders Service', version: '1.0.0', sends: [{ events: { prefix: ['analytics-', 'order-'] } }] }],
+          });
+
+          const service = await getService('Orders Service', '1.0.0');
+          expect(service).toEqual(
+            expect.objectContaining({
+              id: 'Orders Service',
+              version: '1.0.0',
+              sends: [
+                { id: 'analytics-event-click', version: '1' },
+                { id: 'analytics-event-convert', version: '1' },
+                { id: 'analytics-capture', version: '1' },
+                { id: 'analytics-event-view', version: '5' },
+                { id: 'order-created', version: '1' },
+              ],
+            })
+          );
+        });
+
+        it('when a prefix filter is given for events and commands both the messages that match the prefix are added to the service', async () => {
+          const { getService } = utils(catalogDir);
+
+          await plugin(config, {
+            schemaRegistryUrl: 'http://localhost:8081',
+            services: [
+              {
+                id: 'Orders Service',
+                version: '1.0.0',
+                sends: [{ events: { prefix: 'analytics-' } }],
+                receives: [{ commands: { prefix: 'order-' } }],
+              },
+            ],
+          });
+
+          const service = await getService('Orders Service', '1.0.0');
+          expect(service).toEqual(
+            expect.objectContaining({
+              id: 'Orders Service',
+              version: '1.0.0',
+              sends: [
+                { id: 'analytics-event-click', version: '1' },
+                { id: 'analytics-event-convert', version: '1' },
+                { id: 'analytics-capture', version: '1' },
+                { id: 'analytics-event-view', version: '5' },
+              ],
+              receives: [{ id: 'order-created', version: '1' }],
+            })
+          );
+        });
+      });
+
+      describe('suffix filter', () => {
+        it('when a suffix filter is in the service config, the messages that match the suffix are added to the service', async () => {
+          const { getService } = utils(catalogDir);
+
+          await plugin(config, {
+            schemaRegistryUrl: 'http://localhost:8081',
+            services: [{ id: 'Orders Service', version: '1.0.0', receives: [{ events: { suffix: '-click' } }] }],
+          });
+
+          const service = await getService('Orders Service', '1.0.0');
+          expect(service.receives).toEqual([{ id: 'analytics-event-click', version: '1' }]);
+        });
+
+        it('when a suffix filter is an array of strings is in the service config, the messages that match the suffix are added to the service', async () => {
+          const { getService } = utils(catalogDir);
+
+          await plugin(config, {
+            schemaRegistryUrl: 'http://localhost:8081',
+            services: [{ id: 'Orders Service', version: '1.0.0', receives: [{ events: { suffix: ['-click', '-convert'] } }] }],
+          });
+
+          const service = await getService('Orders Service', '1.0.0');
+          expect(service.receives).toEqual([
+            { id: 'analytics-event-click', version: '1' },
+            { id: 'analytics-event-convert', version: '1' },
+          ]);
+        });
+
+        it('when a suffix filter is given for events and commands both the messages that match the suffix are added to the service', async () => {
+          const { getService } = utils(catalogDir);
+
+          await plugin(config, {
+            schemaRegistryUrl: 'http://localhost:8081',
+            services: [
+              {
+                id: 'Orders Service',
+                version: '1.0.0',
+                receives: [{ events: { suffix: '-click' }, commands: { suffix: '-created' } }],
+              },
+            ],
+          });
+
+          const service = await getService('Orders Service', '1.0.0');
+          expect(service.receives).toEqual([
+            { id: 'analytics-event-click', version: '1' },
+            { id: 'order-created', version: '1' },
+            { id: 'shipment-created', version: '1' },
+          ]);
+        });
+      });
+
+      describe('includes filter', () => {
+        it('when a `includes` filter is in the service config, the schemas that match the include filter are added to the service', async () => {
+          const { getService } = utils(catalogDir);
+
+          await plugin(config, {
+            schemaRegistryUrl: 'http://localhost:8081',
+            services: [{ id: 'Orders Service', version: '1.0.0', receives: [{ events: { includes: '-event-' } }] }],
+          });
+
+          const service = await getService('Orders Service', '1.0.0');
+          expect(service.receives).toEqual([
+            { id: 'analytics-event-click', version: '1' },
+            { id: 'analytics-event-convert', version: '1' },
+            { id: 'analytics-event-view', version: '5' },
+          ]);
+        });
+
+        it('when a `includes` filter is given for events and commands both the messages that match the include filter are added to the service', async () => {
+          const { getService } = utils(catalogDir);
+
+          await plugin(config, {
+            schemaRegistryUrl: 'http://localhost:8081',
+            services: [
+              {
+                id: 'Orders Service',
+                version: '1.0.0',
+                receives: [{ events: { includes: '-event-' }, commands: { includes: '-command-' } }],
+              },
+            ],
+          });
+
+          const service = await getService('Orders Service', '1.0.0');
+          expect(service.receives).toEqual([
+            { id: 'analytics-event-click', version: '1' },
+            { id: 'analytics-event-convert', version: '1' },
+            { id: 'analytics-event-view', version: '5' },
+          ]);
+        });
       });
     });
   });
 
   describe('events', () => {
-    it('when the service has sends and receives configured, the topics (events) are added to the catalog (within the service directory)', async () => {
+    it('when the service has sends and receives configured, the messages are added to the catalog (within the service directory)', async () => {
       const { getEvent } = utils(catalogDir);
 
       await plugin(config, {
-        url: 'http://localhost:8081',
+        schemaRegistryUrl: 'http://localhost:8081',
         services: [
           {
             id: 'Orders Service',
             version: '1.0.0',
-            sends: [{ topic: 'analytics-event-view' }],
-            receives: [{ topic: 'customer-deleted' }],
+            sends: [{ events: ['analytics-event-view'] }],
+            receives: [{ events: ['customer-deleted'] }],
           },
         ],
       });
@@ -522,17 +649,17 @@ message analytics_event_view_value {
       expect(customerDeletedFile).toBeTruthy();
     });
 
-    it('when the service has sends and receives configured, but the topics are not found in the schema registry, the topics are not added to the catalog', async () => {
+    it('when the service has sends and receives configured, but the messages are not found in the schema registry, the messages are not added to the catalog', async () => {
       const { getEvent } = utils(catalogDir);
 
       await plugin(config, {
-        url: 'http://localhost:8081',
+        schemaRegistryUrl: 'http://localhost:8081',
         services: [
           {
             id: 'Orders Service',
             version: '1.0.0',
-            sends: [{ topic: 'analytics-event-view-that-does-not-exist' }],
-            receives: [{ topic: 'customer-deleted-that-does-not-exist' }],
+            sends: [{ events: ['analytics-event-view-that-does-not-exist'] }],
+            receives: [{ events: ['customer-deleted-that-does-not-exist'] }],
           },
         ],
       });
@@ -544,7 +671,7 @@ message analytics_event_view_value {
       expect(customerDeleted).toBeUndefined();
     });
 
-    it('when the service has sends and receives configured, but the topics already exist in the catalog (with the same version), the topic information is persisted', async () => {
+    it('when the service has sends and receives configured, but the messages already exist in the catalog (with the same version), the message information is persisted', async () => {
       const { writeEvent, getEvent } = utils(catalogDir);
 
       await writeEvent({
@@ -557,13 +684,13 @@ message analytics_event_view_value {
       });
 
       await plugin(config, {
-        url: 'http://localhost:8081',
+        schemaRegistryUrl: 'http://localhost:8081',
         services: [
           {
             id: 'Orders Service',
             version: '1.0.0',
-            sends: [{ topic: 'analytics-event-view' }],
-            receives: [{ topic: 'customer-deleted' }],
+            sends: [{ events: ['analytics-event-view'] }],
+            receives: [{ events: ['customer-deleted'] }],
           },
         ],
       });
@@ -580,7 +707,7 @@ message analytics_event_view_value {
       );
     });
 
-    it('when the service has sends and receives configured, but the versions are different, the topic is versioned', async () => {
+    it('when the service has sends and receives configured, but the versions are different, the message is versioned', async () => {
       const { getEvent, writeEventToService, writeService, addSchemaToEvent } = utils(catalogDir);
 
       // Add the service to the catalog
@@ -612,13 +739,13 @@ message analytics_event_view_value {
       });
 
       await plugin(config, {
-        url: 'http://localhost:8081',
+        schemaRegistryUrl: 'http://localhost:8081',
         services: [
           {
             id: 'Orders Service',
             version: '1.0.0',
-            sends: [{ topic: 'analytics-event-view' }],
-            receives: [{ topic: 'customer-deleted' }],
+            sends: [{ events: ['analytics-event-view'] }],
+            receives: [{ events: ['customer-deleted'] }],
           },
         ],
       });
@@ -655,17 +782,17 @@ message analytics_event_view_value {
       expect(versionedSchema).toBeTruthy();
     });
 
-    it('when the service has sends and receives configured, only these topics are added to the catalog', async () => {
+    it('when the service has sends and receives configured, only these messages are added to the catalog', async () => {
       const { getEvent } = utils(catalogDir);
 
       await plugin(config, {
-        url: 'http://localhost:8081',
+        schemaRegistryUrl: 'http://localhost:8081',
         services: [
           {
             id: 'Orders Service',
             version: '1.0.0',
-            sends: [{ topic: 'analytics-event-view' }],
-            receives: [{ topic: 'customer-deleted' }],
+            sends: [{ events: ['analytics-event-view'] }],
+            receives: [{ events: ['customer-deleted'] }],
           },
         ],
       });
@@ -689,18 +816,94 @@ message analytics_event_view_value {
     });
   });
 
+  describe('commands', () => {
+    it('when the service has sends and receives configured as commands, the messages are added to the catalog (within the service directory)', async () => {
+      const { getCommand } = utils(catalogDir);
+
+      await plugin(config, {
+        schemaRegistryUrl: 'http://localhost:8081',
+        services: [
+          {
+            id: 'Orders Service',
+            version: '1.0.0',
+            sends: [{ commands: ['analytics-event-view'] }],
+            receives: [{ commands: ['customer-deleted'] }],
+          },
+        ],
+      });
+
+      const analyticsEventView = await getCommand('analytics-event-view');
+      expect(analyticsEventView).toEqual(
+        expect.objectContaining({
+          id: 'analytics-event-view',
+          version: '5',
+          markdown: expect.stringContaining('<NodeGraph />'),
+          badges: [{ backgroundColor: 'green', textColor: 'white', content: 'Kafka Topic' }],
+          summary: 'Kafka Topic from Confluent Schema Registry',
+        })
+      );
+
+      const customerDeleted = await getCommand('customer-deleted');
+      expect(customerDeleted).toEqual(
+        expect.objectContaining({
+          id: 'customer-deleted',
+          version: '1',
+          markdown: expect.stringContaining('<NodeGraph />'),
+          badges: [{ backgroundColor: 'green', textColor: 'white', content: 'Kafka Topic' }],
+          summary: 'Kafka Topic from Confluent Schema Registry',
+        })
+      );
+
+      // Make sure the events are added to the service folder
+      const eventsFolder = await existsSync(join(catalogDir, 'services', 'Orders Service', 'commands'));
+      expect(eventsFolder).toBeTruthy();
+
+      const analyticsEventViewFile = await existsSync(
+        join(catalogDir, 'services', 'Orders Service', 'commands', 'analytics-event-view', 'index.mdx')
+      );
+      expect(analyticsEventViewFile).toBeTruthy();
+
+      const customerDeletedFile = await existsSync(
+        join(catalogDir, 'services', 'Orders Service', 'commands', 'customer-deleted', 'index.mdx')
+      );
+      expect(customerDeletedFile).toBeTruthy();
+    });
+
+    it('when the service has sends and receives configured as commands (using filters), the messages are added to the catalog (within the service directory)', async () => {
+      const { getCommand } = utils(catalogDir);
+
+      await plugin(config, {
+        schemaRegistryUrl: 'http://localhost:8081',
+        services: [{ id: 'Orders Service', version: '1.0.0', receives: [{ commands: { includes: 'analytics-event-' } }] }],
+      });
+
+      const analyticsEventView = await getCommand('analytics-event-view');
+      expect(analyticsEventView).toBeTruthy();
+
+      // Make sure folder exists
+      const commandsFolder = await existsSync(join(catalogDir, 'services', 'Orders Service', 'commands'));
+      expect(commandsFolder).toBeTruthy();
+
+      // Make sure the command is added to the folder
+      const commandFile = await existsSync(
+        join(catalogDir, 'services', 'Orders Service', 'commands', 'analytics-event-view', 'index.mdx')
+      );
+      expect(commandFile).toBeTruthy();
+    });
+  });
+
   describe('domains', () => {
     it('if a domain is configured along side the services, the domain is created and the services are added to the domain, and events added to the services folder', async () => {
       const { getDomain } = utils(catalogDir);
 
       await plugin(config, {
-        url: 'http://localhost:8081',
+        schemaRegistryUrl: 'http://localhost:8081',
         services: [
           {
             id: 'Orders Service',
             version: '1.0.0',
-            sends: [{ topic: 'analytics-event-view' }],
-            receives: [{ topic: 'customer-deleted' }],
+            sends: [{ events: ['analytics-event-view'] }],
+            receives: [{ events: ['customer-deleted'] }],
           },
         ],
         domain: { id: 'orders', name: 'Orders', version: '0.0.1' },
@@ -742,7 +945,7 @@ message analytics_event_view_value {
       });
 
       await plugin(config, {
-        url: 'http://localhost:8081',
+        schemaRegistryUrl: 'http://localhost:8081',
         domain: { id: 'orders', name: 'Orders', version: '0.0.2' },
       });
 
@@ -761,6 +964,100 @@ message analytics_event_view_value {
 
       const versionedDomain = await existsSync(join(catalogDir, 'domains', 'orders', 'versioned', '0.0.1'));
       expect(versionedDomain).toBeTruthy();
+    });
+  });
+
+  describe('topics', () => {
+    it('if topics are configured, they are documented into EventCatalog as channels with the kafka protocol', async () => {
+      const { getChannel } = utils(catalogDir);
+
+      await plugin(config, {
+        schemaRegistryUrl: 'http://localhost:8081',
+        topics: [
+          {
+            id: 'orders',
+            name: 'Orders',
+            address: 'localhost:9092',
+          },
+        ],
+      });
+
+      const channel = await getChannel('orders');
+      expect(channel).toEqual(
+        expect.objectContaining({
+          id: 'orders',
+          name: 'Orders',
+          address: 'localhost:9092',
+          protocols: ['kafka'],
+          version: '0.0.1',
+          markdown: '<ChannelInformation /> \n <NodeGraph />',
+        })
+      );
+    });
+
+    it('if messages are assigned to topics, the messages are added to the catalog with the channel configured in the message', async () => {
+      const { getEvent, getChannel } = utils(catalogDir);
+
+      await plugin(config, {
+        schemaRegistryUrl: 'http://localhost:8081',
+        topics: [
+          {
+            id: 'orders',
+            name: 'Orders',
+            address: 'localhost:9092',
+          },
+        ],
+        services: [
+          {
+            id: 'Orders Service',
+            version: '1.0.0',
+            sends: [{ events: ['analytics-event-view'], topic: 'orders' }],
+          },
+        ],
+      });
+
+      const analyticsEventView = await getEvent('analytics-event-view');
+      expect(analyticsEventView).toEqual(
+        expect.objectContaining({
+          id: 'analytics-event-view',
+          version: '5',
+          channels: [{ id: 'orders', version: '0.0.1' }],
+        })
+      );
+    });
+
+    it('if a topic already exists (channel in EventCatalog), the custom information (e.g markdown, badges) are persisted', async () => {
+      const { getChannel, writeChannel } = utils(catalogDir);
+
+      await writeChannel({
+        id: 'orders',
+        name: 'Orders',
+        address: 'localhost:9092',
+        version: '0.0.1',
+        protocols: ['kafka', 'random'],
+        markdown: 'This is custom markdown',
+        badges: [{ backgroundColor: 'red', textColor: 'white', content: 'Custom Badge' }],
+      });
+
+      await plugin(config, {
+        schemaRegistryUrl: 'http://localhost:8081',
+        topics: [
+          {
+            id: 'orders',
+            name: 'Orders',
+            address: 'localhost:9092',
+          },
+        ],
+      });
+
+      const channel = await getChannel('orders');
+      expect(channel).toEqual(
+        expect.objectContaining({
+          markdown: 'This is custom markdown',
+          badges: [{ backgroundColor: 'red', textColor: 'white', content: 'Custom Badge' }],
+          protocols: ['kafka', 'random'],
+        })
+      );
     });
   });
 });
