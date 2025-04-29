@@ -1,5 +1,11 @@
 # @eventcatalog/generator-confluent-schema-registry
 
+## 0.0.7
+
+### Patch Changes
+
+- 3c17ab4: chore(plugin): confluent channels no longer persist between generations
+
 ## 0.0.6
 
 ### Patch Changes
