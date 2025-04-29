@@ -127,8 +127,7 @@ message analytics_event_view_value {
   string name = 2;
   int64 timestamp = 3;
   bool active = 4;
-}
-`);
+}`);
 
       await plugin(config, {
         schemaRegistryUrl: 'http://localhost:8081',
@@ -145,8 +144,8 @@ message analytics_event_view_value {
 
       const event = await getEvent('analytics-event-view');
       expect(event.markdown).toEqual(expect.stringContaining('<NodeGraph />'));
-      expect(event.badges).toEqual([{ backgroundColor: 'green', textColor: 'white', content: 'Kafka Topic' }]);
-      expect(event.summary).toEqual('Kafka Topic from Confluent Schema Registry');
+      expect(event.badges).toEqual([{ backgroundColor: 'green', textColor: 'white', content: 'Kafka Message', icon: 'kafka' }]);
+      expect(event.summary).toEqual('Message from Confluent Schema Registry');
     });
 
     it('all schemas are added to the catalog as events (within the events directory, when no services are configured)', async () => {
@@ -179,7 +178,7 @@ message analytics_event_view_value {
           version: '5',
           markdown: expect.stringContaining('<NodeGraph />'),
           schemaPath: 'analytics-event-view-value.proto',
-          badges: [{ backgroundColor: 'green', textColor: 'white', content: 'Kafka Topic' }],
+          badges: [{ backgroundColor: 'green', textColor: 'white', content: 'Kafka Message', icon: 'kafka' }],
         })
       );
 
@@ -618,8 +617,8 @@ message analytics_event_view_value {
           id: 'analytics-event-view',
           version: '5',
           markdown: expect.stringContaining('<NodeGraph />'),
-          badges: [{ backgroundColor: 'green', textColor: 'white', content: 'Kafka Topic' }],
-          summary: 'Kafka Topic from Confluent Schema Registry',
+          badges: [{ backgroundColor: 'green', textColor: 'white', content: 'Kafka Message', icon: 'kafka' }],
+          summary: 'Message from Confluent Schema Registry',
         })
       );
 
@@ -629,8 +628,8 @@ message analytics_event_view_value {
           id: 'customer-deleted',
           version: '1',
           markdown: expect.stringContaining('<NodeGraph />'),
-          badges: [{ backgroundColor: 'green', textColor: 'white', content: 'Kafka Topic' }],
-          summary: 'Kafka Topic from Confluent Schema Registry',
+          badges: [{ backgroundColor: 'green', textColor: 'white', content: 'Kafka Message', icon: 'kafka' }],
+          summary: 'Message from Confluent Schema Registry',
         })
       );
 
@@ -838,8 +837,8 @@ message analytics_event_view_value {
           id: 'analytics-event-view',
           version: '5',
           markdown: expect.stringContaining('<NodeGraph />'),
-          badges: [{ backgroundColor: 'green', textColor: 'white', content: 'Kafka Topic' }],
-          summary: 'Kafka Topic from Confluent Schema Registry',
+          badges: [{ backgroundColor: 'green', textColor: 'white', content: 'Kafka Message', icon: 'kafka' }],
+          summary: 'Message from Confluent Schema Registry',
         })
       );
 
@@ -849,8 +848,8 @@ message analytics_event_view_value {
           id: 'customer-deleted',
           version: '1',
           markdown: expect.stringContaining('<NodeGraph />'),
-          badges: [{ backgroundColor: 'green', textColor: 'white', content: 'Kafka Topic' }],
-          summary: 'Kafka Topic from Confluent Schema Registry',
+          badges: [{ backgroundColor: 'green', textColor: 'white', content: 'Kafka Message', icon: 'kafka' }],
+          summary: 'Message from Confluent Schema Registry',
         })
       );
 
@@ -990,7 +989,10 @@ message analytics_event_view_value {
           address: 'localhost:9092',
           protocols: ['kafka'],
           version: '0.0.1',
-          markdown: '<ChannelInformation /> \n <NodeGraph />',
+          markdown: '<ChannelInformation />',
+          sidebar: {
+            badge: 'Topic',
+          },
         })
       );
     });
