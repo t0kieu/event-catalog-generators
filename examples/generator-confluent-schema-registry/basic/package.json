@@ -12,6 +12,6 @@
   },
   "dependencies": {
     "@eventcatalog/core": "latest",
-    "@eventcatalog/generator-confluent-schema-registry": "^0.0.3"
+    "@eventcatalog/generator-confluent-schema-registry": "latest"
   }
 }

@@ -32,7 +32,7 @@ export default {
     [
       '@eventcatalog/generator-confluent-schema-registry',
       {
-        registryUrl: 'http://localhost:8081',
+        schemaRegistryUrl: 'http://localhost:8081',
         topics: [{
           id: 'orders-topic',
           name: 'Orders Topic',
@@ -46,7 +46,7 @@ export default {
           {
             id: 'Orders Service',
             version: '1.0.0',
-            sends: [{ events: ['order-created'], topic: 'orders-topic', commands: ['order-updated'] }],
+            sends: [{ events: ['order-created'], topic: 'orders-topic' }],
             receives: [{ events: [{ prefix: ['inventory-'] }], topic: 'inventory-topic' }],
           },
         ],
