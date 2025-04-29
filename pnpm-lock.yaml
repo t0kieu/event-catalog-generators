@@ -192,8 +192,8 @@ importers:
         specifier: ^2.27.8
         version: 2.27.12
       '@eventcatalog/sdk':
-        specifier: ^2.3.4
-        version: 2.3.4
+        specifier: ^2.3.5
+        version: 2.3.5
       axios:
         specifier: ^1.8.4
         version: 1.8.4
@@ -920,8 +920,8 @@ packages:
   '@eventcatalog/sdk@2.3.2':
     resolution: { integrity: sha512-POiX4Iu7NBA01uIbBqKYjxDkKPtTJa9dF2pH+YBwm7SFn+uKlw4QCi9lXpcJnpXshpjguOoyAMzt3dvQf6gCdw== }
 
-  '@eventcatalog/sdk@2.3.4':
-    resolution: { integrity: sha512-yfbkNdWC2Ay51U5CYf4ythg6Q+UZnjdTKtuTWwexUXwga6dsw2dG3eMAB3Sm5JJ+yDOB4jZ5CnKyQ9NiEol8pg== }
+  '@eventcatalog/sdk@2.3.5':
+    resolution: { integrity: sha512-r7VANF8/n3+wm5d6SyQoGeaFK1FHZu99UCl0w2i2qeGGU6WWbrEiU8aT2GjEqriL465Tsw3XOFI34KY7V3VkqQ== }
 
   '@huggingface/jinja@0.3.3':
     resolution: { integrity: sha512-vQQr2JyWvVFba3Lj9es4q9vCl1sAc74fdgnEMoX8qHrXtswap9ge9uO3ONDzQB0cQ0PUyaKY2N6HaVbTBvSXvw== }
@@ -4447,7 +4447,7 @@ snapshots:
       semver: 7.6.3
       slugify: 1.6.6
 
-  '@eventcatalog/sdk@2.3.4':
+  '@eventcatalog/sdk@2.3.5':
     dependencies:
       '@changesets/cli': 2.27.12
       fs-extra: 11.3.0

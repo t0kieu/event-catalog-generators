@@ -97,8 +97,8 @@ export const writeMessageToEventCatalog = async ({
     ...(!messageInCatalog
       ? {
           markdown: getMarkdownForSchema(message),
-          badges: [{ backgroundColor: 'green', textColor: 'white', content: 'Kafka Topic' }],
-          summary: 'Kafka Topic from Confluent Schema Registry',
+          badges: [{ backgroundColor: 'green', textColor: 'white', content: 'Kafka Message', icon: 'kafka' }],
+          summary: 'Message from Confluent Schema Registry',
         }
       : {}),
   };

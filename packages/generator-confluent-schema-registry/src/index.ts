@@ -129,7 +129,12 @@ export default async (config: EventCatalogConfig, options: GeneratorProps) => {
             ? {
                 protocols: ['kafka'],
                 version: '0.0.1',
-                markdown: '<ChannelInformation /> \n <NodeGraph />',
+                summary: 'Kafka Topic',
+                sidebar: {
+                  badge: 'Topic',
+                },
+                badges: [{ backgroundColor: 'red', textColor: 'white', content: 'Kafka Topic', icon: 'kafka' }],
+                markdown: '<ChannelInformation />',
               }
             : {}),
         },
@@ -173,7 +178,7 @@ export default async (config: EventCatalogConfig, options: GeneratorProps) => {
         // If the service does not already exist we need to add fields for new documented topics
         ...(!serviceInCatalog
           ? {
-              markdown: getMarkdownForService(service),
+              markdown: getMarkdownForService(),
               summary: `${service.id} Service`,
             }
           : {}),
