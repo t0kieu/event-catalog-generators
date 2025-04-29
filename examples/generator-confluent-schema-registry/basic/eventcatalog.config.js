@@ -22,12 +22,6 @@ export default {
     src: "/logo.png",
     text: "EventCatalog",
   },
-  docs: {
-    sidebar: {
-      // Should the sub heading be rendered in the docs sidebar?
-      showPageHeadings: true,
-    },
-  },
   generators: [
     [
       '@eventcatalog/generator-confluent-schema-registry',
@@ -41,16 +35,39 @@ export default {
           id: 'inventory-topic',
           name: 'Inventory Topic',
           address: 'kafka-cluster-bootstrap:9092',
+        }, {
+          id: 'users-topic',
+          name: 'Users Topic',
+          address: 'kafka-cluster-bootstrap:9092',
+        }, {
+          id: 'shipments-topic',
+          name: 'Shipments Topic',
+          address: 'kafka-cluster-bootstrap:9092',
         }],
         services: [
           {
             id: 'Orders Service',
             version: '1.0.0',
-            sends: [{ events: ['order-created'], topic: 'orders-topic' }],
-            receives: [{ events: [{ prefix: ['inventory-'] }], topic: 'inventory-topic' }],
+            sends: [{ events: { prefix: 'order-' }, topic: 'orders-topic' }],
+            receives: [{ events: { prefix: 'analytics-' }, topic: 'inventory-topic' }],
+          },
+          {
+            id: 'Inventory Service',
+            version: '1.0.0',
+            sends: [{ events: { prefix: 'inventory-' }, topic: 'inventory-topic' }],
+            receives: [{ events: { prefix: 'order-' }, topic: 'orders-topic' }],
+          },
+          {
+            id: 'Notifications Service',
+            version: '1.0.0',
+            receives: [
+              { events: ['user-registered'], topic: 'users-topic' },
+              { events: ['shipment-created'], topic: 'shipments-topic' },
+              { events: ['payment-received'] }
+            ],
           },
         ],
       },
-    ],
+    ]
   ],
 };

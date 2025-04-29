@@ -67,7 +67,7 @@ describe('Confluent Schema Registry EventCatalog Plugin', () => {
   });
 
   describe('when no services are configured (messages (as events) are written to the root of the catalog)', () => {
-    it('if the event already exists in the catalog data is persisted (e.g markdown, badges, summary, channels, deprecated)', async () => {
+    it('if the event already exists in the catalog data is persisted (e.g markdown, badges, summary, deprecated)', async () => {
       const { writeEvent, getEvent } = utils(catalogDir);
 
       await writeEvent({
@@ -88,7 +88,28 @@ describe('Confluent Schema Registry EventCatalog Plugin', () => {
       expect(event.markdown).toEqual('This should be persisted');
       expect(event.badges).toEqual([{ backgroundColor: 'red', textColor: 'white', content: 'Custom Badge' }]);
       expect(event.summary).toEqual('This is custom summary');
-      expect(event.channels).toEqual([{ id: 'analytics-event-view', version: '5' }]);
+      expect(event.channels).toBeUndefined();
+    });
+
+    it('if the event already exists with a channel defined, the channel is not added to the event', async () => {
+      const { writeEvent, getEvent } = utils(catalogDir);
+
+      await writeEvent({
+        id: 'analytics-event-view',
+        name: 'analytics-event-view',
+        version: '5',
+        markdown: 'This should be persisted',
+        badges: [{ backgroundColor: 'red', textColor: 'white', content: 'Custom Badge' }],
+        summary: 'This is custom summary',
+        channels: [{ id: 'analytics-event-view', version: '5' }],
+      });
+
+      await plugin(config, {
+        schemaRegistryUrl: 'http://localhost:8081',
+      });
+
+      const event = await getEvent('analytics-event-view', '5');
+      expect(event.channels).toBeUndefined();
     });
 
     it('if the event already exists in the catalog and the versions are the same, but the schema is different, the schema is updated', async () => {

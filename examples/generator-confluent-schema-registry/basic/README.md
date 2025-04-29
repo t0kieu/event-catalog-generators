@@ -26,6 +26,8 @@ To dive into how this plugin can help you, you can read the [Confluent Schema Re
 
 - Docker
 - Confluent Schema Registry API Key (optional, for local development)
+- EventCatalog Starter License Key (14 day free trial at [EventCatalog Cloud](https://eventcatalog.cloud))
+
 
 ## Setup
 

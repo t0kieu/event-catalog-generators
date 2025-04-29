@@ -71,7 +71,7 @@ export const writeMessageToEventCatalog = async ({
   let topicPath = join(rootPath, collection, message.eventId);
 
   const messageInCatalog = await getMessage(message.eventId);
-  const { ...previousMessageInformation } = messageInCatalog || {};
+  const { channels, ...previousMessageInformation } = messageInCatalog || {};
 
   if (messageInCatalog) {
     if (message.version.toString() !== messageInCatalog.version.toString()) {
@@ -90,7 +90,6 @@ export const writeMessageToEventCatalog = async ({
     name: message.eventId,
     version: message.version.toString(),
     schemaPath: schemaFileName,
-
     ...(message.topic ? { channels: [{ id: message.topic, version: '0.0.1' }] } : {}),
 
     // If the topic does not already exist we need to add fields for new documented topics
