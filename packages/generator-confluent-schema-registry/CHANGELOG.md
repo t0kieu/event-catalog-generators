@@ -1,5 +1,11 @@
 # @eventcatalog/generator-confluent-schema-registry
 
+## 0.0.6
+
+### Patch Changes
+
+- cca2728: chore(plugin): confluent plugin sdk version updates
+
 ## 0.0.5
 
 ### Patch Changes
