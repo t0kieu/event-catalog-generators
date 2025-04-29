@@ -1,6 +1,6 @@
-# EventCatalog Confluent Schema Registry Example
+# EventCatalog Confluent Schema Registry Example: Document All Schemas
 
-This example shows you how to ingest events from [Confluent Schema Registry](https://www.confluent.io/product/confluent-schema-registry/) into EventCatalog.
+This example shows you how to ingest events from [Confluent Schema Registry](https://www.confluent.io/product/confluent-schema-registry/) into EventCatalog, this example will document all the schemas in the registry.
 
 This gives you the ability to add semantic meaning to your schemas in Confluent Schema Registry, assign them to topics, services and domains.
 
@@ -26,8 +26,7 @@ To dive into how this plugin can help you, you can read the [Confluent Schema Re
 
 - Docker
 - Confluent Schema Registry API Key (optional, for local development)
-- EventCatalog Starter License Key (14 day free trial at [EventCatalog Cloud](https://eventcatalog.cloud))
-
+- EventCatalog Confluent Schema Registry License Key (14 day free trial at [EventCatalog Cloud](https://eventcatalog.cloud))
 
 ## Setup
 

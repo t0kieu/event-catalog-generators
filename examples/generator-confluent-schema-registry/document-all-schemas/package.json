@@ -1,5 +1,5 @@
 {
-  "name": "confluent-schema-registry-basic-example",
+  "name": "confluent-schema-registry-document-all-schemas-example",
   "version": "0.1.0",
   "private": true,
   "scripts": {
