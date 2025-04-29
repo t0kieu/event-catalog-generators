@@ -1,5 +1,11 @@
 # @eventcatalog/generator-confluent-schema-registry
 
+## 0.0.5
+
+### Patch Changes
+
+- b2e82b6: fix(plugin): confluent plugin now writes markdown for a service with kafka badges
+
 ## 0.0.4
 
 ### Patch Changes
