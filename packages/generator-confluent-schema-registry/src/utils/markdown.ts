@@ -4,11 +4,17 @@ import { getSchemaFileName } from './topics';
 export const getMarkdownForSchema = (schema: Schema) => {
   const schemaFileName = getSchemaFileName(schema);
   return `
-    
-    <NodeGraph />
+## Architecture diagram
+
+A visual representation of the {frontmatter.name} message.
+
+<NodeGraph />
+
+---
   
-<Schema file="${schemaFileName}" />
-    `;
+## Schema
+This is the schema for the {frontmatter.name} message.  
+<Schema file="${schemaFileName}" />`;
 };
 
 export const getMarkdownForService = () => {
