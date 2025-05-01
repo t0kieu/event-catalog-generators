@@ -936,6 +936,7 @@ message analytics_event_view_value {
           name: 'Orders',
           version: '0.0.1',
           services: [{ id: 'Orders Service', version: '1.0.0' }],
+          markdown: expect.stringContaining('<NodeGraph />')
         })
       );
 
