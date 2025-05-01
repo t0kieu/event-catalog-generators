@@ -8,7 +8,7 @@ import path, { join } from 'path';
 import { EventCatalogConfig, GeneratorProps, Schema } from './types';
 import { getSchemasFromRegistry, getLatestVersionFromSubject } from './lib/confluent';
 import { writeMessageToEventCatalog } from './utils/topics';
-import { getMarkdownForService } from './utils/markdown';
+import { getMarkdownForService, getMarkdownForDomain } from './utils/markdown';
 
 /////////////////////////////////////////////////
 
@@ -98,7 +98,7 @@ export default async (config: EventCatalogConfig, options: GeneratorProps) => {
         id: domainId,
         name: domainName,
         version: domainVersion,
-        markdown: '',
+        markdown: getMarkdownForDomain(),
       });
       console.log(chalk.cyan(` - Domain (v${domainVersion}) created`));
     }
@@ -178,7 +178,7 @@ export default async (config: EventCatalogConfig, options: GeneratorProps) => {
         // If the service does not already exist we need to add fields for new documented topics
         ...(!serviceInCatalog
           ? {
-              markdown: getMarkdownForService(),
+              markdown: getMarkdownForService({ schemaRegistryUrl: SCHEMA_REGISTRY_URL }),
               summary: `${service.id} Service`,
             }
           : {}),
