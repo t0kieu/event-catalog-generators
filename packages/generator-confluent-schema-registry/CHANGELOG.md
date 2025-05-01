@@ -1,5 +1,11 @@
 # @eventcatalog/generator-confluent-schema-registry
 
+## 0.0.9
+
+### Patch Changes
+
+- c330303: chore(plugin): updated the markdown generated from the confluent plugin
+
 ## 0.0.8
 
 ### Patch Changes

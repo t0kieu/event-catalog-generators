@@ -1,6 +1,6 @@
 {
   "name": "@eventcatalog/generator-confluent-schema-registry",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "Confluent Schema Registry generator for EventCatalog",
   "scripts": {
     "build": "tsup",
