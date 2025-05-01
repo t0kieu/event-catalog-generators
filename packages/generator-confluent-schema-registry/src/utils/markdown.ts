@@ -52,5 +52,5 @@ The following is the architecture diagram for all the messages and services in t
 
 ### Messages
 
-<MessageTable limit={10} showChannels={true} />`
+<MessageTable limit={10} showChannels={true} />`;
 };
