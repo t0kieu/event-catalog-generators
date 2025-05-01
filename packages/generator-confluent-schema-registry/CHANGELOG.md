@@ -1,5 +1,11 @@
 # @eventcatalog/generator-confluent-schema-registry
 
+## 0.0.8
+
+### Patch Changes
+
+- 1035cb9: chore(plugin): confluent message markdown updates
+
 ## 0.0.7
 
 ### Patch Changes
