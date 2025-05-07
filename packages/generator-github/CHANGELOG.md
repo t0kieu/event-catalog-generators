@@ -1,5 +1,11 @@
 # @eventcatalog/generator-github
 
+## 0.0.7
+
+### Patch Changes
+
+- 2413d09: feat(plugin): added markdown defaults to gihub plugin
+
 ## 0.0.6
 
 ### Patch Changes
