@@ -14,6 +14,10 @@ import { processMessageAndSchema } from './utils/messages';
 const tmpDir = path.join(os.tmpdir(), 'eventcatalog-generator-github');
 
 export default async (_: EventCatalogConfig, options: GeneratorProps) => {
+  if (!process.env.PROJECT_DIR) {
+    process.env.PROJECT_DIR = process.cwd();
+  }
+
   // This is set by EventCatalog. This is the directory where the catalog is stored
   const eventCatalogDirectory = process.env.PROJECT_DIR;
 
