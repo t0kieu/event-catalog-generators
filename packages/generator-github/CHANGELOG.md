@@ -1,5 +1,11 @@
 # @eventcatalog/generator-github
 
+## 0.0.6
+
+### Patch Changes
+
+- 5bf3bb5: fix(plugin): fixed formatting for github plugin
+
 ## 0.0.5
 
 ### Patch Changes
