@@ -1,5 +1,11 @@
 # @eventcatalog/generator-confluent-schema-registry
 
+## 0.0.10
+
+### Patch Changes
+
+- 35ef600: fix(plugin): github/confluent plugins now reads and uses the service name when given in the config
+
 ## 0.0.9
 
 ### Patch Changes

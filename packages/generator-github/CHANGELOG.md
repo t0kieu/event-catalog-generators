@@ -1,5 +1,11 @@
 # @eventcatalog/generator-github
 
+## 0.0.9
+
+### Patch Changes
+
+- 35ef600: fix(plugin): github/confluent plugins now reads and uses the service name when given in the config
+
 ## 0.0.8
 
 ### Patch Changes
