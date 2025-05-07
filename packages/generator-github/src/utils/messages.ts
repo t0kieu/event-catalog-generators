@@ -31,7 +31,7 @@ export const processMessageAndSchema = async ({
     addSchemaToQuery,
     versionQuery,
     writeQuery,
-    writeQueryToService
+    writeQueryToService,
   } = utils(pathToCatalog);
 
   // Define the message operations mapping with proper types
