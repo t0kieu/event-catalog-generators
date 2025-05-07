@@ -85,7 +85,7 @@ export default async (_: EventCatalogConfig, options: GeneratorProps) => {
         version: domainVersion,
         markdown: '',
       });
-      console.log(chalk.cyan(` - Domain ${domainName} (v${domainVersion}) created`));
+      console.log(chalk.green(` - Domain ${domainName} (v${domainVersion}) created`));
     }
 
     //  Add all the services to the domain
@@ -138,7 +138,7 @@ export default async (_: EventCatalogConfig, options: GeneratorProps) => {
       // @ts-ignore
       await writeService(serviceToWrite, { path: servicePath, override: serviceInCatalog?.version === service.version });
 
-      console.log(chalk.cyan(` - Service ${service.id} (v${service.version}) created`));
+      console.log(chalk.green(` - Service ${service.id} (v${service.version}) created`));
 
       const messages = [...(service.sends || []), ...(service.receives || [])];
       for (const message of messages) {
@@ -152,7 +152,7 @@ export default async (_: EventCatalogConfig, options: GeneratorProps) => {
     }
   }
 
-  console.log(chalk.green(`Finished processing ${options.source} to EventCatalog`));
+  console.log(chalk.green(`\nFinished processing ${options.source} to EventCatalog`));
 
   // // Remove the tmpDir
   await fs.rm(tmpDir, { recursive: true });
