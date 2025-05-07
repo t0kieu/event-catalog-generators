@@ -1,6 +1,6 @@
 # EventCatalog GitHub Plugin Example: Assign Schemas to Producers and Consumers
 
-This example shows you how to pull and sync schemas from a GitHub repository and assign them to producers and consumers (services) in EventCatalog.
+This example shows you how to pull and sync schemas from a GitHub schema registry (example used here: https://github.com/event-catalog/flowmart-schema-registry) and assign them to producers and consumers (services) in EventCatalog.
 
 In this example we will pull schemas from GitHub and assign them to the orders and inventory services.
 

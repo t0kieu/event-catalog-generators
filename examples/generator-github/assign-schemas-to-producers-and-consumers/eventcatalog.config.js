@@ -29,8 +29,8 @@ export default {
     [
       '@eventcatalog/generator-github',
       {
-        source: 'https://github.com/event-catalog/eventcatalog',
-        path: 'examples/default',
+        source: 'https://github.com/event-catalog/flowmart-schema-registry.git',
+        path: 'domains',
         branch: 'main',
         services: [
           {
@@ -39,26 +39,40 @@ export default {
             version: '1.0.0',
             sends: [
               {
-                id: 'order-amended',
-                name: 'Order Amended',
+                id: 'order-cancelled',
+                name: 'Order Cancelled',
                 version: '1.0.0',
-                schemaPath: 'domains/Orders/services/OrdersService/events/OrderAmended/schema.avro',
+                schemaPath: 'orders/schemas/order_cancelled_v1.json',
                 type: 'event'
               },
               {
-                id: 'order-cancelled',
-                name: 'Order Cancelled',
-                version: '2.0.0',
-                schemaPath: 'domains/Orders/services/OrdersService/events/OrderCancelled/schema.json',
+                id: 'order-created',
+                name: 'Order Created',
+                version: '1.0.0',
+                schemaPath: 'orders/schemas/order_created_v1.avsc',
                 type: 'event'
               },
-            ],
+              {
+                id: 'order-shipped',
+                name: 'Order Shipped',
+                version: '1.0.0',
+                schemaPath: 'orders/schemas/order_shipped_v1.proto',
+                type: 'event'
+              },
+            ],  
             receives: [
               {
                 id: 'place-order',
                 name: 'Place Order',
                 version: '1.0.0',
-                schemaPath: 'domains/Orders/services/OrdersService/commands/PlaceOrder/schema.json',
+                schemaPath: 'orders/schemas/place_order_v1.proto',
+                type: 'command'
+              },
+              {
+                id: 'update-order',
+                name: 'Update Order',
+                version: '1.0.0',
+                schemaPath: 'orders/schemas/update_order_v1.proto',
                 type: 'command'
               }
             ],
@@ -69,35 +83,58 @@ export default {
             version: '1.0.0',
             sends: [
               {
-                id: 'inventory-adjusted',
-                name: 'Inventory Adjusted',
+                id: 'out-of-stock',
+                name: 'Out of Stock',
                 version: '1.0.0',
-                schemaPath: 'domains/Orders/services/InventoryService/events/InventoryAdjusted/schema.avro',
+                schemaPath: 'inventory/schemas/out_of_stock_alert_v1.proto',
+                type: 'event'
+              },
+              {
+                id: 'stock-level-updated',
+                name: 'Stock Level Updated',
+                version: '1.0.0',
+                schemaPath: 'inventory/schemas/stock_level_updated_v1.avsc',
                 type: 'event'
               },
             ],
             receives: [
               {
-                id: 'get-inventory-stock',
-                name: 'Get Inventory Stock',
-                version: '1.0.0',
-                schemaPath: 'domains/Orders/services/InventoryService/queries/GetInventoryList/schema.json',
-                type: 'query'
-              },
-              {
-                id: 'get-inventory-status',
-                name: 'Get Inventory Status',
-                version: '1.0.0',
-                schemaPath: 'domains/Orders/services/InventoryService/queries/GetInventoryStatus/schema.json',
-                type: 'query'
-              },
-              {
                 id: 'update-inventory',
                 name: 'Update Inventory',
                 version: '1.0.0',
-                schemaPath: 'domains/Orders/services/InventoryService/commands/UpdateInventory/schema.json',
+                schemaPath: 'inventory/schemas/update_inventory_v1.proto',
                 type: 'command'
               }
+            ],
+          },
+          {
+            id: 'payment',
+            name: 'Payment Service',
+            version: '1.0.0',
+            sends: [
+              {
+                id: 'payment-processed',
+                name: 'Payment Processed',
+                version: '1.0.0',
+                schemaPath: 'payments/schemas/payment_processed_v1.avsc',
+                type: 'event'
+              },
+              {
+                id: 'payment-failed',
+                name: 'Payment Failed',
+                version: '1.0.0',
+                schemaPath: 'payments/schemas/payment_failed_v1.proto',
+                type: 'event'
+              },
+            ],
+            receives: [
+              {
+                id: 'process-payment',
+                name: 'Process Payment',
+                version: '1.0.0',
+                schemaPath: 'payments/schemas/process_payment_v1.proto',
+                type: 'command'
+              },
             ],
           }
         ],

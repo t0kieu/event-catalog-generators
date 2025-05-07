@@ -1,6 +1,6 @@
 # EventCatalog GitHub Plugin Example: Basic
 
-This example shows you how to pull and sync schemas from a GitHub repository into EventCatalog.
+This example shows you how to pull and sync schemas from a GitHub schema registry (example used here: https://github.com/event-catalog/flowmart-schema-registry) into EventCatalog.
 
 In this example we pull schemas and assign them to events, commands, and queries.
 

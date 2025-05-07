@@ -29,29 +29,57 @@ export default {
     [
       '@eventcatalog/generator-github',
       {
-        source: 'https://github.com/event-catalog/eventcatalog',
-        path: 'examples/default',
+        source: 'https://github.com/event-catalog/flowmart-schema-registry.git',
+        path: 'domains',
         branch: 'main',
         messages: [
           {
-            id: 'order-amended',
-            name: 'Order Amended',
+            id: 'out-of-stock',
+            name: 'Out of Stock',
             version: '1.0.0',
-            schemaPath: 'domains/Orders/services/OrdersService/events/OrderAmended/schema.avro',
+            schemaPath: 'inventory/schemas/out_of_stock_alert_v1.proto',
+            type: 'event'
+          },
+          {
+            id: 'stock-level-updated',
+            name: 'Stock Level Updated',
+            version: '1.0.0',
+            schemaPath: 'inventory/schemas/stock_level_updated_v1.avsc',
             type: 'event'
           },
           {
             id: 'order-cancelled',
             name: 'Order Cancelled',
-            version: '2.0.0',
-            schemaPath: 'domains/Orders/services/OrdersService/events/OrderCancelled/schema.json',
+            version: '1.0.0',
+            schemaPath: 'orders/schemas/order_cancelled_v1.json',
+            type: 'event'
+          },
+          {
+            id: 'order-created',
+            name: 'Order Created',
+            version: '1.0.0',
+            schemaPath: 'orders/schemas/order_created_v1.avsc',
+            type: 'event'
+          },
+          {
+            id: 'order-shipped',
+            name: 'Order Shipped',
+            version: '1.0.0',
+            schemaPath: 'orders/schemas/order_shipped_v1.proto',
             type: 'event'
           },
           {
             id: 'place-order',
             name: 'Place Order',
             version: '1.0.0',
-            schemaPath: 'domains/Orders/services/OrdersService/commands/PlaceOrder/schema.json',
+            schemaPath: 'orders/schemas/place_order_v1.proto',
+            type: 'command'
+          },
+          {
+            id: 'update-order',
+            name: 'Update Order',
+            version: '1.0.0',
+            schemaPath: 'orders/schemas/update_order_v1.proto',
             type: 'command'
           }
         ]
