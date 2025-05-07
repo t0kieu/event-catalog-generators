@@ -101,7 +101,7 @@ export const processMessageAndSchema = async ({
         { id: service.id },
         { override: true }
       );
-      console.log(chalk.cyan(` - Message ${id} (v${version}) created`));
+      console.log(chalk.green(` - Message ${id} (v${version}) created`));
     } else {
       await writeMessage({
         id,
@@ -109,7 +109,7 @@ export const processMessageAndSchema = async ({
         version: version || '1',
         markdown: '',
       });
-      console.log(chalk.cyan(` - Message ${id} (v${version}) created`));
+      console.log(chalk.green(` - Message ${id} (v${version}) created`));
     }
   } else {
     console.log(chalk.green(`- Message ${id} (v${version}) already exists, updating schema...`));
