@@ -168,7 +168,7 @@ export default async (config: EventCatalogConfig, options: GeneratorProps) => {
 
         // Regardless if we have previous information or not, we add this information always
         id: service.id,
-        name: service.id,
+        name: service.name || service.id,
         version: service.version,
         ...(sends.length > 0 ? { sends: sends.map((topic) => ({ id: topic.eventId, version: topic.version.toString() })) } : {}),
         ...(receives.length > 0
