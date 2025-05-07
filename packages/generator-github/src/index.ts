@@ -43,14 +43,15 @@ export default async (_: EventCatalogConfig, options: GeneratorProps) => {
 
   // If its already cloned dont clone it again
   if (fsExtra.existsSync(join(tmpDir, options.path || ''))) {
-    console.log(chalk.green(`${options.source} already cloned to ${tmpDir}, skipping clone`));
+    console.log(chalk.green(`${options.source} already cloned..., skipping clone`));
   } else {
-    console.log(chalk.green(`Cloning ${options.source} to ${tmpDir}...`));
+    console.log(chalk.green(`Cloning ${options.source}...`));
     await cloneRepo(options.source, tmpDir, options.branch || 'main', options.path);
   }
 
   // Process the messages
   if (options.messages) {
+    console.log(chalk.blue(`\nProcessing messages...`));
     for (const message of options.messages) {
       await processMessageAndSchema({
         pathToCatalog: eventCatalogDirectory,
@@ -62,6 +63,8 @@ export default async (_: EventCatalogConfig, options: GeneratorProps) => {
 
   // Create/manage domain if one is configured
   if (options.domain) {
+    console.log(chalk.blue(`\nProcessing domain: ${options.domain.name} (v${options.domain.version})`));
+
     const { id: domainId, name: domainName, version: domainVersion } = options.domain;
     const domain = await getDomain(options.domain.id, domainVersion || 'latest');
     const currentDomain = await getDomain(options.domain.id, 'latest');
@@ -82,7 +85,7 @@ export default async (_: EventCatalogConfig, options: GeneratorProps) => {
         version: domainVersion,
         markdown: '',
       });
-      console.log(chalk.cyan(` - Domain (v${domainVersion}) created`));
+      console.log(chalk.cyan(` - Domain ${domainName} (v${domainVersion}) created`));
     }
 
     //  Add all the services to the domain
@@ -93,6 +96,7 @@ export default async (_: EventCatalogConfig, options: GeneratorProps) => {
 
   if (options.services) {
     for (const service of options.services) {
+      console.log(chalk.blue(`Processing service: ${service.id} (v${service.version})`));
       const sends = (service.sends || []).map((send) => ({ id: send.id, ...(send.version ? { version: send.version } : {}) }));
       const receives = (service.receives || []).map((receive) => ({
         id: receive.id,
@@ -134,6 +138,8 @@ export default async (_: EventCatalogConfig, options: GeneratorProps) => {
       // @ts-ignore
       await writeService(serviceToWrite, { path: servicePath, override: serviceInCatalog?.version === service.version });
 
+      console.log(chalk.cyan(` - Service ${service.id} (v${service.version}) created`));
+
       const messages = [...(service.sends || []), ...(service.receives || [])];
       for (const message of messages) {
         await processMessageAndSchema({
@@ -142,9 +148,7 @@ export default async (_: EventCatalogConfig, options: GeneratorProps) => {
           message,
           service: { id: service.id, version: service.version },
         });
-        console.log(chalk.blue(`  - Processed ${message.id} (v${message.version}), added schema to event catalog`));
       }
-      console.log(chalk.blue(`  - Processed ${service.id} (v${service.version}), added service to event catalog`));
     }
   }
 

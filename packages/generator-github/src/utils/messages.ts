@@ -70,8 +70,6 @@ export const processMessageAndSchema = async ({
 
   const { id, name, version, schemaPath } = message;
 
-  console.log('join(directory, schemaPath)', join(directory, schemaPath));
-
   const schemaExists = await fs
     .access(join(directory, schemaPath), fs.constants.F_OK)
     .then(() => true)
@@ -87,8 +85,10 @@ export const processMessageAndSchema = async ({
 
   const catalogMessage = await getMessage(id, version);
 
+  console.log(chalk.blue(`Processing message: ${message.name} (v${message.version})`));
+
   if (!catalogMessage) {
-    console.log(chalk.red(`${message.type} ${id} (v${version}) does not exist, creating...`));
+    console.log(chalk.cyan(`${message.type} ${id} (v${version}) does not exist, creating...`));
 
     if (service) {
       await writeMessageToService(
@@ -101,6 +101,7 @@ export const processMessageAndSchema = async ({
         { id: service.id },
         { override: true }
       );
+      console.log(chalk.cyan(` - Message ${id} (v${version}) created`));
     } else {
       await writeMessage({
         id,
@@ -108,9 +109,10 @@ export const processMessageAndSchema = async ({
         version: version || '1',
         markdown: '',
       });
+      console.log(chalk.cyan(` - Message ${id} (v${version}) created`));
     }
   } else {
-    console.log(chalk.green(`${message.type} ${id} (v${version}) already exists, updating schema...`));
+    console.log(chalk.green(`- Message ${id} (v${version}) already exists, updating schema...`));
   }
 
   await addSchemaToMessage(id, { fileName, schema }, version);
