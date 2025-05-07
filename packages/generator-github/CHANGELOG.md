@@ -1,5 +1,11 @@
 # @eventcatalog/generator-github
 
+## 0.0.8
+
+### Patch Changes
+
+- 631531e: fix(plugin): github plugin now writes queries to the service
+
 ## 0.0.7
 
 ### Patch Changes
