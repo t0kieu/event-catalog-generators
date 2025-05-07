@@ -51,7 +51,7 @@ export default async (_: EventCatalogConfig, options: GeneratorProps) => {
 
   // Process the messages
   if (options.messages) {
-    console.log(chalk.blue(`\nProcessing messages...`));
+    console.log(chalk.cyan(`\nProcessing messages...`));
     for (const message of options.messages) {
       await processMessageAndSchema({
         pathToCatalog: eventCatalogDirectory,
@@ -63,13 +63,13 @@ export default async (_: EventCatalogConfig, options: GeneratorProps) => {
 
   // Create/manage domain if one is configured
   if (options.domain) {
-    console.log(chalk.blue(`\nProcessing domain: ${options.domain.name} (v${options.domain.version})`));
+    console.log(chalk.cyan(`\nProcessing domain: ${options.domain.name} (v${options.domain.version})`));
 
     const { id: domainId, name: domainName, version: domainVersion } = options.domain;
     const domain = await getDomain(options.domain.id, domainVersion || 'latest');
     const currentDomain = await getDomain(options.domain.id, 'latest');
 
-    console.log(chalk.blue(`\nProcessing domain: ${domainName} (v${domainVersion})`));
+    console.log(chalk.cyan(`\nProcessing domain: ${domainName} (v${domainVersion})`));
 
     // Found a domain, but the versions do not match
     if (currentDomain && currentDomain.version !== domainVersion) {
@@ -96,7 +96,7 @@ export default async (_: EventCatalogConfig, options: GeneratorProps) => {
 
   if (options.services) {
     for (const service of options.services) {
-      console.log(chalk.blue(`Processing service: ${service.id} (v${service.version})`));
+      console.log(chalk.cyan(`Processing service: ${service.id} (v${service.version})`));
       const sends = (service.sends || []).map((send) => ({ id: send.id, ...(send.version ? { version: send.version } : {}) }));
       const receives = (service.receives || []).map((receive) => ({
         id: receive.id,

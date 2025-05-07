@@ -85,10 +85,10 @@ export const processMessageAndSchema = async ({
 
   const catalogMessage = await getMessage(id, version);
 
-  console.log(chalk.blue(`Processing message: ${message.name} (v${message.version})`));
+  console.log(chalk.cyan(`Processing message: ${message.name} (v${message.version})`));
 
   if (!catalogMessage) {
-    console.log(chalk.cyan(`${message.type} ${id} (v${version}) does not exist, creating...`));
+    console.log(chalk.cyan(`- Message ${id} (v${version}) does not exist, creating...`));
 
     if (service) {
       await writeMessageToService(
