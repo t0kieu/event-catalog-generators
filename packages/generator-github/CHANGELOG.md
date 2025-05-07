@@ -1,5 +1,11 @@
 # @eventcatalog/generator-github
 
+## 0.0.10
+
+### Patch Changes
+
+- 5353d61: fix(plugin): github plugin now attaches schema paths when using services
+
 ## 0.0.9
 
 ### Patch Changes
