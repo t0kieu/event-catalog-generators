@@ -22,6 +22,9 @@ export default {
     src: "/logo.png",
     text: "EventCatalog",
   },
+  llmsTxt: {
+    enabled: true,
+  },
   generators: [
     [
       '@eventcatalog/generator-github',

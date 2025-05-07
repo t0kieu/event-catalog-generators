@@ -11,7 +11,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "@eventcatalog/core": "latest",
-    "@eventcatalog/generator-github": "^0.0.5"
+    "@eventcatalog/core": "^2.37.4",
+    "@eventcatalog/generator-github": "^0.0.6"
   }
 }

@@ -66,6 +66,8 @@ describe('generator-github', () => {
               id: 'analytics-event-view',
               name: 'analytics-event-view',
               version: '1',
+              schemaPath: 'schema.avro',
+              markdown: expect.stringContaining('<NodeGraph />'),
             })
           );
 
@@ -83,6 +85,7 @@ describe('generator-github', () => {
           name: 'analytics-event-view',
           version: '1',
           markdown: 'This is persisted and not changed',
+          schemaPath: 'schema.avro',
         });
 
         await addSchemaToEvent('analytics-event-view', {
@@ -111,6 +114,7 @@ describe('generator-github', () => {
             name: 'analytics-event-view',
             version: '1',
             markdown: 'This is persisted and not changed',
+            schemaPath: 'schema.avro',
           })
         );
 
@@ -202,6 +206,8 @@ describe('generator-github', () => {
             id: 'update-analytics',
             name: 'update-analytics',
             version: '1',
+            schemaPath: 'schema.avro',
+            markdown: expect.stringContaining('<NodeGraph />'),
           })
         );
 
@@ -340,6 +346,8 @@ describe('generator-github', () => {
             id: 'update-analytics',
             name: 'update-analytics',
             version: '1',
+            schemaPath: 'schema.avro',
+            markdown: expect.stringContaining('<NodeGraph />'),
           })
         );
 
@@ -768,7 +776,7 @@ describe('generator-github', () => {
           name: 'Orders',
           version: '0.0.1',
           services: [{ id: 'Orders Service', version: '1.0.0' }],
-          markdown: expect.stringContaining(''),
+          markdown: expect.stringContaining('<NodeGraph />'),
         })
       );
     }, 20000);
@@ -799,6 +807,7 @@ describe('generator-github', () => {
           id: 'orders',
           name: 'Orders',
           version: '0.0.2',
+          markdown: expect.stringContaining('<NodeGraph />'),
         })
       );
 

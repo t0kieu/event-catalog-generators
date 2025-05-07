@@ -3,6 +3,7 @@ import utils from '@eventcatalog/sdk';
 import chalk from 'chalk';
 import { join, basename } from 'path';
 import fs from 'fs/promises';
+import { getMarkdownForMessage } from './markdown';
 
 export const processMessageAndSchema = async ({
   pathToCatalog,
@@ -96,7 +97,7 @@ export const processMessageAndSchema = async ({
           id,
           name: name || id,
           version: version || '1',
-          markdown: '',
+          markdown: getMarkdownForMessage(message, fileName),
         },
         { id: service.id },
         { override: true }
@@ -107,7 +108,8 @@ export const processMessageAndSchema = async ({
         id,
         name: name || id,
         version: version || '1',
-        markdown: '',
+        markdown: getMarkdownForMessage(message, fileName),
+        schemaPath: fileName,
       });
       console.log(chalk.green(` - Message ${id} (v${version}) created`));
     }
