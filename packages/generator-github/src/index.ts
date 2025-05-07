@@ -24,7 +24,7 @@ export default async (_: EventCatalogConfig, options: GeneratorProps) => {
   const { getService, versionService, writeService, getDomain, versionDomain, writeDomain, addServiceToDomain } =
     utils(eventCatalogDirectory);
 
-  if (!options.repo) {
+  if (!options.source) {
     throw new Error('Please provide a repository to clone');
   }
 
@@ -39,10 +39,10 @@ export default async (_: EventCatalogConfig, options: GeneratorProps) => {
 
   // If its already cloned dont clone it again
   if (fsExtra.existsSync(join(tmpDir, options.path || ''))) {
-    console.log(chalk.green(`${options.repo} already cloned to ${tmpDir}, skipping clone`));
+    console.log(chalk.green(`${options.source} already cloned to ${tmpDir}, skipping clone`));
   } else {
-    console.log(chalk.green(`Cloning ${options.repo} to ${tmpDir}...`));
-    await cloneRepo(options.repo, tmpDir, options.branch || 'main', options.path);
+    console.log(chalk.green(`Cloning ${options.source} to ${tmpDir}...`));
+    await cloneRepo(options.source, tmpDir, options.branch || 'main', options.path);
   }
 
   // Process the messages
@@ -144,7 +144,7 @@ export default async (_: EventCatalogConfig, options: GeneratorProps) => {
     }
   }
 
-  console.log(chalk.green(`Finished processing ${options.repo} to EventCatalog`));
+  console.log(chalk.green(`Finished processing ${options.source} to EventCatalog`));
 
   // // Remove the tmpDir
   await fs.rm(tmpDir, { recursive: true });

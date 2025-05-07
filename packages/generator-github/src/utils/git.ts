@@ -1,8 +1,8 @@
 import { execSync } from 'child_process';
 
-export const cloneRepo = async (repo: string, destination: string, branch?: string, path?: string) => {
+export const cloneRepo = async (source: string, destination: string, branch?: string, path?: string) => {
   // Clone the repo without checking out the files
-  await execSync(`git clone --no-checkout git@github.com:${repo}.git ${destination}`);
+  await execSync(`git clone --no-checkout ${source} ${destination}`);
 
   if (path) {
     // Sparse checkout the content

@@ -47,7 +47,7 @@ describe('generator-github', () => {
           const { getEvent } = utils(catalogDir);
 
           await plugin(eventCatalogConfig, {
-            repo: 'event-catalog/eventcatalog',
+            source: 'https://github.com/event-catalog/eventcatalog.git',
             path: 'examples/default',
             messages: [
               {
@@ -91,7 +91,7 @@ describe('generator-github', () => {
         });
 
         await plugin(eventCatalogConfig, {
-          repo: 'event-catalog/eventcatalog',
+          source: 'https://github.com/event-catalog/eventcatalog.git',
           path: 'examples/default',
           messages: [
             {
@@ -122,7 +122,7 @@ describe('generator-github', () => {
         const { getEvent } = utils(catalogDir);
 
         await plugin(eventCatalogConfig, {
-          repo: 'event-catalog/eventcatalog',
+          source: 'https://github.com/event-catalog/eventcatalog.git',
           path: 'examples/default',
           messages: [
             {
@@ -154,7 +154,7 @@ describe('generator-github', () => {
         });
 
         await plugin(eventCatalogConfig, {
-          repo: 'event-catalog/eventcatalog',
+          source: 'https://github.com/event-catalog/eventcatalog.git',
           path: 'examples/default',
           messages: [
             {
@@ -183,7 +183,7 @@ describe('generator-github', () => {
         const { getCommand } = utils(catalogDir);
 
         await plugin(eventCatalogConfig, {
-          repo: 'event-catalog/eventcatalog',
+          source: 'https://github.com/event-catalog/eventcatalog.git',
           path: 'examples/default',
           messages: [
             {
@@ -226,7 +226,7 @@ describe('generator-github', () => {
         });
 
         await plugin(eventCatalogConfig, {
-          repo: 'event-catalog/eventcatalog',
+          source: 'https://github.com/event-catalog/eventcatalog.git',
           path: 'examples/default',
           messages: [
             {
@@ -258,7 +258,7 @@ describe('generator-github', () => {
         const { getCommand } = utils(catalogDir);
 
         await plugin(eventCatalogConfig, {
-          repo: 'event-catalog/eventcatalog',
+          source: 'https://github.com/event-catalog/eventcatalog.git',
           path: 'examples/default',
           messages: [
             {
@@ -290,7 +290,7 @@ describe('generator-github', () => {
         });
 
         await plugin(eventCatalogConfig, {
-          repo: 'event-catalog/eventcatalog',
+          source: 'https://github.com/event-catalog/eventcatalog.git',
           path: 'examples/default',
           messages: [
             {
@@ -321,7 +321,7 @@ describe('generator-github', () => {
         const { getQuery } = utils(catalogDir);
 
         await plugin(eventCatalogConfig, {
-          repo: 'event-catalog/eventcatalog',
+          source: 'https://github.com/event-catalog/eventcatalog.git',
           path: 'examples/default',
           messages: [
             {
@@ -364,7 +364,7 @@ describe('generator-github', () => {
         });
 
         await plugin(eventCatalogConfig, {
-          repo: 'event-catalog/eventcatalog',
+          source: 'https://github.com/event-catalog/eventcatalog.git',
           path: 'examples/default',
           messages: [
             {
@@ -396,7 +396,7 @@ describe('generator-github', () => {
         const { getQuery } = utils(catalogDir);
 
         await plugin(eventCatalogConfig, {
-          repo: 'event-catalog/eventcatalog',
+          source: 'https://github.com/event-catalog/eventcatalog.git',
           path: 'examples/default',
           messages: [
             {
@@ -428,7 +428,7 @@ describe('generator-github', () => {
         });
 
         await plugin(eventCatalogConfig, {
-          repo: 'event-catalog/eventcatalog',
+          source: 'https://github.com/event-catalog/eventcatalog.git',
           path: 'examples/default',
           messages: [
             {
@@ -460,7 +460,7 @@ describe('generator-github', () => {
       const { getService } = utils(catalogDir);
 
       await plugin(eventCatalogConfig, {
-        repo: 'event-catalog/eventcatalog',
+        source: 'https://github.com/event-catalog/eventcatalog.git',
         path: 'examples/default',
         services: [
           {
@@ -504,7 +504,7 @@ describe('generator-github', () => {
       const { getService, getEvent, getCommand } = utils(catalogDir);
 
       await plugin(eventCatalogConfig, {
-        repo: 'event-catalog/eventcatalog',
+        source: 'https://github.com/event-catalog/eventcatalog.git',
         path: 'examples/default',
         services: [
           {
@@ -566,7 +566,7 @@ describe('generator-github', () => {
       const { getService } = utils(catalogDir);
 
       await plugin(eventCatalogConfig, {
-        repo: 'event-catalog/eventcatalog',
+        source: 'https://github.com/event-catalog/eventcatalog.git',
         path: 'examples/default',
         services: [
           {
@@ -646,7 +646,7 @@ describe('generator-github', () => {
       });
 
       await plugin(eventCatalogConfig, {
-        repo: 'event-catalog/eventcatalog',
+        source: 'https://github.com/event-catalog/eventcatalog.git',
         path: 'examples/default',
         services: [
           {
@@ -695,7 +695,7 @@ describe('generator-github', () => {
       });
 
       await plugin(eventCatalogConfig, {
-        repo: 'event-catalog/eventcatalog',
+        source: 'https://github.com/event-catalog/eventcatalog.git',
         path: 'examples/default',
         services: [
           {
@@ -746,7 +746,7 @@ describe('generator-github', () => {
       const { getDomain } = utils(catalogDir);
 
       await plugin(eventCatalogConfig, {
-        repo: 'event-catalog/eventcatalog',
+        source: 'https://github.com/event-catalog/eventcatalog.git',
         path: 'examples/default',
         domain: {
           id: 'orders',
@@ -784,7 +784,7 @@ describe('generator-github', () => {
       });
 
       await plugin(eventCatalogConfig, {
-        repo: 'event-catalog/eventcatalog',
+        source: 'https://github.com/event-catalog/eventcatalog.git',
         path: 'examples/default',
         domain: {
           id: 'orders',
@@ -812,7 +812,7 @@ describe('generator-github', () => {
     'clones the source directory and copies the files specified in the content to the destination directory',
     async () => {
       await plugin(eventCatalogConfig, {
-        repo: 'event-catalog/eventcatalog',
+        source: 'https://github.com/event-catalog/eventcatalog.git',
         path: 'examples/default',
       });
       console.log('HELLO WORLD');

@@ -33,7 +33,7 @@ export type GeneratorProps = {
   /**
    * The repository to clone
    */
-  repo: string;
+  source: string;
 
   /**
    * The branch to clone
