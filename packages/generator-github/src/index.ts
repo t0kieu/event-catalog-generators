@@ -10,6 +10,7 @@ import { checkForPackageUpdate } from '../../../shared/check-for-package-update'
 import { cloneRepo } from './utils/git';
 import { EventCatalogConfig, GeneratorProps } from './types';
 import { processMessageAndSchema } from './utils/messages';
+import { getMarkdownForDomain, getMarkdownForService } from './utils/markdown';
 
 const tmpDir = path.join(os.tmpdir(), 'eventcatalog-generator-github');
 
@@ -83,7 +84,7 @@ export default async (_: EventCatalogConfig, options: GeneratorProps) => {
         id: domainId,
         name: domainName,
         version: domainVersion,
-        markdown: '',
+        markdown: getMarkdownForDomain(),
       });
       console.log(chalk.green(` - Domain ${domainName} (v${domainVersion}) created`));
     }
@@ -128,7 +129,7 @@ export default async (_: EventCatalogConfig, options: GeneratorProps) => {
         // If the service does not already exist we need to add fields for new documented topics
         ...(!serviceInCatalog
           ? {
-              markdown: '<NodeGraph />',
+              markdown: getMarkdownForService(),
               summary: `${service.id} Service`,
             }
           : {}),
