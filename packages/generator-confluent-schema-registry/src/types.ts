@@ -15,6 +15,7 @@ export type Filter = {
 
 export type Service = {
   id: string;
+  name?: string;
   sends?: Filter[];
   receives?: Filter[];
   version: string;

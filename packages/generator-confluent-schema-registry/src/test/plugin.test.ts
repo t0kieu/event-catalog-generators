@@ -243,7 +243,8 @@ message analytics_event_view_value {
           schemaRegistryUrl: 'http://localhost:8081',
           services: [
             {
-              id: 'Orders Service',
+              id: 'orders-service',
+              name: 'Orders Service',
               version: '1.0.0',
               sends: [{ events: ['analytics-event-view'] }],
               receives: [{ events: ['customer-deleted'], commands: ['analytics-capture'] }],
@@ -251,10 +252,11 @@ message analytics_event_view_value {
           ],
         });
 
-        const service = await getService('Orders Service', '1.0.0');
+        const service = await getService('orders-service', '1.0.0');
         expect(service).toEqual(
           expect.objectContaining({
-            id: 'Orders Service',
+            id: 'orders-service',
+            name: 'Orders Service',
             version: '1.0.0',
             sends: [{ id: 'analytics-event-view', version: '5' }],
             receives: [
@@ -273,13 +275,15 @@ message analytics_event_view_value {
           schemaRegistryUrl: 'http://localhost:8081',
           services: [
             {
-              id: 'Orders Service',
+              id: 'orders-service',
+              name: 'Orders Service',
               version: '1.0.0',
               sends: [{ events: 'analytics-event-view' }],
               receives: [{ events: 'customer-deleted' }],
             },
             {
-              id: 'Customers Service',
+              id: 'customers-service',
+              name: 'Customers Service',
               version: '1.0.0',
               sends: [{ events: 'order-created' }],
               receives: [{ events: 'customer-deleted' }],
@@ -287,20 +291,22 @@ message analytics_event_view_value {
           ],
         });
 
-        const ordersService = await getService('Orders Service', '1.0.0');
+        const ordersService = await getService('orders-service', '1.0.0');
         expect(ordersService).toEqual(
           expect.objectContaining({
-            id: 'Orders Service',
+            id: 'orders-service',
+            name: 'Orders Service',
             version: '1.0.0',
             sends: [{ id: 'analytics-event-view', version: '5' }],
             receives: [{ id: 'customer-deleted', version: '1' }],
           })
         );
 
-        const customersService = await getService('Customers Service', '1.0.0');
+        const customersService = await getService('customers-service', '1.0.0');
         expect(customersService).toEqual(
           expect.objectContaining({
-            id: 'Customers Service',
+            id: 'customers-service',
+            name: 'Customers Service',
             version: '1.0.0',
             sends: [{ id: 'order-created', version: '1' }],
             receives: [{ id: 'customer-deleted', version: '1' }],
@@ -308,10 +314,10 @@ message analytics_event_view_value {
         );
 
         // Verify that the events are added to the service folder
-        const eventsFolder = await existsSync(join(catalogDir, 'services', 'Orders Service', 'events'));
+        const eventsFolder = await existsSync(join(catalogDir, 'services', 'orders-service', 'events'));
         expect(eventsFolder).toBeTruthy();
 
-        // const orderCreatedFile = await existsSync(join(catalogDir, 'services', 'Orders Service', 'events', 'order-created', 'index.mdx'));
+        // const orderCreatedFile = await existsSync(join(catalogDir, 'services', 'orders-service', 'events', 'order-created', 'index.mdx'));
         // expect(orderCreatedFile).toBeTruthy();
       });
 
@@ -322,7 +328,8 @@ message analytics_event_view_value {
           schemaRegistryUrl: 'http://localhost:8081',
           services: [
             {
-              id: 'Orders Service',
+              id: 'orders-service',
+              name: 'Orders Service',
               version: '1.0.0',
               sends: [{ events: ['analytics-event-view', 'customer-deleted'] }],
               receives: [{ events: ['customer-deleted'] }],
@@ -330,10 +337,11 @@ message analytics_event_view_value {
           ],
         });
 
-        const service = await getService('Orders Service', '1.0.0');
+        const service = await getService('orders-service', '1.0.0');
         expect(service).toEqual(
           expect.objectContaining({
-            id: 'Orders Service',
+            id: 'orders-service',
+            name: 'Orders Service',
             version: '1.0.0',
             sends: [
               { id: 'analytics-event-view', version: '5' },
@@ -348,7 +356,7 @@ message analytics_event_view_value {
         const { writeService, getService } = utils(catalogDir);
 
         await writeService({
-          id: 'Orders Service',
+          id: 'orders-service',
           version: '1.0.0',
           name: 'Orders Service',
           markdown: 'This markdown is persisted',
@@ -363,7 +371,8 @@ message analytics_event_view_value {
           schemaRegistryUrl: 'http://localhost:8081',
           services: [
             {
-              id: 'Orders Service',
+              id: 'orders-service',
+              name: 'Orders Service',
               version: '1.0.0',
               sends: [{ events: ['analytics-event-view', 'customer-deleted'] }],
               receives: [{ events: ['customer-deleted'] }],
@@ -371,10 +380,11 @@ message analytics_event_view_value {
           ],
         });
 
-        const service = await getService('Orders Service', '1.0.0');
+        const service = await getService('orders-service', '1.0.0');
         expect(service).toEqual(
           expect.objectContaining({
-            id: 'Orders Service',
+            id: 'orders-service',
+            name: 'Orders Service',
             version: '1.0.0',
             markdown: 'This markdown is persisted',
             badges: [{ backgroundColor: 'red', textColor: 'white', content: 'Custom Badge' }],
@@ -393,7 +403,7 @@ message analytics_event_view_value {
         const { writeService, getService } = utils(catalogDir);
 
         await writeService({
-          id: 'Orders Service',
+          id: 'orders-service',
           version: '1.0.0',
           name: 'Orders Service',
           markdown: 'This markdown is persisted',
@@ -407,7 +417,8 @@ message analytics_event_view_value {
           schemaRegistryUrl: 'http://localhost:8081',
           services: [
             {
-              id: 'Orders Service',
+              id: 'orders-service',
+              name: 'Orders Service',
               version: '2.0.0',
               sends: [{ events: ['analytics-event-view', 'customer-deleted'] }],
               receives: [{ events: ['customer-deleted'] }],
@@ -415,10 +426,11 @@ message analytics_event_view_value {
           ],
         });
 
-        const oldService = await getService('Orders Service', '1.0.0');
+        const oldService = await getService('orders-service', '1.0.0');
         expect(oldService).toEqual(
           expect.objectContaining({
-            id: 'Orders Service',
+            id: 'orders-service',
+            name: 'Orders Service',
             version: '1.0.0',
             markdown: 'This markdown is persisted',
             badges: [{ backgroundColor: 'red', textColor: 'white', content: 'Custom Badge' }],
@@ -428,16 +440,17 @@ message analytics_event_view_value {
           })
         );
 
-        const newService = await getService('Orders Service', '2.0.0');
+        const newService = await getService('orders-service', '2.0.0');
         expect(newService).toEqual(
           expect.objectContaining({
-            id: 'Orders Service',
+            id: 'orders-service',
+            name: 'Orders Service',
             version: '2.0.0',
           })
         );
 
         // Make sure versioned folder exists
-        const versionedFolder = await existsSync(join(catalogDir, 'services', 'Orders Service', 'versioned'));
+        const versionedFolder = await existsSync(join(catalogDir, 'services', 'orders-service', 'versioned'));
         expect(versionedFolder).toBeTruthy();
       });
     });
@@ -449,13 +462,16 @@ message analytics_event_view_value {
 
           await plugin(config, {
             schemaRegistryUrl: 'http://localhost:8081',
-            services: [{ id: 'Orders Service', version: '1.0.0', sends: [{ events: { prefix: 'analytics-' } }] }],
+            services: [
+              { id: 'orders-service', name: 'Orders Service', version: '1.0.0', sends: [{ events: { prefix: 'analytics-' } }] },
+            ],
           });
 
-          const service = await getService('Orders Service', '1.0.0');
+          const service = await getService('orders-service', '1.0.0');
           expect(service).toEqual(
             expect.objectContaining({
-              id: 'Orders Service',
+              id: 'orders-service',
+              name: 'Orders Service',
               version: '1.0.0',
               sends: [
                 { id: 'analytics-event-click', version: '1' },
@@ -472,13 +488,21 @@ message analytics_event_view_value {
 
           await plugin(config, {
             schemaRegistryUrl: 'http://localhost:8081',
-            services: [{ id: 'Orders Service', version: '1.0.0', sends: [{ events: { prefix: ['analytics-', 'order-'] } }] }],
+            services: [
+              {
+                id: 'orders-service',
+                name: 'Orders Service',
+                version: '1.0.0',
+                sends: [{ events: { prefix: ['analytics-', 'order-'] } }],
+              },
+            ],
           });
 
-          const service = await getService('Orders Service', '1.0.0');
+          const service = await getService('orders-service', '1.0.0');
           expect(service).toEqual(
             expect.objectContaining({
-              id: 'Orders Service',
+              id: 'orders-service',
+              name: 'Orders Service',
               version: '1.0.0',
               sends: [
                 { id: 'analytics-event-click', version: '1' },
@@ -498,7 +522,8 @@ message analytics_event_view_value {
             schemaRegistryUrl: 'http://localhost:8081',
             services: [
               {
-                id: 'Orders Service',
+                id: 'orders-service',
+                name: 'Orders Service',
                 version: '1.0.0',
                 sends: [{ events: { prefix: 'analytics-' } }],
                 receives: [{ commands: { prefix: 'order-' } }],
@@ -506,10 +531,11 @@ message analytics_event_view_value {
             ],
           });
 
-          const service = await getService('Orders Service', '1.0.0');
+          const service = await getService('orders-service', '1.0.0');
           expect(service).toEqual(
             expect.objectContaining({
-              id: 'Orders Service',
+              id: 'orders-service',
+              name: 'Orders Service',
               version: '1.0.0',
               sends: [
                 { id: 'analytics-event-click', version: '1' },
@@ -529,10 +555,12 @@ message analytics_event_view_value {
 
           await plugin(config, {
             schemaRegistryUrl: 'http://localhost:8081',
-            services: [{ id: 'Orders Service', version: '1.0.0', receives: [{ events: { suffix: '-click' } }] }],
+            services: [
+              { id: 'orders-service', name: 'Orders Service', version: '1.0.0', receives: [{ events: { suffix: '-click' } }] },
+            ],
           });
 
-          const service = await getService('Orders Service', '1.0.0');
+          const service = await getService('orders-service', '1.0.0');
           expect(service.receives).toEqual([{ id: 'analytics-event-click', version: '1' }]);
         });
 
@@ -541,10 +569,17 @@ message analytics_event_view_value {
 
           await plugin(config, {
             schemaRegistryUrl: 'http://localhost:8081',
-            services: [{ id: 'Orders Service', version: '1.0.0', receives: [{ events: { suffix: ['-click', '-convert'] } }] }],
+            services: [
+              {
+                id: 'orders-service',
+                name: 'Orders Service',
+                version: '1.0.0',
+                receives: [{ events: { suffix: ['-click', '-convert'] } }],
+              },
+            ],
           });
 
-          const service = await getService('Orders Service', '1.0.0');
+          const service = await getService('orders-service', '1.0.0');
           expect(service.receives).toEqual([
             { id: 'analytics-event-click', version: '1' },
             { id: 'analytics-event-convert', version: '1' },
@@ -558,14 +593,15 @@ message analytics_event_view_value {
             schemaRegistryUrl: 'http://localhost:8081',
             services: [
               {
-                id: 'Orders Service',
+                id: 'orders-service',
+                name: 'Orders Service',
                 version: '1.0.0',
                 receives: [{ events: { suffix: '-click' }, commands: { suffix: '-created' } }],
               },
             ],
           });
 
-          const service = await getService('Orders Service', '1.0.0');
+          const service = await getService('orders-service', '1.0.0');
           expect(service.receives).toEqual([
             { id: 'analytics-event-click', version: '1' },
             { id: 'order-created', version: '1' },
@@ -580,10 +616,12 @@ message analytics_event_view_value {
 
           await plugin(config, {
             schemaRegistryUrl: 'http://localhost:8081',
-            services: [{ id: 'Orders Service', version: '1.0.0', receives: [{ events: { includes: '-event-' } }] }],
+            services: [
+              { id: 'orders-service', name: 'Orders Service', version: '1.0.0', receives: [{ events: { includes: '-event-' } }] },
+            ],
           });
 
-          const service = await getService('Orders Service', '1.0.0');
+          const service = await getService('orders-service', '1.0.0');
           expect(service.receives).toEqual([
             { id: 'analytics-event-click', version: '1' },
             { id: 'analytics-event-convert', version: '1' },
@@ -598,14 +636,15 @@ message analytics_event_view_value {
             schemaRegistryUrl: 'http://localhost:8081',
             services: [
               {
-                id: 'Orders Service',
+                id: 'orders-service',
+                name: 'Orders Service',
                 version: '1.0.0',
                 receives: [{ events: { includes: '-event-' }, commands: { includes: '-command-' } }],
               },
             ],
           });
 
-          const service = await getService('Orders Service', '1.0.0');
+          const service = await getService('orders-service', '1.0.0');
           expect(service.receives).toEqual([
             { id: 'analytics-event-click', version: '1' },
             { id: 'analytics-event-convert', version: '1' },
@@ -624,7 +663,8 @@ message analytics_event_view_value {
         schemaRegistryUrl: 'http://localhost:8081',
         services: [
           {
-            id: 'Orders Service',
+            id: 'orders-service',
+            name: 'Orders Service',
             version: '1.0.0',
             sends: [{ events: ['analytics-event-view'] }],
             receives: [{ events: ['customer-deleted'] }],
@@ -655,16 +695,16 @@ message analytics_event_view_value {
       );
 
       // Make sure the events are added to the service folder
-      const eventsFolder = await existsSync(join(catalogDir, 'services', 'Orders Service', 'events'));
+      const eventsFolder = await existsSync(join(catalogDir, 'services', 'orders-service', 'events'));
       expect(eventsFolder).toBeTruthy();
 
       const analyticsEventViewFile = await existsSync(
-        join(catalogDir, 'services', 'Orders Service', 'events', 'analytics-event-view', 'index.mdx')
+        join(catalogDir, 'services', 'orders-service', 'events', 'analytics-event-view', 'index.mdx')
       );
       expect(analyticsEventViewFile).toBeTruthy();
 
       const customerDeletedFile = await existsSync(
-        join(catalogDir, 'services', 'Orders Service', 'events', 'customer-deleted', 'index.mdx')
+        join(catalogDir, 'services', 'orders-service', 'events', 'customer-deleted', 'index.mdx')
       );
       expect(customerDeletedFile).toBeTruthy();
     });
@@ -676,7 +716,7 @@ message analytics_event_view_value {
         schemaRegistryUrl: 'http://localhost:8081',
         services: [
           {
-            id: 'Orders Service',
+            id: 'orders-service',
             version: '1.0.0',
             sends: [{ events: ['analytics-event-view-that-does-not-exist'] }],
             receives: [{ events: ['customer-deleted-that-does-not-exist'] }],
@@ -707,7 +747,7 @@ message analytics_event_view_value {
         schemaRegistryUrl: 'http://localhost:8081',
         services: [
           {
-            id: 'Orders Service',
+            id: 'orders-service',
             version: '1.0.0',
             sends: [{ events: ['analytics-event-view'] }],
             receives: [{ events: ['customer-deleted'] }],
@@ -732,7 +772,7 @@ message analytics_event_view_value {
 
       // Add the service to the catalog
       await writeService({
-        id: 'Orders Service',
+        id: 'orders-service',
         version: '1.0.0',
         name: 'Orders Service',
         markdown: 'This markdown is persisted',
@@ -749,7 +789,7 @@ message analytics_event_view_value {
           summary: 'This is custom summary',
           name: 'analytics-event-view',
         },
-        { id: 'Orders Service' }
+        { id: 'orders-service' }
       );
 
       // Add schema to the event
@@ -762,7 +802,8 @@ message analytics_event_view_value {
         schemaRegistryUrl: 'http://localhost:8081',
         services: [
           {
-            id: 'Orders Service',
+            id: 'orders-service',
+            name: 'Orders Service',
             version: '1.0.0',
             sends: [{ events: ['analytics-event-view'] }],
             receives: [{ events: ['customer-deleted'] }],
@@ -779,18 +820,18 @@ message analytics_event_view_value {
       );
 
       const versionedFolder = await existsSync(
-        join(catalogDir, 'services', 'Orders Service', 'events', 'analytics-event-view', 'versioned')
+        join(catalogDir, 'services', 'orders-service', 'events', 'analytics-event-view', 'versioned')
       );
       expect(versionedFolder).toBeTruthy();
 
       const versionedEvent = await existsSync(
-        join(catalogDir, 'services', 'Orders Service', 'events', 'analytics-event-view', 'versioned', '4', 'index.mdx')
+        join(catalogDir, 'services', 'orders-service', 'events', 'analytics-event-view', 'versioned', '4', 'index.mdx')
       );
       const versionedSchema = await existsSync(
         join(
           catalogDir,
           'services',
-          'Orders Service',
+          'orders-service',
           'events',
           'analytics-event-view',
           'versioned',
@@ -809,7 +850,8 @@ message analytics_event_view_value {
         schemaRegistryUrl: 'http://localhost:8081',
         services: [
           {
-            id: 'Orders Service',
+            id: 'orders-service',
+            name: 'Orders Service',
             version: '1.0.0',
             sends: [{ events: ['analytics-event-view'] }],
             receives: [{ events: ['customer-deleted'] }],
@@ -824,10 +866,10 @@ message analytics_event_view_value {
       expect(customerDeleted).toBeTruthy();
 
       // Make sure only two events are added to the folder
-      const eventsFolder = await existsSync(join(catalogDir, 'services', 'Orders Service', 'events'));
+      const eventsFolder = await existsSync(join(catalogDir, 'services', 'orders-service', 'events'));
       expect(eventsFolder).toBeTruthy();
 
-      const events = await fs.readdir(join(catalogDir, 'services', 'Orders Service', 'events'));
+      const events = await fs.readdir(join(catalogDir, 'services', 'orders-service', 'events'));
       expect(events.length).toBe(2);
 
       // This is in the schema registry "order-created-value" but make sure it is not added to the catalog
@@ -844,7 +886,8 @@ message analytics_event_view_value {
         schemaRegistryUrl: 'http://localhost:8081',
         services: [
           {
-            id: 'Orders Service',
+            id: 'orders-service',
+            name: 'Orders Service',
             version: '1.0.0',
             sends: [{ commands: ['analytics-event-view'] }],
             receives: [{ commands: ['customer-deleted'] }],
@@ -875,16 +918,16 @@ message analytics_event_view_value {
       );
 
       // Make sure the events are added to the service folder
-      const eventsFolder = await existsSync(join(catalogDir, 'services', 'Orders Service', 'commands'));
+      const eventsFolder = await existsSync(join(catalogDir, 'services', 'orders-service', 'commands'));
       expect(eventsFolder).toBeTruthy();
 
       const analyticsEventViewFile = await existsSync(
-        join(catalogDir, 'services', 'Orders Service', 'commands', 'analytics-event-view', 'index.mdx')
+        join(catalogDir, 'services', 'orders-service', 'commands', 'analytics-event-view', 'index.mdx')
       );
       expect(analyticsEventViewFile).toBeTruthy();
 
       const customerDeletedFile = await existsSync(
-        join(catalogDir, 'services', 'Orders Service', 'commands', 'customer-deleted', 'index.mdx')
+        join(catalogDir, 'services', 'orders-service', 'commands', 'customer-deleted', 'index.mdx')
       );
       expect(customerDeletedFile).toBeTruthy();
     });
@@ -894,19 +937,26 @@ message analytics_event_view_value {
 
       await plugin(config, {
         schemaRegistryUrl: 'http://localhost:8081',
-        services: [{ id: 'Orders Service', version: '1.0.0', receives: [{ commands: { includes: 'analytics-event-' } }] }],
+        services: [
+          {
+            id: 'orders-service',
+            name: 'Orders Service',
+            version: '1.0.0',
+            receives: [{ commands: { includes: 'analytics-event-' } }],
+          },
+        ],
       });
 
       const analyticsEventView = await getCommand('analytics-event-view');
       expect(analyticsEventView).toBeTruthy();
 
       // Make sure folder exists
-      const commandsFolder = await existsSync(join(catalogDir, 'services', 'Orders Service', 'commands'));
+      const commandsFolder = await existsSync(join(catalogDir, 'services', 'orders-service', 'commands'));
       expect(commandsFolder).toBeTruthy();
 
       // Make sure the command is added to the folder
       const commandFile = await existsSync(
-        join(catalogDir, 'services', 'Orders Service', 'commands', 'analytics-event-view', 'index.mdx')
+        join(catalogDir, 'services', 'orders-service', 'commands', 'analytics-event-view', 'index.mdx')
       );
       expect(commandFile).toBeTruthy();
     });
@@ -920,7 +970,8 @@ message analytics_event_view_value {
         schemaRegistryUrl: 'http://localhost:8081',
         services: [
           {
-            id: 'Orders Service',
+            id: 'orders-service',
+            name: 'Orders Service',
             version: '1.0.0',
             sends: [{ events: ['analytics-event-view'] }],
             receives: [{ events: ['customer-deleted'] }],
@@ -935,7 +986,7 @@ message analytics_event_view_value {
           id: 'orders',
           name: 'Orders',
           version: '0.0.1',
-          services: [{ id: 'Orders Service', version: '1.0.0' }],
+          services: [{ id: 'orders-service', version: '1.0.0' }],
           markdown: expect.stringContaining('<NodeGraph />'),
         })
       );
@@ -944,14 +995,14 @@ message analytics_event_view_value {
       const servicesFolder = await existsSync(join(catalogDir, 'domains', 'orders', 'services'));
       expect(servicesFolder).toBeTruthy();
 
-      const ordersService = await existsSync(join(catalogDir, 'domains', 'orders', 'services', 'Orders Service'));
+      const ordersService = await existsSync(join(catalogDir, 'domains', 'orders', 'services', 'orders-service'));
       expect(ordersService).toBeTruthy();
 
-      // Verify the events are added to the service folder
-      const eventsFolder = await existsSync(join(catalogDir, 'domains', 'orders', 'services', 'Orders Service', 'events'));
+      // // Verify the events are added to the service folder
+      const eventsFolder = await existsSync(join(catalogDir, 'domains', 'orders', 'services', 'orders-service', 'events'));
       expect(eventsFolder).toBeTruthy();
 
-      const events = await fs.readdir(join(catalogDir, 'domains', 'orders', 'services', 'Orders Service', 'events'));
+      const events = await fs.readdir(join(catalogDir, 'domains', 'orders', 'services', 'orders-service', 'events'));
       expect(events.length).toBe(2);
     });
 
@@ -1033,7 +1084,8 @@ message analytics_event_view_value {
         ],
         services: [
           {
-            id: 'Orders Service',
+            id: 'orders-service',
+            name: 'Orders Service',
             version: '1.0.0',
             sends: [{ events: ['analytics-event-view'], topic: 'orders' }],
           },

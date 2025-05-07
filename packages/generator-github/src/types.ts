@@ -12,6 +12,7 @@ export type Message = {
 
 export type Service = {
   id: string;
+  name?: string;
   version: string;
   sends?: Message[];
   receives?: Message[];

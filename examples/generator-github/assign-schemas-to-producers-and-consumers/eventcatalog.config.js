@@ -101,7 +101,7 @@ export default {
             ],
           }
         ],
-        domains: {
+        domain: {
           id: 'E-Commerce',
           name: 'E-Commerce',
           version: '1.0.0',
