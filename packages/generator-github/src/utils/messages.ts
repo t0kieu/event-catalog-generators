@@ -100,6 +100,7 @@ export const processMessageAndSchema = async ({
           name: name || id,
           version: version || '1',
           markdown: getMarkdownForMessage(message, fileName),
+          schemaPath: fileName,
         },
         { id: service.id },
         { override: true }

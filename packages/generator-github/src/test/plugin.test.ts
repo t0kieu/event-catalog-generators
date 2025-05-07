@@ -555,6 +555,7 @@ describe('generator-github', () => {
           name: 'analytics-event-view',
           // no version given, so it is given a version of 1
           version: '1',
+          schemaPath: 'schema.avro',
         })
       );
 
@@ -566,6 +567,7 @@ describe('generator-github', () => {
           name: 'analytics-capture',
           // no version given, so it is given a version of 1
           version: '1',
+          schemaPath: 'schema.avro',
         })
       );
     }, 20000);
