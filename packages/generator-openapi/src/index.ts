@@ -29,6 +29,7 @@ type Props = {
   writeFilesToRoot?: boolean;
   sidebarBadgeType?: 'HTTP_METHOD' | 'MESSAGE_TYPE';
   httpMethodsToMessages?: HTTP_METHOD_TO_MESSAGE_TYPE;
+  preserveExistingMessages?: boolean;
 };
 
 export default async (_: any, options: Props) => {
@@ -205,6 +206,8 @@ const processMessagesForOpenAPISpec = async (
   const operations = await getOperationsByType(pathToSpec, options.httpMethodsToMessages);
   const sidebarBadgeType = options.sidebarBadgeType || 'HTTP_METHOD';
   const version = document.info.version;
+  const preserveExistingMessages = options.preserveExistingMessages ?? true;
+
   let receives = [],
     sends = [];
 
@@ -230,7 +233,10 @@ const processMessagesForOpenAPISpec = async (
     const catalogedMessage = await getMessage(message.id, 'latest');
 
     if (catalogedMessage) {
-      messageMarkdown = catalogedMessage.markdown;
+      // only keep the markdown if the message is being preserved
+      if (preserveExistingMessages) {
+        messageMarkdown = catalogedMessage.markdown;
+      }
       // if the version matches, we can override the message but keep markdown as it  was
       if (catalogedMessage.version !== version) {
         // if the version does not match, we need to version the message
