@@ -757,7 +757,7 @@ describe('OpenAPI EventCatalog Plugin', () => {
         expect(newEvent).toBeDefined();
       });
 
-      it('when a the message already exists in EventCatalog the markdown is persisted and not overwritten', async () => {
+      it('when a the message already exists in EventCatalog the markdown is persisted and not overwritten by default', async () => {
         const { writeCommand, getCommand } = utils(catalogDir);
 
         await writeCommand({
@@ -772,6 +772,27 @@ describe('OpenAPI EventCatalog Plugin', () => {
 
         const command = await getCommand('createPets', '1.0.0');
         expect(command.markdown).toEqual('please dont override me!');
+      });
+
+      it('when preserveExistingMessages is set to false, the markdown is not persisted and overwritten  ', async () => {
+        const { writeCommand, getCommand } = utils(catalogDir);
+
+        await writeCommand({
+          id: 'createPets',
+          name: 'createPets',
+          version: '1.0.0',
+          summary: 'Create a pet',
+          markdown: 'This markdown is already in the catalog',
+        });
+
+        await plugin(config, {
+          preserveExistingMessages: false,
+          services: [{ path: join(openAPIExamples, 'petstore.yml'), id: 'swagger-petstore' }],
+        });
+
+        const command = await getCommand('createPets', '1.0.0');
+        expect(command.markdown).not.toContain('This markdown is already in the catalog');
+        expect(command.markdown).toContain('<SchemaViewer file="response-default.json" maxHeight="500" id="response-default" />');
       });
 
       it('when a message already exists in EventCatalog with the same version the metadata is updated', async () => {
