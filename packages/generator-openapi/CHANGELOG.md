@@ -1,5 +1,11 @@
 # @eventcatalog/generator-openapi
 
+## 5.0.5
+
+### Patch Changes
+
+- c3447b2: feat(core): added preserveExistingMessages flag to openapi plugin
+
 ## 5.0.4
 
 ### Patch Changes
