@@ -57,143 +57,171 @@ export default async (_: any, options: Props) => {
   } = utils(process.env.PROJECT_DIR);
 
   const { services = [], saveParsedSpecFile = false } = options;
+
   for (const serviceSpec of services) {
-    console.log(chalk.green(`Processing ${serviceSpec.path}`));
+    const specFiles = Array.isArray(serviceSpec.path) ? serviceSpec.path : [serviceSpec.path];
 
-    try {
-      await SwaggerParser.validate(serviceSpec.path);
-    } catch (error) {
-      console.error(chalk.red(`Failed to parse OpenAPI file: ${serviceSpec.path}`));
-      console.error(chalk.red(error));
-      continue;
-    }
-
-    const document = await SwaggerParser.dereference(serviceSpec.path);
-    const version = document.info.version;
-
-    const service = buildService(serviceSpec, document);
-    let serviceMarkdown = service.markdown;
-    let serviceSpecificationsFiles = [];
-    let serviceSpecifications = service.specifications;
-
-    // Have to ../ as the SDK will put the files into hard coded folders
-    let servicePath = options.domain
-      ? join('../', 'domains', options.domain.id, 'services', service.id)
-      : join('../', 'services', service.id);
-    if (options.writeFilesToRoot) {
-      servicePath = service.id;
-    }
-
-    // Manage domain
-    if (options.domain) {
-      // Try and get the domain
-      const { id: domainId, name: domainName, version: domainVersion } = options.domain;
-      const domain = await getDomain(options.domain.id, domainVersion || 'latest');
-      const currentDomain = await getDomain(options.domain.id, 'latest');
-
-      console.log(chalk.blue(`\nProcessing domain: ${domainName} (v${domainVersion})`));
-
-      // Found a domain, but the versions do not match
-      if (currentDomain && currentDomain.version !== domainVersion) {
-        await versionDomain(domainId);
-        console.log(chalk.cyan(` - Versioned previous domain (v${currentDomain.version})`));
+    const specs = specFiles.map(async (specFile) => {
+      try {
+        await SwaggerParser.validate(specFile);
+        const document = await SwaggerParser.dereference(specFile);
+        return {
+          document,
+          path: specFile,
+        };
+      } catch (error) {
+        console.error(chalk.red(`Failed to parse OpenAPI file: ${serviceSpec.path}`));
+        console.error(chalk.red(error));
+        return null;
       }
-
-      // Do we need to create a new domain?
-      if (!domain || (domain && domain.version !== domainVersion)) {
-        await writeDomain({
-          id: domainId,
-          name: domainName,
-          version: domainVersion,
-          markdown: generateMarkdownForDomain(),
-          ...(options.domain?.owners ? { owners: options.domain.owners } : {}),
-        });
-        console.log(chalk.cyan(` - Domain (v${domainVersion}) created`));
-      }
-
-      if (currentDomain && currentDomain.version === domainVersion) {
-        console.log(chalk.yellow(` - Domain (v${domainVersion}) already exists, skipped creation...`));
-      }
-
-      // Add the service to the domain
-      await addServiceToDomain(domainId, { id: service.id, version: service.version }, domainVersion);
-    }
-
-    // Process all messages for the OpenAPI spec
-    let { sends, receives } = await processMessagesForOpenAPISpec(serviceSpec.path, document, servicePath, {
-      ...options,
-      owners: service.setMessageOwnersToServiceOwners ? service.owners : [],
     });
 
-    let owners = service.owners || [];
-    let repository = null;
-    let styles = null;
+    const validSpecs = await Promise.all(specs);
+    const validSpecFiles = validSpecs.filter((v) => v !== null);
 
-    // Check if service is already defined... if the versions do not match then create service.
-    const latestServiceInCatalog = await getService(service.id, 'latest');
-    console.log(chalk.blue(`Processing service: ${document.info.title} (v${version})`));
+    const orderedSpecs = validSpecFiles.sort((a, b) => {
+      const versionA = a?.document.info.version ?? '';
+      const versionB = b?.document.info.version ?? '';
+      return versionA.localeCompare(versionB);
+    });
 
-    if (latestServiceInCatalog) {
-      serviceMarkdown = latestServiceInCatalog.markdown;
-      serviceSpecificationsFiles = await getSpecificationFilesForService(service.id, 'latest');
-      sends = latestServiceInCatalog.sends || ([] as any);
-      owners = latestServiceInCatalog.owners || ([] as any);
-      repository = latestServiceInCatalog.repository || null;
-      styles = latestServiceInCatalog.styles || null;
-      // persist any specifications that are already in the catalog
-      serviceSpecifications = {
-        ...serviceSpecifications,
-        ...latestServiceInCatalog.specifications,
-      };
+    for (const specification of orderedSpecs) {
+      const document = specification.document;
+      const version = document.info.version;
+      const specPath = specification.path;
+
+      const service = buildService({ ...serviceSpec, path: specPath }, document);
+      let serviceMarkdown = service.markdown;
+      let serviceSpecificationsFiles = [];
+      let serviceSpecifications = service.specifications;
+
+      // Have to ../ as the SDK will put the files into hard coded folders
+      let servicePath = options.domain
+        ? join('../', 'domains', options.domain.id, 'services', service.id)
+        : join('../', 'services', service.id);
+      if (options.writeFilesToRoot) {
+        servicePath = service.id;
+      }
+
+      // Manage domain
+      if (options.domain) {
+        // Try and get the domain
+        const { id: domainId, name: domainName, version: domainVersion } = options.domain;
+        const domain = await getDomain(options.domain.id, domainVersion || 'latest');
+        const currentDomain = await getDomain(options.domain.id, 'latest');
+
+        console.log(chalk.blue(`\nProcessing domain: ${domainName} (v${domainVersion})`));
+
+        // Found a domain, but the versions do not match
+        if (currentDomain && currentDomain.version !== domainVersion) {
+          await versionDomain(domainId);
+          console.log(chalk.cyan(` - Versioned previous domain (v${currentDomain.version})`));
+        }
+
+        // Do we need to create a new domain?
+        if (!domain || (domain && domain.version !== domainVersion)) {
+          await writeDomain({
+            id: domainId,
+            name: domainName,
+            version: domainVersion,
+            markdown: generateMarkdownForDomain(),
+            ...(options.domain?.owners ? { owners: options.domain.owners } : {}),
+          });
+          console.log(chalk.cyan(` - Domain (v${domainVersion}) created`));
+        }
+
+        if (currentDomain && currentDomain.version === domainVersion) {
+          console.log(chalk.yellow(` - Domain (v${domainVersion}) already exists, skipped creation...`));
+        }
+
+        // Add the service to the domain
+        await addServiceToDomain(domainId, { id: service.id, version: service.version }, domainVersion);
+      }
+
+      // Check if service is already defined... if the versions do not match then create service.
+      const latestServiceInCatalog = await getService(service.id, 'latest');
+      const versionTheService = latestServiceInCatalog && latestServiceInCatalog.version !== version;
+      console.log(chalk.blue(`Processing service: ${document.info.title} (v${version})`));
 
       // Found a service, and versions do not match, we need to version the one already there
-      if (latestServiceInCatalog.version !== version) {
+      if (versionTheService) {
         await versionService(service.id);
         console.log(chalk.cyan(` - Versioned previous service (v${latestServiceInCatalog.version})`));
       }
 
-      // Match found, override it
-      if (latestServiceInCatalog.version === version) {
-        receives = latestServiceInCatalog.receives ? [...latestServiceInCatalog.receives, ...receives] : receives;
+      // Process all messages for the OpenAPI spec
+      let { sends, receives } = await processMessagesForOpenAPISpec(specPath, document, servicePath, {
+        ...options,
+        owners: service.setMessageOwnersToServiceOwners ? service.owners : [],
+        serviceHasMultipleSpecFiles: Array.isArray(serviceSpec.path),
+      });
+
+      let owners = service.owners || [];
+      let repository = null;
+      let styles = null;
+
+      // for now, if the user is doing multiple files into the same service,
+      // we don't persist the previous specification files. TODO: fix this
+      const persistPreviousSpecificationFiles = Array.isArray(serviceSpec.path) === false;
+
+      if (latestServiceInCatalog) {
+        serviceMarkdown = latestServiceInCatalog.markdown;
+        serviceSpecificationsFiles = await getSpecificationFilesForService(service.id, 'latest');
+        sends = latestServiceInCatalog.sends || ([] as any);
+        owners = latestServiceInCatalog.owners || ([] as any);
+        repository = latestServiceInCatalog.repository || null;
+        styles = latestServiceInCatalog.styles || null;
+        // persist any specifications that are already in the catalog
+        serviceSpecifications = {
+          ...serviceSpecifications,
+          ...(persistPreviousSpecificationFiles ? latestServiceInCatalog.specifications : {}),
+        };
+
+        // Match found, override it
+        if (latestServiceInCatalog.version === version) {
+          receives = latestServiceInCatalog.receives ? [...latestServiceInCatalog.receives, ...receives] : receives;
+        }
       }
-    }
 
-    await writeService(
-      {
-        ...service,
-        markdown: serviceMarkdown,
-        specifications: serviceSpecifications,
-        sends,
-        receives,
-        ...(owners ? { owners } : {}),
-        ...(repository ? { repository } : {}),
-        ...(styles ? { styles } : {}),
-      },
-      { path: join(servicePath), override: true }
-    );
-
-    // What files need added to the service (specification files)
-    const specFiles = [
-      // add any previous spec files to the list
-      ...serviceSpecificationsFiles,
-      {
-        content: saveParsedSpecFile ? getParsedSpecFile(serviceSpec, document) : await getRawSpecFile(serviceSpec),
-        fileName: service.schemaPath,
-      },
-    ];
-
-    for (const specFile of specFiles) {
-      await addFileToService(
-        service.id,
+      await writeService(
         {
-          fileName: specFile.fileName,
-          content: specFile.content,
+          ...service,
+          markdown: serviceMarkdown,
+          specifications: serviceSpecifications,
+          sends,
+          receives,
+          ...(owners ? { owners } : {}),
+          ...(repository ? { repository } : {}),
+          ...(styles ? { styles } : {}),
         },
-        version
+        { path: join(servicePath), override: true }
       );
-    }
 
-    console.log(chalk.cyan(` - Service (v${version}) created`));
+      // What files need added to the service (specification files)
+      const specFiles = [
+        // add any previous spec files to the list
+        ...(persistPreviousSpecificationFiles ? serviceSpecificationsFiles : []),
+        {
+          content: saveParsedSpecFile
+            ? getParsedSpecFile({ ...serviceSpec, path: specPath }, document)
+            : await getRawSpecFile({ ...serviceSpec, path: specPath }),
+          fileName: service.schemaPath,
+        },
+      ];
+
+      for (const specFile of specFiles) {
+        await addFileToService(
+          service.id,
+          {
+            fileName: specFile.fileName,
+            content: specFile.content,
+          },
+          version
+        );
+      }
+
+      console.log(chalk.cyan(` - Service (v${version}) created`));
+    }
   }
 };
 
@@ -201,7 +229,7 @@ const processMessagesForOpenAPISpec = async (
   pathToSpec: string,
   document: OpenAPI.Document,
   servicePath: string,
-  options: Props & { owners: string[] }
+  options: Props & { owners: string[]; pathForMessages?: string; serviceHasMultipleSpecFiles: boolean }
 ) => {
   const operations = await getOperationsByType(pathToSpec, options.httpMethodsToMessages);
   const sidebarBadgeType = options.sidebarBadgeType || 'HTTP_METHOD';
@@ -214,7 +242,6 @@ const processMessagesForOpenAPISpec = async (
   // Go through all messages
   for (const operation of operations) {
     const { requestBodiesAndResponses, sidebar, ...message } = await buildMessage(pathToSpec, document, operation);
-    // console.log('operation', operation);
     let messageMarkdown = message.markdown;
     const messageType = operation.type;
     const messageAction = operation.action;
@@ -238,10 +265,10 @@ const processMessagesForOpenAPISpec = async (
         messageMarkdown = catalogedMessage.markdown;
       }
       // if the version matches, we can override the message but keep markdown as it  was
-      if (catalogedMessage.version !== version) {
+      if (catalogedMessage.version !== version && !options.serviceHasMultipleSpecFiles) {
         // if the version does not match, we need to version the message
         await versionMessage(message.id);
-        console.log(chalk.cyan(` - Versioned previous message: (v${catalogedMessage.version})`));
+        console.log(chalk.cyan(` - Versioned previous message: ${message.id} (v${catalogedMessage.version})`));
       }
     }
 
@@ -259,7 +286,7 @@ const processMessagesForOpenAPISpec = async (
         // only if its defined add it to the sidebar
         ...(sidebarBadgeType === 'HTTP_METHOD' ? { sidebar } : {}),
       },
-      { path: messagePath, override: true }
+      { path: options.pathForMessages || messagePath, override: true }
     );
 
     // If the message send or recieved by the service?
@@ -330,17 +357,19 @@ const processMessagesForOpenAPISpec = async (
 };
 
 const getParsedSpecFile = (service: Service, document: OpenAPI.Document) => {
-  const isSpecFileJSON = service.path.endsWith('.json');
+  const specPath = service.path as string;
+  const isSpecFileJSON = specPath.endsWith('.json');
   return isSpecFileJSON ? JSON.stringify(document, null, 2) : yaml.dump(document, { noRefs: true });
 };
 
 const getRawSpecFile = async (service: Service) => {
-  if (service.path.startsWith('http')) {
-    const file = await fetch(service.path, { method: 'GET' });
+  const specPath = service.path as string;
+  if (specPath.startsWith('http')) {
+    const file = await fetch(specPath, { method: 'GET' });
     if (!file.ok) {
-      throw new Error(`Failed to fetch file: ${service.path}, status: ${file.status}`);
+      throw new Error(`Failed to fetch file: ${specPath}, status: ${file.status}`);
     }
     return await file.text();
   }
-  return await readFile(service.path, 'utf8');
+  return await readFile(specPath, 'utf8');
 };
