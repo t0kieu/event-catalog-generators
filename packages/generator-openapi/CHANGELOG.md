@@ -1,5 +1,11 @@
 # @eventcatalog/generator-openapi
 
+## 6.0.0
+
+### Major Changes
+
+- 427d2bf: feat(plugin): openapi file supports many openapi files for service
+
 ## 5.0.5
 
 ### Patch Changes
