@@ -4,6 +4,7 @@ import plugin from '../index';
 import { join } from 'node:path';
 import fs from 'fs/promises';
 import { vi } from 'vitest';
+import { existsSync } from 'node:fs';
 
 // Add mock for the local checkLicense module
 vi.mock('../utils/checkLicense', () => ({
@@ -960,7 +961,7 @@ describe('OpenAPI EventCatalog Plugin', () => {
         // Normalize line endings
         const normalizeLineEndings = (str: string) => str.replace(/\r\n/g, '\n');
 
-        expect(normalizeLineEndings(asyncAPIFile)).toEqual(normalizeLineEndings(expected));
+        expect(normalizeLineEndings(asyncAPIFile).trim()).toEqual(normalizeLineEndings(expected).trim());
       });
 
       it('when saveParsedSpecFile is set, the OpenAPI files with $ref are resolved and added to the catalog', async () => {
@@ -1230,6 +1231,117 @@ describe('OpenAPI EventCatalog Plugin', () => {
             },
           })
         );
+      });
+    });
+
+    describe('parsing multiple OpenAPI files to the same service', () => {
+      it('when multiple OpenAPI files are parsed to the same service, the services and messages are written to the correct locations', async () => {
+        const { getService } = utils(catalogDir);
+
+        await plugin(config, {
+          services: [
+            {
+              path: [
+                join(openAPIExamples, 'petstore-v2-no-extensions.yml'),
+                join(openAPIExamples, 'petstore-v1-no-extensions.yml'),
+              ],
+              id: 'swagger-petstore-2',
+            },
+          ],
+        });
+
+        const previousService = await getService('swagger-petstore-2', '1.0.0');
+        const service = await getService('swagger-petstore-2', '2.0.0');
+
+        expect(service).toBeDefined();
+        expect(previousService).toBeDefined();
+
+        // Expect versioned folder for 1.0.0 and all files are present
+        expect(existsSync(join(catalogDir, 'services', 'swagger-petstore-2', 'versioned', '1.0.0'))).toBe(true);
+        expect(
+          existsSync(join(catalogDir, 'services', 'swagger-petstore-2', 'versioned', '1.0.0', 'petstore-v1-no-extensions.yml'))
+        ).toBe(true);
+        expect(existsSync(join(catalogDir, 'services', 'swagger-petstore-2', 'versioned', '1.0.0', 'queries'))).toBe(true);
+        expect(existsSync(join(catalogDir, 'services', 'swagger-petstore-2', 'versioned', '1.0.0', 'index.mdx'))).toBe(true);
+
+        // Expect 2.0.0 to be the latest version with expected files
+        expect(existsSync(join(catalogDir, 'services', 'swagger-petstore-2', 'petstore-v2-no-extensions.yml'))).toBe(true);
+        expect(existsSync(join(catalogDir, 'services', 'swagger-petstore-2', 'petstore-v1-no-extensions.yml'))).toBe(false);
+
+        expect(service).toEqual(
+          expect.objectContaining({
+            id: 'swagger-petstore-2',
+            version: '2.0.0',
+            specifications: {
+              openapiPath: 'petstore-v2-no-extensions.yml',
+            },
+            sends: [],
+            receives: [
+              { id: 'listPets', version: '2.0.0' },
+              { id: 'createPets', version: '2.0.0' },
+              { id: 'updatePet', version: '2.0.0' },
+              { id: 'deletePet', version: '2.0.0' },
+              { id: 'petAdopted', version: '2.0.0' },
+              { id: 'petVaccinated', version: '2.0.0' },
+            ],
+          })
+        );
+
+        expect(previousService).toEqual(
+          expect.objectContaining({
+            id: 'swagger-petstore-2',
+            version: '1.0.0',
+            specifications: {
+              openapiPath: 'petstore-v1-no-extensions.yml',
+            },
+            sends: [],
+            receives: [
+              { id: 'listPets', version: '1.0.0' },
+              { id: 'createPets', version: '1.0.0' },
+              { id: 'showPetById', version: '1.0.0' },
+              { id: 'updatePet', version: '1.0.0' },
+              { id: 'deletePet', version: '1.0.0' },
+              { id: 'petAdopted', version: '1.0.0' },
+              { id: 'petVaccinated', version: '1.0.0' },
+            ],
+          })
+        );
+      });
+
+      it('when multiple OpenAPI files are processed, the messages for each spec file are written to the correct locations', async () => {
+        await plugin(config, {
+          services: [
+            {
+              path: [
+                join(openAPIExamples, 'petstore-v2-no-extensions.yml'),
+                join(openAPIExamples, 'petstore-v1-no-extensions.yml'),
+              ],
+              id: 'swagger-petstore-2',
+            },
+          ],
+        });
+
+        expect(
+          existsSync(join(catalogDir, 'services', 'swagger-petstore-2', 'versioned', '1.0.0', 'queries', 'showPetById'))
+        ).toBe(true);
+        expect(existsSync(join(catalogDir, 'services', 'swagger-petstore-2', 'queries', 'showPetById'))).toBe(false);
+
+        // Get all the folder names in the queries folder for v2
+        const queries = await fs.readdir(join(catalogDir, 'services', 'swagger-petstore-2', 'queries'));
+        expect(queries).toEqual(['createPets', 'deletePet', 'listPets', 'petAdopted', 'petVaccinated', 'updatePet']);
+
+        const versionedQueries = await fs.readdir(
+          join(catalogDir, 'services', 'swagger-petstore-2', 'versioned', '1.0.0', 'queries')
+        );
+        expect(versionedQueries).toEqual([
+          'createPets',
+          'deletePet',
+          'listPets',
+          'petAdopted',
+          'petVaccinated',
+          'showPetById',
+          'updatePet',
+        ]);
       });
     });
   });

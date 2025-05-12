@@ -9,7 +9,7 @@ export type Domain = {
 
 export type Service = {
   id: string;
-  path: string;
+  path: string | string[];
   owners?: string[];
   setMessageOwnersToServiceOwners?: boolean;
 };
