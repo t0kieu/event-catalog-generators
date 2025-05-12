@@ -70,7 +70,7 @@ export default async (_: any, options: Props) => {
           path: specFile,
         };
       } catch (error) {
-        console.error(chalk.red(`Failed to parse OpenAPI file: ${serviceSpec.path}`));
+        console.error(chalk.red(`Failed to parse OpenAPI file: ${specFile}`));
         console.error(chalk.red(error));
         return null;
       }
