@@ -1,0 +1,46 @@
+name: New Integration 🔌
+description: Suggest a new integration for EventCatalog
+labels: ['🔌 new-integration', 'needs-discussion']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        :pray: Thanks for taking the time to fill out this new integration request! Feel free to ping us on [EventCatalog Discord](https://discord.com/invite/3rjaZMmrAm) if you have any questions or need help.
+
+  - type: markdown
+    attributes:
+      value: |
+        ## New Integration Request
+
+  - type: textarea
+    id: use-cases
+    attributes:
+      label: Use Case
+      placeholder: What is the integration you want to add?
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed Solution
+      description:
+      placeholder: |
+        Optionally, describe how you would have ideally wanted EventCatalog to support this use case.
+
+  - type: textarea
+    id: implementation-notes
+    attributes:
+      label: Implementation Notes
+      description:
+      placeholder: |
+        Any thoughts regarding how this should be implemented?
+
+  - type: textarea
+    attributes:
+      label: Community Notes
+      value: |
+        <!-- Please keep this note for the community -->
+        * Please vote by adding a 👍 reaction to the issue to help us prioritize.
+        * If you are interested to work on this issue, please leave a comment.
+        * If this issue is labeled **needs-discussion**, it means the spec has not been finalized yet. Please reach out in the [EventCatalog Discord](https://discord.com/invite/3rjaZMmrAm).
