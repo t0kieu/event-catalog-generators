@@ -82,9 +82,9 @@ npm run generate
 npm run dev
 ```
 
-### Corporate Proxy Server setup
+### Proxy Server setup
 
-Configure environment variable `PROXY_SERVER_URI` to use a corporate proxy server.
+Configure environment variable `PROXY_SERVER_URI` to use a proxy server.
 You can define proxy settings in URI format example below:
 
 ```sh
