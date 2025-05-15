@@ -1,3 +1,5 @@
+import fetch from 'node-fetch';
+import { HttpsProxyAgent } from 'https-proxy-agent';
 import chalk from 'chalk';
 import pkg from '../package.json';
 
@@ -7,8 +9,9 @@ type LicenseResponse = {
   state: string;
 };
 
-export default async (licenseKey?: string) => {
+export default async (licenseKey?: string, proxyServerUri?: string) => {
   const LICENSE_KEY = process.env.EVENTCATALOG_LICENSE_KEY_ASYNCAPI || licenseKey || null;
+  const PROXY_SERVER_URI= process.env.PROXY_SERVER_URI || proxyServerUri || null;
 
   if (!LICENSE_KEY) {
     console.log(chalk.bgRed(`\nThis plugin requires a license key to use`));
@@ -17,13 +20,25 @@ export default async (licenseKey?: string) => {
   }
 
   // Verify the license key
-  const response = await fetch('https://api.eventcatalog.cloud/functions/v1/license', {
+  const fetchOptions: any = {
     method: 'POST',
     headers: {
       Authorization: `Bearer ${LICENSE_KEY}`,
       'Content-Type': 'application/json',
-    },
-  });
+    }
+  };
+  let response: any;
+  try {
+    if (PROXY_SERVER_URI) {
+      const proxyAgent = new HttpsProxyAgent(PROXY_SERVER_URI);
+      fetchOptions.agent = proxyAgent;
+    }
+    response = await fetch('https://api.eventcatalog.cloud/functions/v1/license', fetchOptions);
+  } catch (err: any) {
+    console.log(chalk.redBright('Network Connection Error: Unable to establish a connection to licence server. Check network or proxy settings.'));
+    console.log(chalk.red(`Error details: ${err?.message || err}`));
+    process.exit(1);
+  }
 
   if (response.status !== 200) {
     console.log(chalk.bgRed(`\nInvalid license key`));
