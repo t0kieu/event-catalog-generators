@@ -1,5 +1,11 @@
 # @eventcatalog/sdk
 
+## 4.1.0
+
+### Minor Changes
+
+- e0f2cf2: feat(plugin) asyncapi add support for proxy server
+
 ## 4.0.3
 
 ### Patch Changes
