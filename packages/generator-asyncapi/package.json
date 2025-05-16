@@ -43,9 +43,11 @@
     "fs-extra": "^11.2.0",
     "glob": "^11.0.0",
     "gray-matter": "^4.0.3",
+    "https-proxy-agent": "^7.0.6",
     "js-yaml": "^4.1.0",
     "lodash": "^4.17.21",
     "minimist": "^1.2.8",
+    "node-fetch": "^3.3.2",
     "slugify": "^1.6.6",
     "update-notifier": "^7.3.1",
     "zod": "^3.23.8"
