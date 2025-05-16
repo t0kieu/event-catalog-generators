@@ -82,15 +82,6 @@ npm run generate
 npm run dev
 ```
 
-### Proxy Server setup
-
-Configure environment variable `PROXY_SERVER_URI` to use a proxy server.
-You can define proxy settings in URI format example below:
-
-```sh
-PROXY_SERVER_URI="http://username:password@your-proxy.company.local" npm run generate
-```
-
 ## Found a problem?
 
 Raise a GitHub issue on this project, or contact us on [our Discord server](https://discord.gg/3rjaZMmrAm).

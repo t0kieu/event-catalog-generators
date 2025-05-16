@@ -9,9 +9,9 @@ type LicenseResponse = {
   state: string;
 };
 
-export default async (licenseKey?: string, proxyServerUri?: string) => {
+export default async (licenseKey?: string) => {
   const LICENSE_KEY = process.env.EVENTCATALOG_LICENSE_KEY_ASYNCAPI || licenseKey || null;
-  const PROXY_SERVER_URI= process.env.PROXY_SERVER_URI || proxyServerUri || null;
+  const PROXY_SERVER_URI = process.env.PROXY_SERVER_URI || null;
 
   if (!LICENSE_KEY) {
     console.log(chalk.bgRed(`\nThis plugin requires a license key to use`));
@@ -25,7 +25,7 @@ export default async (licenseKey?: string, proxyServerUri?: string) => {
     headers: {
       Authorization: `Bearer ${LICENSE_KEY}`,
       'Content-Type': 'application/json',
-    }
+    },
   };
   let response: any;
   try {
@@ -35,7 +35,11 @@ export default async (licenseKey?: string, proxyServerUri?: string) => {
     }
     response = await fetch('https://api.eventcatalog.cloud/functions/v1/license', fetchOptions);
   } catch (err: any) {
-    console.log(chalk.redBright('Network Connection Error: Unable to establish a connection to licence server. Check network or proxy settings.'));
+    console.log(
+      chalk.redBright(
+        'Network Connection Error: Unable to establish a connection to licence server. Check network or proxy settings.'
+      )
+    );
     console.log(chalk.red(`Error details: ${err?.message || err}`));
     process.exit(1);
   }
