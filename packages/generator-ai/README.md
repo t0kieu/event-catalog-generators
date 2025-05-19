@@ -56,6 +56,10 @@ generators: [
         // This can bloat the embeddings and may effect the results you get back, false by default
         includeUsersAndTeams: false,
 
+        // Should the schemas for the messages also be embedded?
+        // Default value is true. (You must specify the schemaPath in your message for the schema to be embedded)
+        includeSchemas: true,
+
         embedding: {
           // defaults to huggingface
           provider: 'openai' | 'huggingface',
