@@ -1,5 +1,11 @@
 # @eventcatalog/generator-ai
 
+## 1.1.0
+
+### Minor Changes
+
+- 07a440a: feat(plugin): ai plugin now embeds schemas
+
 ## 1.0.3
 
 ### Patch Changes
