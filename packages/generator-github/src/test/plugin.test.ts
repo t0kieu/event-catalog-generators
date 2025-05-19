@@ -54,7 +54,7 @@ describe('generator-github', () => {
                 id: 'analytics-event-view',
                 name: 'analytics-event-view',
                 version: '1',
-                schemaPath: 'domains/Orders/services/InventoryService/events/InventoryAdjusted/schema.avro',
+                schemaPath: 'domains/E-Commerce/subdomains/Orders/services/InventoryService/events/InventoryAdjusted/schema.avro',
                 type: 'event',
               },
             ],
@@ -101,7 +101,7 @@ describe('generator-github', () => {
               id: 'analytics-event-view',
               name: 'analytics-event-view',
               version: '1',
-              schemaPath: 'domains/Orders/services/InventoryService/events/InventoryAdjusted/schema.avro',
+              schemaPath: 'domains/E-Commerce/subdomains/Orders/services/InventoryService/events/InventoryAdjusted/schema.avro',
               type: 'event',
             },
           ],
@@ -132,7 +132,7 @@ describe('generator-github', () => {
             {
               id: 'analytics-event-view',
               name: 'analytics-event-view',
-              schemaPath: 'domains/Orders/services/InventoryService/events/InventoryAdjusted/schema.avro',
+              schemaPath: 'domains/E-Commerce/subdomains/Orders/services/InventoryService/events/InventoryAdjusted/schema.avro',
               type: 'event',
             },
           ],
@@ -164,7 +164,7 @@ describe('generator-github', () => {
             {
               id: 'analytics-event-view',
               name: 'analytics-event-view',
-              schemaPath: 'domains/Orders/services/InventoryService/events/InventoryAdjusted/schema.avro',
+              schemaPath: 'domains/E-Commerce/subdomains/Orders/services/InventoryService/events/InventoryAdjusted/schema.avro',
               type: 'event',
             },
           ],
@@ -194,7 +194,7 @@ describe('generator-github', () => {
               id: 'update-analytics',
               name: 'update-analytics',
               version: '1',
-              schemaPath: 'domains/Orders/services/InventoryService/events/InventoryAdjusted/schema.avro',
+              schemaPath: 'domains/E-Commerce/subdomains/Orders/services/InventoryService/events/InventoryAdjusted/schema.avro',
               type: 'command',
             },
           ],
@@ -239,7 +239,7 @@ describe('generator-github', () => {
               id: 'analytics-event-view',
               name: 'analytics-event-view',
               version: '1',
-              schemaPath: 'domains/Orders/services/InventoryService/events/InventoryAdjusted/schema.avro',
+              schemaPath: 'domains/E-Commerce/subdomains/Orders/services/InventoryService/events/InventoryAdjusted/schema.avro',
               type: 'event',
             },
           ],
@@ -270,7 +270,7 @@ describe('generator-github', () => {
             {
               id: 'analytics-event-view',
               name: 'analytics-event-view',
-              schemaPath: 'domains/Orders/services/InventoryService/events/InventoryAdjusted/schema.avro',
+              schemaPath: 'domains/E-Commerce/subdomains/Orders/services/InventoryService/events/InventoryAdjusted/schema.avro',
               type: 'command',
             },
           ],
@@ -302,7 +302,7 @@ describe('generator-github', () => {
             {
               id: 'analytics-event-view',
               name: 'analytics-event-view',
-              schemaPath: 'domains/Orders/services/InventoryService/events/InventoryAdjusted/schema.avro',
+              schemaPath: 'domains/E-Commerce/subdomains/Orders/services/InventoryService/events/InventoryAdjusted/schema.avro',
               type: 'command',
             },
           ],
@@ -334,7 +334,7 @@ describe('generator-github', () => {
               id: 'update-analytics',
               name: 'update-analytics',
               version: '1',
-              schemaPath: 'domains/Orders/services/InventoryService/events/InventoryAdjusted/schema.avro',
+              schemaPath: 'domains/E-Commerce/subdomains/Orders/services/InventoryService/events/InventoryAdjusted/schema.avro',
               type: 'query',
             },
           ],
@@ -379,7 +379,7 @@ describe('generator-github', () => {
               id: 'analytics-event-view',
               name: 'analytics-event-view',
               version: '1',
-              schemaPath: 'domains/Orders/services/InventoryService/events/InventoryAdjusted/schema.avro',
+              schemaPath: 'domains/E-Commerce/subdomains/Orders/services/InventoryService/events/InventoryAdjusted/schema.avro',
               type: 'query',
             },
           ],
@@ -410,7 +410,7 @@ describe('generator-github', () => {
             {
               id: 'analytics-event-view',
               name: 'analytics-event-view',
-              schemaPath: 'domains/Orders/services/InventoryService/events/InventoryAdjusted/schema.avro',
+              schemaPath: 'domains/E-Commerce/subdomains/Orders/services/InventoryService/events/InventoryAdjusted/schema.avro',
               type: 'query',
             },
           ],
@@ -442,7 +442,7 @@ describe('generator-github', () => {
             {
               id: 'analytics-event-view',
               name: 'analytics-event-view',
-              schemaPath: 'domains/Orders/services/InventoryService/events/InventoryAdjusted/schema.avro',
+              schemaPath: 'domains/E-Commerce/subdomains/Orders/services/InventoryService/events/InventoryAdjusted/schema.avro',
               type: 'command',
             },
           ],
@@ -479,7 +479,7 @@ describe('generator-github', () => {
                 id: 'analytics-event-view',
                 version: '5',
                 name: 'analytics-event-view',
-                schemaPath: 'domains/Orders/services/InventoryService/events/InventoryAdjusted/schema.avro',
+                schemaPath: 'domains/E-Commerce/subdomains/Orders/services/InventoryService/events/InventoryAdjusted/schema.avro',
                 type: 'event',
               },
             ],
@@ -488,7 +488,7 @@ describe('generator-github', () => {
                 id: 'analytics-capture',
                 version: '1',
                 name: 'analytics-capture',
-                schemaPath: 'domains/Orders/services/InventoryService/events/InventoryAdjusted/schema.avro',
+                schemaPath: 'domains/E-Commerce/subdomains/Orders/services/InventoryService/events/InventoryAdjusted/schema.avro',
                 type: 'command',
               },
             ],
@@ -521,14 +521,14 @@ describe('generator-github', () => {
             sends: [
               {
                 id: 'analytics-event-view',
-                schemaPath: 'domains/Orders/services/InventoryService/events/InventoryAdjusted/schema.avro',
+                schemaPath: 'domains/E-Commerce/subdomains/Orders/services/InventoryService/events/InventoryAdjusted/schema.avro',
                 type: 'event',
               },
             ],
             receives: [
               {
                 id: 'analytics-capture',
-                schemaPath: 'domains/Orders/services/InventoryService/events/InventoryAdjusted/schema.avro',
+                schemaPath: 'domains/E-Commerce/subdomains/Orders/services/InventoryService/events/InventoryAdjusted/schema.avro',
                 type: 'command',
               },
             ],
@@ -585,14 +585,14 @@ describe('generator-github', () => {
             sends: [
               {
                 id: 'analytics-event-view',
-                schemaPath: 'domains/Orders/services/InventoryService/events/InventoryAdjusted/schema.avro',
+                schemaPath: 'domains/E-Commerce/subdomains/Orders/services/InventoryService/events/InventoryAdjusted/schema.avro',
                 type: 'event',
               },
             ],
             receives: [
               {
                 id: 'analytics-capture',
-                schemaPath: 'domains/Orders/services/InventoryService/events/InventoryAdjusted/schema.avro',
+                schemaPath: 'domains/E-Commerce/subdomains/Orders/services/InventoryService/events/InventoryAdjusted/schema.avro',
                 type: 'command',
               },
             ],
@@ -603,14 +603,14 @@ describe('generator-github', () => {
             sends: [
               {
                 id: 'analytics-event-view',
-                schemaPath: 'domains/Orders/services/InventoryService/events/InventoryAdjusted/schema.avro',
+                schemaPath: 'domains/E-Commerce/subdomains/Orders/services/InventoryService/events/InventoryAdjusted/schema.avro',
                 type: 'event',
               },
             ],
             receives: [
               {
                 id: 'analytics-capture',
-                schemaPath: 'domains/Orders/services/InventoryService/events/InventoryAdjusted/schema.avro',
+                schemaPath: 'domains/E-Commerce/subdomains/Orders/services/InventoryService/events/InventoryAdjusted/schema.avro',
                 type: 'command',
               },
             ],
@@ -665,14 +665,14 @@ describe('generator-github', () => {
             sends: [
               {
                 id: 'analytics-event-view',
-                schemaPath: 'domains/Orders/services/InventoryService/events/InventoryAdjusted/schema.avro',
+                schemaPath: 'domains/E-Commerce/subdomains/Orders/services/InventoryService/events/InventoryAdjusted/schema.avro',
                 type: 'event',
               },
             ],
             receives: [
               {
                 id: 'analytics-capture',
-                schemaPath: 'domains/Orders/services/InventoryService/events/InventoryAdjusted/schema.avro',
+                schemaPath: 'domains/E-Commerce/subdomains/Orders/services/InventoryService/events/InventoryAdjusted/schema.avro',
                 type: 'command',
               },
             ],
@@ -714,14 +714,14 @@ describe('generator-github', () => {
             sends: [
               {
                 id: 'analytics-event-view',
-                schemaPath: 'domains/Orders/services/InventoryService/events/InventoryAdjusted/schema.avro',
+                schemaPath: 'domains/E-Commerce/subdomains/Orders/services/InventoryService/events/InventoryAdjusted/schema.avro',
                 type: 'event',
               },
             ],
             receives: [
               {
                 id: 'analytics-capture',
-                schemaPath: 'domains/Orders/services/InventoryService/events/InventoryAdjusted/schema.avro',
+                schemaPath: 'domains/E-Commerce/subdomains/Orders/services/InventoryService/events/InventoryAdjusted/schema.avro',
                 type: 'command',
               },
             ],
