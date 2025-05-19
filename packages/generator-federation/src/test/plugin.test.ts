@@ -32,7 +32,7 @@ describe('generator-federation', () => {
         source: 'https://github.com/event-catalog/eventcatalog.git',
         copy: [
           {
-            content: 'examples/default/domains/Orders/services',
+            content: 'examples/default/domains/E-Commerce/subdomains/Orders/services',
             destination: path.join(catalogDir, 'services'),
           },
         ],
@@ -51,7 +51,10 @@ describe('generator-federation', () => {
         source: 'https://github.com/event-catalog/eventcatalog.git',
         copy: [
           {
-            content: ['examples/default/domains/Orders/services', 'examples/default/domains/Payment/services'],
+            content: [
+              'examples/default/domains/E-Commerce/subdomains/Orders/services',
+              'examples/default/domains/E-Commerce/subdomains/Payment/services',
+            ],
             destination: path.join(catalogDir, 'services'),
           },
         ],
@@ -98,7 +101,10 @@ describe('generator-federation', () => {
       console.log(files);
 
       const domains = await fs.readdir(path.join(catalogDir, 'domains'));
-      expect(domains).toHaveLength(4);
+      expect(domains).toHaveLength(1);
+
+      const subdomains = await fs.readdir(path.join(catalogDir, 'domains', 'E-Commerce', 'subdomains'));
+      expect(subdomains).toHaveLength(3);
 
       const teams = await fs.readdir(path.join(catalogDir, 'teams'));
       expect(teams).toHaveLength(4);
@@ -139,7 +145,7 @@ describe('generator-federation', () => {
           source: 'https://github.com/event-catalog/eventcatalog.git',
           copy: [
             {
-              content: ['examples/default/domains/Orders/services'],
+              content: ['examples/default/domains/E-Commerce/subdomains/Orders/services'],
               destination: path.join(catalogDir, 'services'),
             },
           ],
@@ -149,7 +155,7 @@ describe('generator-federation', () => {
           source: 'https://github.com/event-catalog/eventcatalog.git',
           copy: [
             {
-              content: ['examples/default/domains/Orders/services'],
+              content: ['examples/default/domains/E-Commerce/subdomains/Orders/services'],
               destination: path.join(catalogDir, 'services'),
             },
           ],
@@ -178,7 +184,10 @@ describe('generator-federation', () => {
           source: 'https://github.com/event-catalog/eventcatalog.git',
           copy: [
             {
-              content: ['examples/default/domains/Orders/services', 'examples/default/domains/Payment/services'],
+              content: [
+                'examples/default/domains/E-Commerce/subdomains/Orders/services',
+                'examples/default/domains/E-Commerce/subdomains/Payment/services',
+              ],
               destination: path.join(catalogDir, 'services'),
             },
           ],
@@ -200,7 +209,7 @@ describe('generator-federation', () => {
           source: 'https://github.com/event-catalog/eventcatalog.git',
           copy: [
             {
-              content: ['examples/default/domains/Orders/services'],
+              content: ['examples/default/domains/E-Commerce/subdomains/Orders/services'],
               destination: path.join(catalogDir, 'services'),
             },
           ],
@@ -211,7 +220,7 @@ describe('generator-federation', () => {
             source: 'https://github.com/event-catalog/eventcatalog.git',
             copy: [
               {
-                content: ['examples/default/domains/Orders/services'],
+                content: ['examples/default/domains/E-Commerce/subdomains/Orders/services'],
                 destination: path.join(catalogDir, 'services'),
               },
             ],
@@ -238,7 +247,10 @@ describe('generator-federation', () => {
             source: 'https://github.com/event-catalog/eventcatalog.git',
             copy: [
               {
-                content: ['examples/default/domains/Orders/services', 'examples/default/domains/Payment/services'],
+                content: [
+                  'examples/default/domains/E-Commerce/subdomains/Orders/services',
+                  'examples/default/domains/E-Commerce/subdomains/Payment/services',
+                ],
                 destination: path.join(catalogDir, 'services'),
               },
             ],
@@ -272,7 +284,7 @@ describe('generator-federation', () => {
             source: 'https://github.com/event-catalog/eventcatalog.git',
             copy: [
               {
-                content: ['examples/default/domains/Orders/services'],
+                content: ['examples/default/domains/E-Commerce/subdomains/Orders/services'],
                 destination: path.join(catalogDir, 'services'),
               },
             ],

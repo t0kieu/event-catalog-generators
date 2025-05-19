@@ -19,6 +19,7 @@ type GeneratorProps = {
   splitMarkdownFiles?: boolean;
   includeUsersAndTeams?: boolean;
   includeCustomDocumentationPages?: boolean;
+  includeSchemas?: boolean;
   embedding?: {
     provider: 'openai' | 'huggingface';
     model?: string;
@@ -41,6 +42,7 @@ export default async (_: EventCatalogConfig, options: GeneratorProps) => {
   // users and teams can bloat the embeddings and may not provide much value, let the user decide if they want to include them
   const includeUsersAndTeams = options.includeUsersAndTeams ?? false;
   const includeCustomDocumentationPages = options.includeCustomDocumentationPages ?? true;
+  const includeSchemas = options.includeSchemas ?? true;
   const debug = options.debug ?? false;
 
   // await checkLicense(options.licenseKey);
@@ -52,12 +54,18 @@ export default async (_: EventCatalogConfig, options: GeneratorProps) => {
 
   const [events = [], users = [], services = [], domains = [], commands = [], queries = [], teams = [], customDocs = []] =
     await Promise.all([
-      getEvents(),
+      getEvents({
+        attachSchema: includeSchemas,
+      }),
       includeUsersAndTeams ? getUsers() : [],
       getServices(),
       getDomains(),
-      getCommands({}),
-      getQueries({}),
+      getCommands({
+        attachSchema: includeSchemas,
+      }),
+      getQueries({
+        attachSchema: includeSchemas,
+      }),
       includeUsersAndTeams ? getTeams() : [],
       includeCustomDocumentationPages ? getCustomDocs() : [],
     ]);
