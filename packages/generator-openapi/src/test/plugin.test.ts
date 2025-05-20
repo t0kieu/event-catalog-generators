@@ -262,19 +262,16 @@ describe('OpenAPI EventCatalog Plugin', () => {
         );
       });
 
-      it('when the OpenAPI service is already defined in EventCatalog and the versions do not match, a new service is created and the old one is versioned', async () => {
+      it('when the OpenAPI service is already defined in EventCatalog and the processed specification version is greater than the existing service version, a new service is created and the old one is versioned', async () => {
         // Create a service with the same name and version as the OpenAPI file for testing
         const { writeService, getService } = utils(catalogDir);
 
-        await writeService(
-          {
-            id: 'swagger-petstore',
-            version: '0.0.1',
-            name: 'Swagger Petstore',
-            markdown: '',
-          },
-          { path: 'Swagger Petstore' }
-        );
+        await writeService({
+          id: 'swagger-petstore',
+          version: '0.0.1',
+          name: 'Swagger Petstore',
+          markdown: '',
+        });
 
         await plugin(config, { services: [{ path: join(openAPIExamples, 'petstore.yml'), id: 'swagger-petstore' }] });
 
@@ -282,6 +279,42 @@ describe('OpenAPI EventCatalog Plugin', () => {
         const newService = await getService('swagger-petstore', '1.0.0');
         expect(versionedService).toBeDefined();
         expect(newService).toBeDefined();
+      });
+
+      it('when the OpenAPI service is already defined in EventCatalog and the processed specification version is less than the existing service version, the existing service is not versioned, and the new one is written to the versioned folder', async () => {
+        const { writeService, getService } = utils(catalogDir);
+
+        await writeService({
+          id: 'swagger-petstore',
+          version: '2.0.0',
+          name: 'Swagger Petstore',
+          markdown: '',
+        });
+
+        await plugin(config, { services: [{ path: join(openAPIExamples, 'petstore.yml'), id: 'swagger-petstore' }] });
+
+        const versionedService = await getService('swagger-petstore', '1.0.0');
+        const currentService = await getService('swagger-petstore', '2.0.0');
+
+        expect(currentService).toBeDefined();
+        expect(versionedService).toBeDefined();
+
+        const versionedServicePath = join(catalogDir, 'services', 'swagger-petstore', 'versioned', '1.0.0');
+        const commandsPath = join(versionedServicePath, 'commands');
+        const eventsPath = join(versionedServicePath, 'events');
+        const queriesPath = join(versionedServicePath, 'queries');
+        expect(existsSync(versionedServicePath)).toBe(true);
+        expect(existsSync(commandsPath)).toBe(true);
+
+        // expect commands path to have 2 files
+        const commands = await fs.readdir(commandsPath);
+        expect(commands).toHaveLength(3);
+
+        const events = await fs.readdir(eventsPath);
+        expect(events).toHaveLength(1);
+
+        const queries = await fs.readdir(queriesPath);
+        expect(queries).toHaveLength(3);
       });
 
       it('the openapi file is added to the service which can be downloaded in eventcatalog', async () => {
