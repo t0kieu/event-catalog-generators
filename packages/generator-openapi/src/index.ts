@@ -15,6 +15,7 @@ import yaml from 'js-yaml';
 import { join } from 'node:path';
 import pkgJSON from '../package.json';
 import { checkForPackageUpdate } from '../../../shared/check-for-package-update';
+import { isVersionGreaterThan, isVersionLessThan } from './utils/versions';
 
 type MESSAGE_TYPE = 'command' | 'query' | 'event';
 export type HTTP_METHOD = 'POST' | 'GET' | 'PUT' | 'DELETE' | 'PATCH' | 'HEAD' | 'OPTIONS';
@@ -141,8 +142,14 @@ export default async (_: any, options: Props) => {
 
       // Check if service is already defined... if the versions do not match then create service.
       const latestServiceInCatalog = await getService(service.id, 'latest');
-      const versionTheService = latestServiceInCatalog && latestServiceInCatalog.version !== version;
+
+      const versionTheService = latestServiceInCatalog && isVersionGreaterThan(version, latestServiceInCatalog.version);
       console.log(chalk.blue(`Processing service: ${document.info.title} (v${version})`));
+
+      // If the version is less than the latest service version, we need to write is a versioned service
+      if (latestServiceInCatalog && isVersionLessThan(version, latestServiceInCatalog.version)) {
+        servicePath = join(servicePath, 'versioned', version);
+      }
 
       // Found a service, and versions do not match, we need to version the one already there
       if (versionTheService) {
