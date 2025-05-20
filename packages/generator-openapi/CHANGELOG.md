@@ -1,5 +1,11 @@
 # @eventcatalog/generator-openapi
 
+## 7.0.0
+
+### Major Changes
+
+- 6e322ef: fix(plugin): openapi plugin now checks versions before versioning
+
 ## 6.0.1
 
 ### Patch Changes
