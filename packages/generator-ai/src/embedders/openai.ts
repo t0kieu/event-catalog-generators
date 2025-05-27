@@ -1,7 +1,6 @@
 import chalk from 'chalk';
 import OpenAI from 'openai';
 import { Embedder } from './types';
-const openai = new OpenAI();
 
 // enum of Models
 enum Model {
@@ -18,6 +17,7 @@ export class OpenAIEmbedder implements Embedder {
   }
 
   async generateEmbeddings(texts: string[]): Promise<number[][]> {
+    const openai = new OpenAI();
     console.log(chalk.cyan(`  - Generating embeddings with OpenAI (${this.model})...`));
     const embeddings = await Promise.all(
       texts.map(async (text) => {
