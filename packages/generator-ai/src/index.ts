@@ -45,7 +45,6 @@ export default async (_: EventCatalogConfig, options: GeneratorProps) => {
   const includeSchemas = options.includeSchemas ?? true;
   const debug = options.debug ?? false;
 
-  // await checkLicense(options.licenseKey);
   await checkForPackageUpdate(pkgJSON.name);
 
   const { getEvents, getUsers, getServices, getDomains, getCommands, getQueries, getTeams, getCustomDocs } = utils(
