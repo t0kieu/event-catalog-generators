@@ -9,4 +9,4 @@
 '@eventcatalog/generator-ai': minor
 ---
 
-feat(plugin) add support proxy server for all plugins
+feat(plugin): add support proxy server for all plugins
