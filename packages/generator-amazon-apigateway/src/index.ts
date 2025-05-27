@@ -43,7 +43,7 @@ export default async (_: any, options: Props) => {
   }
 
   // Check for license and package update
-  const LICENSE_KEY: string  = process.env.EVENTCATALOG_LICENSE_KEY_AMAZON_APIGATEWAY || options.licenseKey || '';
+  const LICENSE_KEY: string = process.env.EVENTCATALOG_LICENSE_KEY_AMAZON_APIGATEWAY || options.licenseKey || '';
   await checkLicense(pkgJSON.name, LICENSE_KEY);
   await checkForPackageUpdate(pkgJSON.name);
 
