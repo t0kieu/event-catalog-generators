@@ -1,5 +1,11 @@
 # @eventcatalog/generator-federation
 
+## 2.1.0
+
+### Minor Changes
+
+- 21100a2: feat(plugin): add support proxy server for all plugins
+
 ## 2.0.1
 
 ### Patch Changes

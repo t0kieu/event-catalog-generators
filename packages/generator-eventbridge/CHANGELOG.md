@@ -1,5 +1,11 @@
 # @eventcatalog/generator-eventbridge
 
+## 3.1.0
+
+### Minor Changes
+
+- 21100a2: feat(plugin): add support proxy server for all plugins
+
 ## 3.0.2
 
 ### Patch Changes

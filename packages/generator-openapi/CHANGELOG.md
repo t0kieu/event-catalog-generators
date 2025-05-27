@@ -1,5 +1,11 @@
 # @eventcatalog/generator-openapi
 
+## 7.1.0
+
+### Minor Changes
+
+- 21100a2: feat(plugin): add support proxy server for all plugins
+
 ## 7.0.0
 
 ### Major Changes

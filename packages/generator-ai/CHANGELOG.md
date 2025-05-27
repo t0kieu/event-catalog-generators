@@ -1,5 +1,11 @@
 # @eventcatalog/generator-ai
 
+## 1.2.0
+
+### Minor Changes
+
+- 21100a2: feat(plugin): add support proxy server for all plugins
+
 ## 1.1.1
 
 ### Patch Changes

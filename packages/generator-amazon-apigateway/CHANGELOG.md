@@ -1,5 +1,11 @@
 # @eventcatalog/generator-amazon-apigateway
 
+## 1.1.0
+
+### Minor Changes
+
+- 21100a2: feat(plugin): add support proxy server for all plugins
+
 ## 1.0.6
 
 ### Patch Changes
