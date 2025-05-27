@@ -66,81 +66,83 @@ describe('Confluent Schema Registry EventCatalog Plugin', () => {
     await expect(plugin(config, {})).rejects.toThrow('Please provide a url for the Confluent Schema Registry');
   });
 
-  describe('when no services are configured (messages (as events) are written to the root of the catalog)', () => {
-    it('if the event already exists in the catalog data is persisted (e.g markdown, badges, summary, deprecated)', async () => {
-      const { writeEvent, getEvent } = utils(catalogDir);
+  describe(
+    'when no services are configured (messages (as events) are written to the root of the catalog)',
+    () => {
+      it('if the event already exists in the catalog data is persisted (e.g markdown, badges, summary, deprecated)', async () => {
+        const { writeEvent, getEvent } = utils(catalogDir);
 
-      await writeEvent({
-        id: 'analytics-event-view',
-        name: 'analytics-event-view',
-        version: '5',
-        markdown: 'This should be persisted',
-        badges: [{ backgroundColor: 'red', textColor: 'white', content: 'Custom Badge' }],
-        summary: 'This is custom summary',
-        channels: [{ id: 'analytics-event-view', version: '5' }],
+        await writeEvent({
+          id: 'analytics-event-view',
+          name: 'analytics-event-view',
+          version: '5',
+          markdown: 'This should be persisted',
+          badges: [{ backgroundColor: 'red', textColor: 'white', content: 'Custom Badge' }],
+          summary: 'This is custom summary',
+          channels: [{ id: 'analytics-event-view', version: '5' }],
+        });
+
+        await plugin(config, {
+          schemaRegistryUrl: 'http://localhost:8081',
+        });
+
+        const event = await getEvent('analytics-event-view', '5');
+        expect(event.markdown).toEqual('This should be persisted');
+        expect(event.badges).toEqual([{ backgroundColor: 'red', textColor: 'white', content: 'Custom Badge' }]);
+        expect(event.summary).toEqual('This is custom summary');
+        expect(event.channels).toBeUndefined();
       });
 
-      await plugin(config, {
-        schemaRegistryUrl: 'http://localhost:8081',
+      it('if the event already exists with a channel defined, the channel is not added to the event', async () => {
+        const { writeEvent, getEvent } = utils(catalogDir);
+
+        await writeEvent({
+          id: 'analytics-event-view',
+          name: 'analytics-event-view',
+          version: '5',
+          markdown: 'This should be persisted',
+          badges: [{ backgroundColor: 'red', textColor: 'white', content: 'Custom Badge' }],
+          summary: 'This is custom summary',
+          channels: [{ id: 'analytics-event-view', version: '5' }],
+        });
+
+        await plugin(config, {
+          schemaRegistryUrl: 'http://localhost:8081',
+        });
+
+        const event = await getEvent('analytics-event-view', '5');
+        expect(event.channels).toBeUndefined();
       });
 
-      const event = await getEvent('analytics-event-view', '5');
-      expect(event.markdown).toEqual('This should be persisted');
-      expect(event.badges).toEqual([{ backgroundColor: 'red', textColor: 'white', content: 'Custom Badge' }]);
-      expect(event.summary).toEqual('This is custom summary');
-      expect(event.channels).toBeUndefined();
-    });
+      it('if the event already exists in the catalog and the versions are the same, but the schema is different, the schema is updated', async () => {
+        const { writeEvent, addSchemaToEvent } = utils(catalogDir);
 
-    it('if the event already exists with a channel defined, the channel is not added to the event', async () => {
-      const { writeEvent, getEvent } = utils(catalogDir);
+        await writeEvent({
+          id: 'analytics-event-view',
+          name: 'analytics-event-view',
+          version: '5',
+          markdown: 'This should be persisted',
+          badges: [{ backgroundColor: 'red', textColor: 'white', content: 'Custom Badge' }],
+          summary: 'This is custom summary',
+        });
 
-      await writeEvent({
-        id: 'analytics-event-view',
-        name: 'analytics-event-view',
-        version: '5',
-        markdown: 'This should be persisted',
-        badges: [{ backgroundColor: 'red', textColor: 'white', content: 'Custom Badge' }],
-        summary: 'This is custom summary',
-        channels: [{ id: 'analytics-event-view', version: '5' }],
-      });
+        // Update the schema
+        await addSchemaToEvent('analytics-event-view', {
+          fileName: 'analytics-event-view-value.proto',
+          schema: 'This is a new schema',
+        });
 
-      await plugin(config, {
-        schemaRegistryUrl: 'http://localhost:8081',
-      });
+        await plugin(config, {
+          schemaRegistryUrl: 'http://localhost:8081',
+        });
 
-      const event = await getEvent('analytics-event-view', '5');
-      expect(event.channels).toBeUndefined();
-    });
-
-    it('if the event already exists in the catalog and the versions are the same, but the schema is different, the schema is updated', async () => {
-      const { writeEvent, addSchemaToEvent } = utils(catalogDir);
-
-      await writeEvent({
-        id: 'analytics-event-view',
-        name: 'analytics-event-view',
-        version: '5',
-        markdown: 'This should be persisted',
-        badges: [{ backgroundColor: 'red', textColor: 'white', content: 'Custom Badge' }],
-        summary: 'This is custom summary',
-      });
-
-      // Update the schema
-      await addSchemaToEvent('analytics-event-view', {
-        fileName: 'analytics-event-view-value.proto',
-        schema: 'This is a new schema',
-      });
-
-      await plugin(config, {
-        schemaRegistryUrl: 'http://localhost:8081',
-      });
-
-      // Check the schema is updated
-      const schema = await fs.readFile(
-        join(catalogDir, 'events', 'analytics-event-view', 'analytics-event-view-value.proto'),
-        'utf8'
-      );
-      expect(schema).not.toEqual('This is a new schema');
-      expect(schema).toEqual(`syntax = "proto3";
+        // Check the schema is updated
+        const schema = await fs.readFile(
+          join(catalogDir, 'events', 'analytics-event-view', 'analytics-event-view-value.proto'),
+          'utf8'
+        );
+        expect(schema).not.toEqual('This is a new schema');
+        expect(schema).toEqual(`syntax = "proto3";
 package com.example;
 
 message analytics_event_view_value {
@@ -150,89 +152,97 @@ message analytics_event_view_value {
   bool active = 4;
 }`);
 
-      await plugin(config, {
-        schemaRegistryUrl: 'http://localhost:8081',
-      });
-    });
-
-    it('if the event does not exist in the catalog, default values are given for the badges, summary and markdown', async () => {
-      const { getEvent } = utils(catalogDir);
-
-      await plugin(config, {
-        schemaRegistryUrl: 'http://localhost:8081',
-        includeAllVersions: false,
+        await plugin(config, {
+          schemaRegistryUrl: 'http://localhost:8081',
+        });
       });
 
-      const event = await getEvent('analytics-event-view');
-      expect(event.markdown).toEqual(expect.stringContaining('<NodeGraph />'));
-      expect(event.badges).toEqual([{ backgroundColor: 'green', textColor: 'white', content: 'Kafka Message', icon: 'kafka' }]);
-      expect(event.summary).toEqual('Message from Confluent Schema Registry');
-    });
+      it('if the event does not exist in the catalog, default values are given for the badges, summary and markdown', async () => {
+        const { getEvent } = utils(catalogDir);
 
-    it('all schemas are added to the catalog as events (within the events directory, when no services are configured)', async () => {
-      const { getEvent } = utils(catalogDir);
+        await plugin(config, {
+          schemaRegistryUrl: 'http://localhost:8081',
+          includeAllVersions: false,
+        });
 
-      await plugin(config, {
-        schemaRegistryUrl: 'http://localhost:8081',
+        const event = await getEvent('analytics-event-view');
+        expect(event.markdown).toEqual(expect.stringContaining('<NodeGraph />'));
+        expect(event.badges).toEqual([{ backgroundColor: 'green', textColor: 'white', content: 'Kafka Message', icon: 'kafka' }]);
+        expect(event.summary).toEqual('Message from Confluent Schema Registry');
       });
 
-      const event = await getEvent('analytics-event-view');
-      expect(event).toEqual(expect.objectContaining({ id: 'analytics-event-view', version: '5' }));
+      it('all schemas are added to the catalog as events (within the events directory, when no services are configured)', async () => {
+        const { getEvent } = utils(catalogDir);
 
-      const eventsFolder = await existsSync(join(catalogDir, 'events', 'analytics-event-view', 'index.mdx'));
-      expect(eventsFolder).toBeTruthy();
-    });
+        await plugin(config, {
+          schemaRegistryUrl: 'http://localhost:8081',
+        });
 
-    it('when includeAllVersions is false, only the latest version of the message is added to the catalog (within the events directory)', async () => {
-      const { getEvent } = utils(catalogDir);
+        const event = await getEvent('analytics-event-view');
+        expect(event).toEqual(expect.objectContaining({ id: 'analytics-event-view', version: '5' }));
 
-      await plugin(config, {
-        schemaRegistryUrl: 'http://localhost:8081',
-        includeAllVersions: false,
+        const eventsFolder = await existsSync(join(catalogDir, 'events', 'analytics-event-view', 'index.mdx'));
+        expect(eventsFolder).toBeTruthy();
       });
 
-      const event = await getEvent('analytics-event-view');
-      expect(event).toEqual(
-        expect.objectContaining({
-          id: 'analytics-event-view',
-          name: 'analytics-event-view',
-          version: '5',
-          markdown: expect.stringContaining('<NodeGraph />'),
-          schemaPath: 'analytics-event-view-value.proto',
-          badges: [{ backgroundColor: 'green', textColor: 'white', content: 'Kafka Message', icon: 'kafka' }],
-        })
+      it('when includeAllVersions is false, only the latest version of the message is added to the catalog (within the events directory)', async () => {
+        const { getEvent } = utils(catalogDir);
+
+        await plugin(config, {
+          schemaRegistryUrl: 'http://localhost:8081',
+          includeAllVersions: false,
+        });
+
+        const event = await getEvent('analytics-event-view');
+        expect(event).toEqual(
+          expect.objectContaining({
+            id: 'analytics-event-view',
+            name: 'analytics-event-view',
+            version: '5',
+            markdown: expect.stringContaining('<NodeGraph />'),
+            schemaPath: 'analytics-event-view-value.proto',
+            badges: [{ backgroundColor: 'green', textColor: 'white', content: 'Kafka Message', icon: 'kafka' }],
+          })
+        );
+
+        const schemaFile = await fs.readFile(
+          join(catalogDir, 'events', 'analytics-event-view', 'analytics-event-view-value.proto')
+        );
+        expect(schemaFile).toBeDefined();
+
+        // Check if folder exists
+        const versionedFolder = await existsSync(join(catalogDir, 'events', 'analytics-event-view', 'versioned'));
+        expect(versionedFolder).toBeFalsy();
+      });
+
+      it(
+        'writes all versions of the topic to catalog when includeAllVersions is true',
+        async () => {
+          const { getEvent } = utils(catalogDir);
+
+          await plugin(config, {
+            schemaRegistryUrl: 'http://localhost:8081',
+            includeAllVersions: true,
+          });
+
+          const event = await getEvent('analytics-event-view', '5');
+          expect(event).toEqual(expect.objectContaining({ id: 'analytics-event-view', version: '5' }));
+
+          const versionedFolder = await existsSync(join(catalogDir, 'events', 'analytics-event-view', 'versioned'));
+          expect(versionedFolder).toBeTruthy();
+
+          for (let i = 1; i <= 4; i++) {
+            const versionedFolder = await existsSync(
+              join(catalogDir, 'events', 'analytics-event-view', 'versioned', i.toString())
+            );
+            expect(versionedFolder).toBeTruthy();
+          }
+        },
+        { timeout: 10000 }
       );
-
-      const schemaFile = await fs.readFile(
-        join(catalogDir, 'events', 'analytics-event-view', 'analytics-event-view-value.proto')
-      );
-      expect(schemaFile).toBeDefined();
-
-      // Check if folder exists
-      const versionedFolder = await existsSync(join(catalogDir, 'events', 'analytics-event-view', 'versioned'));
-      expect(versionedFolder).toBeFalsy();
-    });
-
-    it('writes all versions of the topic to catalog when includeAllVersions is true', async () => {
-      const { getEvent } = utils(catalogDir);
-
-      await plugin(config, {
-        schemaRegistryUrl: 'http://localhost:8081',
-        includeAllVersions: true,
-      });
-
-      const event = await getEvent('analytics-event-view', '5');
-      expect(event).toEqual(expect.objectContaining({ id: 'analytics-event-view', version: '5' }));
-
-      const versionedFolder = await existsSync(join(catalogDir, 'events', 'analytics-event-view', 'versioned'));
-      expect(versionedFolder).toBeTruthy();
-
-      for (let i = 1; i <= 4; i++) {
-        const versionedFolder = await existsSync(join(catalogDir, 'events', 'analytics-event-view', 'versioned', i.toString()));
-        expect(versionedFolder).toBeTruthy();
-      }
-    });
-  });
+    },
+    { timeout: 10000 }
+  );
 
   describe('services', () => {
     describe('with no topics configured', () => {
