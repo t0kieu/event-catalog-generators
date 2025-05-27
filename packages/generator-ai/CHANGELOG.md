@@ -1,5 +1,11 @@
 # @eventcatalog/generator-ai
 
+## 1.1.1
+
+### Patch Changes
+
+- 93e15a5: fix(plugin): OpenAI key now optional for embedder
+
 ## 1.1.0
 
 ### Minor Changes
