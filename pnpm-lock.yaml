@@ -131,8 +131,8 @@ importers:
         specifier: ^3.3.0
         version: 3.4.0
       '@eventcatalog/sdk':
-        specifier: ^2.2.6
-        version: 2.2.6
+        specifier: ^2.5.5
+        version: 2.5.5
       chalk:
         specifier: ^4
         version: 4.1.2
@@ -966,9 +966,6 @@ packages:
   '@eventcatalog/sdk@2.0.0':
     resolution: { integrity: sha512-2qrYit3psOWWT29xDY+KuHOLkXw5fMpfU+/LgZSRZI6ZDB1pyxlqP/3ibJmL9RW7atgSzxHT7sIrHswjkbbuKg== }
 
-  '@eventcatalog/sdk@2.2.6':
-    resolution: { integrity: sha512-Sa72fhoNYQeUnd6Y3yARirdYO+NIdahms/4epzH57+dyCXnGwS49j6hGucCM/w6g7Y38LZsYI+ra5NimoF8TUw== }
-
   '@eventcatalog/sdk@2.3.0':
     resolution: { integrity: sha512-x8HkfA+yO54cECQhdeRTOs8LOhg1yYkd8nSN0p/giQPe4Gc1tixdm0JeUWwHYaERL8zrjbslvP3a1HkyoeXkbg== }
 
@@ -980,6 +977,9 @@ packages:
 
   '@eventcatalog/sdk@2.4.0':
     resolution: { integrity: sha512-EVJwgh7UbT0UURopNNzvCQtkn5xppFLA+rH8iD0HsgDFxOdnPkFBtVW5sTHPBmt863o6VW2CDny8ABJENN3O8A== }
+
+  '@eventcatalog/sdk@2.5.5':
+    resolution: { integrity: sha512-nTFw4gl7gNiAhMtCzh13rLAurB5TyBKcrb5duMbjq5y3AowDwfDBGJsrbHA7miHsczLo0m0K0CBdFUHDt/fQqQ== }
 
   '@huggingface/jinja@0.3.3':
     resolution: { integrity: sha512-vQQr2JyWvVFba3Lj9es4q9vCl1sAc74fdgnEMoX8qHrXtswap9ge9uO3ONDzQB0cQ0PUyaKY2N6HaVbTBvSXvw== }
@@ -4511,16 +4511,6 @@ snapshots:
       proper-lockfile: 4.1.2
       semver: 7.6.3
 
-  '@eventcatalog/sdk@2.2.6':
-    dependencies:
-      '@changesets/cli': 2.27.12
-      fs-extra: 11.3.0
-      glob: 11.0.1
-      gray-matter: 4.0.3
-      proper-lockfile: 4.1.2
-      semver: 7.6.3
-      slugify: 1.6.6
-
   '@eventcatalog/sdk@2.3.0':
     dependencies:
       '@changesets/cli': 2.27.12
@@ -4552,6 +4542,16 @@ snapshots:
       slugify: 1.6.6
 
   '@eventcatalog/sdk@2.4.0':
+    dependencies:
+      '@changesets/cli': 2.27.12
+      fs-extra: 11.3.0
+      glob: 11.0.1
+      gray-matter: 4.0.3
+      proper-lockfile: 4.1.2
+      semver: 7.6.3
+      slugify: 1.6.6
+
+  '@eventcatalog/sdk@2.5.5':
     dependencies:
       '@changesets/cli': 2.27.12
       fs-extra: 11.3.0
