@@ -1,5 +1,11 @@
 # @eventcatalog/sdk
 
+## 4.2.1
+
+### Patch Changes
+
+- e586753: fix(plugin): asyncapi plugin now parses and supports special characters
+
 ## 4.2.0
 
 ### Minor Changes
