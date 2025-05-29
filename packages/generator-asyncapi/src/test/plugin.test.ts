@@ -1219,8 +1219,9 @@ describe('AsyncAPI EventCatalog Plugin', () => {
         ).toString();
 
         const expected = (await fs.readFile(join(asyncAPIExamplesDir, 'ref-example-without-refs.asyncapi.yml'))).toString();
+        const normalizeLineEndings = (str: string) => str.replace(/\r\n/g, '\n');
 
-        expect(asyncAPIFile.trim()).toEqual(expected.trim());
+        expect(normalizeLineEndings(asyncAPIFile.trim())).toEqual(normalizeLineEndings(expected.trim()));
       });
     });
 
