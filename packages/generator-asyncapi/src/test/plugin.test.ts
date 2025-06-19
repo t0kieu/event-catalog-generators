@@ -1217,12 +1217,11 @@ describe('AsyncAPI EventCatalog Plugin', () => {
         const asyncAPIFile = (
           await fs.readFile(join(catalogDir, 'services', 'Test Service', 'ref-example.asyncapi.yml'))
         ).toString();
-        const expected = (await fs.readFile(join(asyncAPIExamplesDir, 'ref-example-without-refs.asyncapi.yml'))).toString();
 
-        // Normalize line endings
+        const expected = (await fs.readFile(join(asyncAPIExamplesDir, 'ref-example-without-refs.asyncapi.yml'))).toString();
         const normalizeLineEndings = (str: string) => str.replace(/\r\n/g, '\n');
 
-        expect(normalizeLineEndings(asyncAPIFile)).toEqual(normalizeLineEndings(expected));
+        expect(normalizeLineEndings(asyncAPIFile.trim())).toEqual(normalizeLineEndings(expected.trim()));
       });
     });
 
@@ -1457,6 +1456,24 @@ describe('AsyncAPI EventCatalog Plugin', () => {
         },
         'x-parser-schema-id': 'ProjectDeleted',
       });
+    });
+
+    it('when the AsyncAPI file has $ values in the message name, the message is parsed and added to the catalog', async () => {
+      const { getEvent } = utils(catalogDir);
+
+      await plugin(config, {
+        services: [{ path: join(asyncAPIExamplesDir, 'async-file-with-$-values.json'), id: 'my-service' }],
+      });
+
+      const event = await getEvent('de.maxdobler.springwolfexample.eventpublisher$examplestartedevent', '1.0.0');
+      expect(event).toEqual(
+        expect.objectContaining({
+          id: 'de.maxdobler.springwolfexample.eventpublisher$examplestartedevent',
+          version: '1.0.0',
+          name: 'ExampleStartedEvent',
+        })
+      );
+      expect(event.schemaPath).toEqual('schema.json');
     });
 
     describe('persisted data', () => {

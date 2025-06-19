@@ -1,0 +1,285 @@
+{
+  "asyncapi": "3.0.0",
+  "info": {
+    "title": "springwolf-example",
+    "version": "1.0.0",
+    "description": "Event-Driven API Documentation",
+    "license": {
+      "name": "Apache License 2.0"
+    },
+    "x-generator": "springwolf"
+  },
+  "defaultContentType": "application/json",
+  "servers": {
+    "RabbitMQ": {
+      "host": "localhost:5672",
+      "protocol": "amqp"
+    }
+  },
+  "channels": {
+    "example-channel-answer": {
+      "address": "example-channel-answer",
+      "bindings": {
+        "amqp": {
+          "is": "queue",
+          "queue": {
+            "name": "example-channel-answer",
+            "durable": true,
+            "exclusive": false,
+            "autoDelete": false,
+            "vhost": "/"
+          },
+          "bindingVersion": "0.3.0"
+        }
+      }
+    },
+    "freeswitch.events_CHANNEL.ANSWER": {
+      "address": "freeswitch.events_CHANNEL.ANSWER",
+      "messages": {
+        "de.maxdobler.springwolfexample.ChannelAnswerEvent": {
+          "$ref": "#/components/messages/de.maxdobler.springwolfexample.ChannelAnswerEvent"
+        }
+      },
+      "bindings": {
+        "amqp": {
+          "is": "routingKey",
+          "exchange": {
+            "name": "freeswitch.events",
+            "type": "topic",
+            "durable": true,
+            "autoDelete": false,
+            "vhost": "/"
+          },
+          "bindingVersion": "0.3.0"
+        }
+      }
+    },
+    "springwolf-example": {
+      "address": "springwolf-example",
+      "messages": {
+        "de.maxdobler.springwolfexample.EventPublisher$ExampleStartedEvent": {
+          "$ref": "#/components/messages/de.maxdobler.springwolfexample.EventPublisher$ExampleStartedEvent"
+        },
+        "de.maxdobler.springwolfexample.ExampleEndedEvent": {
+          "$ref": "#/components/messages/de.maxdobler.springwolfexample.ExampleEndedEvent"
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "HeadersNotDocumented": {
+        "title": "HeadersNotDocumented",
+        "type": "object",
+        "properties": {},
+        "description": "There can be headers, but they are not explicitly documented.",
+        "examples": [{}]
+      },
+      "SpringRabbitListenerDefaultHeaders": {
+        "title": "SpringRabbitListenerDefaultHeaders",
+        "type": "object",
+        "properties": {},
+        "examples": [{}]
+      },
+      "de.maxdobler.springwolfexample.ChannelAnswerEvent": {
+        "title": "ChannelAnswerEvent",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "type": {
+            "type": "string",
+            "enum": ["A", "B"]
+          }
+        },
+        "examples": [
+          {
+            "id": "string",
+            "timestamp": "2015-07-20T15:49:04-07:00",
+            "type": "A"
+          }
+        ]
+      },
+      "de.maxdobler.springwolfexample.EventPublisher$ExampleStartedEvent": {
+        "title": "ExampleStartedEvent",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "startedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "typ": {
+            "type": "string",
+            "enum": ["TYPE_A", "TYPE_B"]
+          }
+        },
+        "examples": [
+          {
+            "id": "string",
+            "startedAt": "2015-07-20T15:49:04-07:00",
+            "typ": "TYPE_A"
+          }
+        ]
+      },
+      "de.maxdobler.springwolfexample.ExampleEndedEvent": {
+        "title": "ExampleEndedEvent",
+        "type": "object",
+        "properties": {
+          "endedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "id": {
+            "type": "string"
+          },
+          "typ": {
+            "type": "string",
+            "enum": ["TYPE_A", "TYPE_B"]
+          }
+        },
+        "examples": [
+          {
+            "endedAt": "2015-07-20T15:49:04-07:00",
+            "id": "string",
+            "typ": "TYPE_A"
+          }
+        ]
+      }
+    },
+    "messages": {
+      "de.maxdobler.springwolfexample.ChannelAnswerEvent": {
+        "headers": {
+          "$ref": "#/components/schemas/SpringRabbitListenerDefaultHeaders"
+        },
+        "payload": {
+          "schemaFormat": "application/vnd.aai.asyncapi+json;version=3.0.0",
+          "schema": {
+            "$ref": "#/components/schemas/de.maxdobler.springwolfexample.ChannelAnswerEvent"
+          }
+        },
+        "name": "de.maxdobler.springwolfexample.ChannelAnswerEvent",
+        "title": "ChannelAnswerEvent",
+        "bindings": {
+          "amqp": {
+            "bindingVersion": "0.3.0"
+          }
+        }
+      },
+      "de.maxdobler.springwolfexample.EventPublisher$ExampleStartedEvent": {
+        "headers": {
+          "$ref": "#/components/schemas/HeadersNotDocumented"
+        },
+        "payload": {
+          "schemaFormat": "application/vnd.aai.asyncapi+json;version=3.0.0",
+          "schema": {
+            "$ref": "#/components/schemas/de.maxdobler.springwolfexample.EventPublisher$ExampleStartedEvent"
+          }
+        },
+        "name": "ExampleStartedEvent",
+        "title": "ExampleStartedEvent",
+        "bindings": {
+          "amqp": {
+            "bindingVersion": "0.3.0"
+          }
+        }
+      },
+      "de.maxdobler.springwolfexample.ExampleEndedEvent": {
+        "headers": {
+          "$ref": "#/components/schemas/HeadersNotDocumented"
+        },
+        "payload": {
+          "schemaFormat": "application/vnd.aai.asyncapi+json;version=3.0.0",
+          "schema": {
+            "$ref": "#/components/schemas/de.maxdobler.springwolfexample.ExampleEndedEvent"
+          }
+        },
+        "name": "ExampleEndedEvent",
+        "title": "ExampleEndedEvent",
+        "bindings": {
+          "amqp": {
+            "bindingVersion": "0.3.0"
+          }
+        }
+      }
+    }
+  },
+  "operations": {
+    "freeswitch.events_CHANNEL.ANSWER_receive_on": {
+      "action": "receive",
+      "channel": {
+        "$ref": "#/channels/freeswitch.events_CHANNEL.ANSWER"
+      },
+      "bindings": {
+        "amqp": {
+          "expiration": 0,
+          "bindingVersion": "0.3.0"
+        }
+      },
+      "messages": [
+        {
+          "$ref": "#/channels/freeswitch.events_CHANNEL.ANSWER/messages/de.maxdobler.springwolfexample.ChannelAnswerEvent"
+        }
+      ]
+    },
+    "springwolf-example_send_publishEnded": {
+      "action": "send",
+      "channel": {
+        "$ref": "#/channels/springwolf-example"
+      },
+      "title": "springwolf-example_send",
+      "description": "Event is sent after ending the example.",
+      "bindings": {
+        "amqp": {
+          "expiration": 0,
+          "cc": [],
+          "priority": 0,
+          "deliveryMode": 1,
+          "mandatory": false,
+          "bcc": [],
+          "timestamp": false,
+          "ack": false,
+          "bindingVersion": "0.3.0"
+        }
+      },
+      "messages": [
+        {
+          "$ref": "#/channels/springwolf-example/messages/de.maxdobler.springwolfexample.ExampleEndedEvent"
+        }
+      ]
+    },
+    "springwolf-example_send_publishStarted": {
+      "action": "send",
+      "channel": {
+        "$ref": "#/channels/springwolf-example"
+      },
+      "title": "springwolf-example_send",
+      "description": "Event is sent after starting the example.",
+      "bindings": {
+        "amqp": {
+          "expiration": 0,
+          "cc": [],
+          "priority": 0,
+          "deliveryMode": 1,
+          "mandatory": false,
+          "bcc": [],
+          "timestamp": false,
+          "ack": false,
+          "bindingVersion": "0.3.0"
+        }
+      },
+      "messages": [
+        {
+          "$ref": "#/channels/springwolf-example/messages/de.maxdobler.springwolfexample.EventPublisher$ExampleStartedEvent"
+        }
+      ]
+    }
+  }
+}
