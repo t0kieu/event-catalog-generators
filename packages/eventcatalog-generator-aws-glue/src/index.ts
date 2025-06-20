@@ -119,7 +119,7 @@ export default async (config: EventCatalogConfig, options: GeneratorProps) => {
   }
 
   // Check for license and package update
-  const LICENSE_KEY: string = process.env.EVENTCATALOG_LICENSE_KEY_GLUE || options.licenseKey || '';
+  const LICENSE_KEY: string = process.env.EVENTCATALOG_LICENSE_KEY_GLUE_SCHEMA_REGISTRY || options.licenseKey || '';
   await checkLicense(pkgJSON.name, LICENSE_KEY);
   await checkForPackageUpdate(pkgJSON.name);
 
