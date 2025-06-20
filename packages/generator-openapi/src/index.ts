@@ -187,6 +187,7 @@ export default async (_: any, options: Props) => {
 
         // Match found, override it
         if (latestServiceInCatalog.version === version) {
+          // @ts-ignore
           receives = latestServiceInCatalog.receives ? [...latestServiceInCatalog.receives, ...receives] : receives;
         }
       }
