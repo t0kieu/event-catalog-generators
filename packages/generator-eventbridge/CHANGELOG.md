@@ -1,5 +1,11 @@
 # @eventcatalog/generator-eventbridge
 
+## 3.1.1
+
+### Patch Changes
+
+- 0e53c82: chore(plugins): ignore types in sends/recieves for now to fix build
+
 ## 3.1.0
 
 ### Minor Changes

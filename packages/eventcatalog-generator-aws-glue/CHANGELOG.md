@@ -1,5 +1,11 @@
 # @eventcatalog/generator-aws-glue
 
+## 0.0.4
+
+### Patch Changes
+
+- 0e53c82: chore(plugins): ignore types in sends/recieves for now to fix build
+
 ## 0.0.3
 
 ### Patch Changes
