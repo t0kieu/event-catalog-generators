@@ -244,7 +244,9 @@ export default async (config: EventCatalogConfig, options: GeneratorProps) => {
         // we want to preserve the markdown any any spec files that are already there
         serviceMarkdown = latestServiceInCatalog.markdown;
         serviceSpecifications = latestServiceInCatalog.specifications ?? {};
+        // @ts-ignore
         sends = latestServiceInCatalog.sends ? [...latestServiceInCatalog.sends, ...sends] : sends;
+        // @ts-ignore
         receives = latestServiceInCatalog.receives ? [...latestServiceInCatalog.receives, ...receives] : receives;
         serviceSpecificationsFiles = await getSpecificationFilesForService(
           latestServiceInCatalog.id,
