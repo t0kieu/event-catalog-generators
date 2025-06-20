@@ -18,6 +18,12 @@ This repository contains the generators for the EventCatalog project.
   - [Documentation](https://www.eventcatalog.dev/integrations/amazon-eventbridge)
 - [Backstage](https://github.com/event-catalog/backstage-plugin-eventcatalog)
   - [Documentation](https://www.eventcatalog.dev/integrations/backstage)
+- [AWS Glue Schema Registry](./packages/generator-aws-glue/README.md)
+  - [Documentation](https://www.eventcatalog.dev/integrations/aws-glue-registry)
+- [GitHub (As Schema Registry)](./packages/generator-github/README.md)
+  - [Documentation](https://www.eventcatalog.dev/integrations/github)
+- [Confluent Schema Registry](./packages/generator-confluent-schema-registry/README.md)
+  - [Documentation](https://www.eventcatalog.dev/integrations/confluent-schema-registry)
 
 All plugins require a license key. You can get a license key from [EventCatalog Cloud](https://eventcatalog.cloud).
 
