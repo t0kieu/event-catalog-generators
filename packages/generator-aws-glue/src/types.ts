@@ -18,6 +18,7 @@ export type GlueSchema = {
   lastUpdated?: Date;
   schemaDefinition?: string;
   version?: string;
+  latestVersion?: boolean;
 };
 
 export type Domain = {
@@ -54,4 +55,5 @@ export type GeneratorProps = {
   credentials?: AwsCredentialIdentity | AwsCredentialIdentityProvider;
   writeFilesToRoot?: boolean;
   format?: 'md' | 'mdx';
+  includeAllVersions?: boolean;
 };

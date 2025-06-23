@@ -1,6 +1,13 @@
 import utils from '@eventcatalog/sdk';
 import chalk from 'chalk';
-import { GlueClient, ListSchemasCommand, GetSchemaVersionCommand, GetSchemaCommand, GetTagsCommand } from '@aws-sdk/client-glue';
+import {
+  GlueClient,
+  ListSchemasCommand,
+  GetSchemaVersionCommand,
+  GetSchemaCommand,
+  GetTagsCommand,
+  ListSchemaVersionsCommand,
+} from '@aws-sdk/client-glue';
 import { EventCatalogConfig, GlueSchema, GeneratorProps } from './types';
 import { filterSchemas } from './utils/filters';
 import checkLicense from '../../../shared/checkLicense';
@@ -27,7 +34,7 @@ const fetchTagsForSchema = async (glueClient: GlueClient, schemaArn: string): Pr
 };
 
 const fetchSchemasFromRegistry =
-  (glueClient: GlueClient) =>
+  (glueClient: GlueClient, includeAllVersions: boolean = false) =>
   async (registryName: string, registryArn?: string): Promise<GlueSchema[]> => {
     const schemas = [] as GlueSchema[];
     let nextToken: string | undefined;
@@ -48,7 +55,6 @@ const fetchSchemasFromRegistry =
             continue;
           }
 
-          // Get latest schema version details
           try {
             const getSchemaCommand = new GetSchemaCommand({
               SchemaId: {
@@ -57,38 +63,100 @@ const fetchSchemasFromRegistry =
             });
             const schemaDetails = await glueClient.send(getSchemaCommand);
 
-            // Get the latest version of the schema
-            const getSchemaVersionCommand = new GetSchemaVersionCommand({
-              SchemaId: {
-                SchemaArn: schema.SchemaArn,
-              },
-              SchemaVersionNumber: {
-                LatestVersion: true,
-              },
-            });
-            const versionDetails = await glueClient.send(getSchemaVersionCommand);
+            if (includeAllVersions) {
+              // Fetch all versions of the schema
+              let versionsNextToken: string | undefined;
+              const versions: GlueSchema[] = [];
+              let latestVersionNumber = 1;
 
-            if (schemaDetails && versionDetails) {
-              // Fetch tags for the schema
-              const tags = schema.SchemaArn ? await fetchTagsForSchema(glueClient, schema.SchemaArn) : {};
+              do {
+                const listVersionsCommand = new ListSchemaVersionsCommand({
+                  SchemaId: {
+                    SchemaArn: schema.SchemaArn,
+                  },
+                  NextToken: versionsNextToken,
+                });
+                const versionsResponse = await glueClient.send(listVersionsCommand);
 
-              schemas.push({
-                id: schema.SchemaName!,
-                name: schema.SchemaName!,
-                registryName: registryName,
-                schemaArn: schema.SchemaArn,
-                schemaVersionId: versionDetails.SchemaVersionId,
-                schemaVersionNumber: versionDetails.VersionNumber,
-                dataFormat: versionDetails.DataFormat,
-                compatibility: schemaDetails.Compatibility,
-                status: versionDetails.Status,
-                description: schemaDetails.Description,
-                tags: tags,
-                createdDate: versionDetails.CreatedTime ? new Date(versionDetails.CreatedTime) : undefined,
-                lastUpdated: schema.UpdatedTime ? new Date(schema.UpdatedTime) : undefined,
-                schemaDefinition: versionDetails.SchemaDefinition,
-                version: versionDetails.VersionNumber?.toString() || '1',
+                if (versionsResponse.Schemas) {
+                  for (const versionSummary of versionsResponse.Schemas) {
+                    if (versionSummary.VersionNumber && versionSummary.VersionNumber > latestVersionNumber) {
+                      latestVersionNumber = versionSummary.VersionNumber;
+                    }
+
+                    // Get full details for each version
+                    const getVersionCommand = new GetSchemaVersionCommand({
+                      SchemaVersionId: versionSummary.SchemaVersionId,
+                    });
+                    const versionDetails = await glueClient.send(getVersionCommand);
+
+                    if (versionDetails) {
+                      const tags = schema.SchemaArn ? await fetchTagsForSchema(glueClient, schema.SchemaArn) : {};
+
+                      versions.push({
+                        id: schema.SchemaName!,
+                        name: schema.SchemaName!,
+                        registryName: registryName,
+                        schemaArn: schema.SchemaArn,
+                        schemaVersionId: versionDetails.SchemaVersionId,
+                        schemaVersionNumber: versionDetails.VersionNumber,
+                        dataFormat: versionDetails.DataFormat,
+                        compatibility: schemaDetails.Compatibility,
+                        status: versionDetails.Status,
+                        description: schemaDetails.Description,
+                        tags: tags,
+                        createdDate: versionDetails.CreatedTime ? new Date(versionDetails.CreatedTime) : undefined,
+                        lastUpdated: versionSummary.CreatedTime ? new Date(versionSummary.CreatedTime) : undefined,
+                        schemaDefinition: versionDetails.SchemaDefinition,
+                        version: versionDetails.VersionNumber?.toString() || '1',
+                      });
+                    }
+                  }
+                }
+
+                versionsNextToken = versionsResponse.NextToken;
+              } while (versionsNextToken);
+
+              // Mark the latest version
+              versions.forEach((v) => {
+                (v as any).latestVersion = v.schemaVersionNumber === latestVersionNumber;
               });
+
+              schemas.push(...versions);
+            } else {
+              // Get only the latest version of the schema
+              const getSchemaVersionCommand = new GetSchemaVersionCommand({
+                SchemaId: {
+                  SchemaArn: schema.SchemaArn,
+                },
+                SchemaVersionNumber: {
+                  LatestVersion: true,
+                },
+              });
+              const versionDetails = await glueClient.send(getSchemaVersionCommand);
+
+              if (schemaDetails && versionDetails) {
+                const tags = schema.SchemaArn ? await fetchTagsForSchema(glueClient, schema.SchemaArn) : {};
+
+                schemas.push({
+                  id: schema.SchemaName!,
+                  name: schema.SchemaName!,
+                  registryName: registryName,
+                  schemaArn: schema.SchemaArn,
+                  schemaVersionId: versionDetails.SchemaVersionId,
+                  schemaVersionNumber: versionDetails.VersionNumber,
+                  dataFormat: versionDetails.DataFormat,
+                  compatibility: schemaDetails.Compatibility,
+                  status: versionDetails.Status,
+                  description: schemaDetails.Description,
+                  tags: tags,
+                  createdDate: versionDetails.CreatedTime ? new Date(versionDetails.CreatedTime) : undefined,
+                  lastUpdated: schema.UpdatedTime ? new Date(schema.UpdatedTime) : undefined,
+                  schemaDefinition: versionDetails.SchemaDefinition,
+                  version: versionDetails.VersionNumber?.toString() || '1',
+                  latestVersion: true,
+                });
+              }
             }
           } catch (error) {
             console.log(`Error fetching details for schema ${schema.SchemaName}:`, error);
@@ -136,7 +204,7 @@ export default async (config: EventCatalogConfig, options: GeneratorProps) => {
     rmServiceById,
   } = utils(eventCatalogDirectory);
 
-  const schemas = await fetchSchemasFromRegistry(glueClient)(registryName, registryArn);
+  const schemas = await fetchSchemasFromRegistry(glueClient, options.includeAllVersions)(registryName, registryArn);
 
   // If no domain or services, just write all schemas as messages to catalog.
   if (!options.domain && !options.services) {
@@ -175,8 +243,6 @@ export default async (config: EventCatalogConfig, options: GeneratorProps) => {
       servicePath = service.id;
     }
 
-    await processSchemas(schemasToWrite, options, servicePath);
-
     // Manage domain
     if (options.domain) {
       // Try and get the domain
@@ -184,7 +250,7 @@ export default async (config: EventCatalogConfig, options: GeneratorProps) => {
       const domain = await getDomain(options.domain.id, domainVersion || 'latest');
       const currentDomain = await getDomain(options.domain.id, 'latest');
 
-      console.log(chalk.blue(`\nProcessing domain: ${domainName} (v${domainVersion})`));
+      console.log(chalk.blueBright(`\nProcessing domain: ${domainName} (v${domainVersion})`));
 
       // Found a domain, but the versions do not match
       if (currentDomain && currentDomain.version !== domainVersion) {
@@ -227,7 +293,7 @@ export default async (config: EventCatalogConfig, options: GeneratorProps) => {
     }));
     let owners = [] as any;
 
-    console.log(chalk.blue(`Processing service: ${service.id} (v${service.version})`));
+    console.log(chalk.blueBright(`Processing service: ${service.id} (v${service.version})`));
 
     if (latestServiceInCatalog) {
       serviceMarkdown = latestServiceInCatalog.markdown;
@@ -252,8 +318,17 @@ export default async (config: EventCatalogConfig, options: GeneratorProps) => {
           latestServiceInCatalog.id,
           latestServiceInCatalog.version
         );
-        await rmServiceById(service.id);
+
+        // Process schemas BEFORE removing service to preserve events folder
+        await processSchemas(schemasToWrite, options, servicePath);
+
+        // await rmServiceById(service.id);
       }
+    }
+
+    // Process schemas if service was not removed (new service or different version)
+    if (!latestServiceInCatalog || latestServiceInCatalog.version !== service.version) {
+      await processSchemas(schemasToWrite, options, servicePath);
     }
 
     await writeService(
@@ -283,63 +358,85 @@ const processSchemas = async (schemas: GlueSchema[], options: GeneratorProps, se
     throw new Error('Please provide catalog url (env variable PROJECT_DIR)');
   }
 
-  // EventCatalog SDK (https://www.eventcatalog.dev/docs/sdk)
-  const { getEvent, writeEvent, addSchemaToEvent, rmEventById, versionEvent } = utils(eventCatalogDirectory);
+  const { getEvent, writeEvent, addSchemaToEvent, versionEvent } = utils(eventCatalogDirectory);
 
-  for (const schema of schemas) {
-    console.log(chalk.blue(`Processing schema: ${schema.id} (v${schema.version})`));
+  // Group schemas by id to process them in the correct order
+  const schemasByEvent = schemas.reduce((acc: Record<string, GlueSchema[]>, schema) => {
+    if (!acc[schema.id]) {
+      acc[schema.id] = [];
+    }
+    acc[schema.id].push(schema);
+    return acc;
+  }, {});
 
-    let messageMarkdown = generateMarkdownForMessage(schema, options.region);
-    const catalogedEvent = await getEvent(schema.id, schema.version);
+  // Process each event and its versions
+  for (const eventId in schemasByEvent) {
+    const eventSchemas = schemasByEvent[eventId];
 
-    if (catalogedEvent) {
-      // Persist markdown between versions
-      messageMarkdown = catalogedEvent.markdown;
+    // Sort by version number to ensure we process them in the correct order
+    eventSchemas.sort((a, b) => {
+      const versionA = parseInt(a.version || '1');
+      const versionB = parseInt(b.version || '1');
+      return versionA - versionB;
+    });
 
-      // if the version matches, we can override the message but keep markdown as it was
-      if (catalogedEvent.version === schema.version) {
-        await rmEventById(schema.id, schema.version);
-      } else {
-        // if the version does not match, we need to version the message
-        await versionEvent(schema.id);
-        console.log(chalk.cyan(` - Versioned previous message: (v${catalogedEvent.version})`));
+    for (const schema of eventSchemas) {
+      console.log(chalk.blueBright(`Processing schema: ${schema.id} (v${schema.version})`));
+
+      let messageMarkdown = generateMarkdownForMessage(schema, options.region);
+      const catalogedEvent = await getEvent(schema.id, 'latest');
+
+      if (catalogedEvent) {
+        // Persist markdown between versions
+        messageMarkdown = catalogedEvent.markdown;
+
+        if (catalogedEvent.version !== schema.version) {
+          await versionEvent(schema.id);
+          console.log(chalk.cyan(` - Versioned previous message: (v${catalogedEvent.version})`));
+        }
       }
-    }
 
-    // Where to write the event to
-    let messagePath = schema.id;
+      // Where to write the event to
+      let messagePath = schema.id;
 
-    if (servicePath && !options.writeFilesToRoot) {
-      messagePath = join(servicePath, 'events', schema.id);
-    }
+      if (servicePath && !options.writeFilesToRoot) {
+        messagePath = join(servicePath, 'events', schema.id);
+      }
 
-    await writeEvent(
-      {
-        id: schema.id,
-        name: schema.name,
-        version: schema.version?.toString() || '1',
-        markdown: messageMarkdown,
-        badges: getBadgesForMessage(schema, options.registryName),
-      },
-      { path: messagePath, format }
-    );
+      await writeEvent(
+        {
+          id: schema.id,
+          name: schema.name,
+          version: schema.version?.toString() || '1',
+          markdown: messageMarkdown,
+          badges: getBadgesForMessage(schema, options.registryName),
+        },
+        { path: messagePath, format, override: true }
+      );
 
-    console.log(chalk.cyan(` - Event (${schema.id} v${schema.version}) created`));
+      console.log(chalk.cyan(` - Event (${schema.id} v${schema.version}) created`));
 
-    // Add schema definition to the event
-    if (schema.schemaDefinition) {
-      const schemaFileName =
-        schema.dataFormat === 'AVRO'
-          ? `${schema.name}-schema.avsc`
-          : schema.dataFormat === 'PROTOBUF'
-            ? `${schema.name}-schema.proto`
-            : `${schema.name}-schema.json`;
+      // Add schema definition to the event
+      if (schema.schemaDefinition) {
+        const schemaFileName =
+          schema.dataFormat === 'AVRO'
+            ? `${schema.name}-schema.avsc`
+            : schema.dataFormat === 'PROTOBUF'
+              ? `${schema.name}-schema.proto`
+              : `${schema.name}-schema.json`;
 
-      await addSchemaToEvent(schema.id, {
-        fileName: schemaFileName,
-        schema: schema.schemaDefinition,
-      });
-      console.log(chalk.cyan(` - Schema added to event (v${schema.version})`));
+        await addSchemaToEvent(schema.id, {
+          fileName: schemaFileName,
+          schema: schema.schemaDefinition,
+        });
+        console.log(chalk.cyan(` - Schema added to event (v${schema.version})`));
+      }
+
+      // If this is not the latest version and includeAllVersions is true, version it immediately
+      if (!schema.latestVersion && options.includeAllVersions) {
+        await versionEvent(schema.id);
+        console.log(chalk.cyan(` - Versioned event as it's not the latest (v${schema.version})`));
+      }
     }
   }
 };
