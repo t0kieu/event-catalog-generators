@@ -26,7 +26,12 @@ vi.mock('@aws-sdk/client-glue', () => {
       });
     }
     // Check if it's a GetSchemaCommand
-    if (command.input && 'SchemaId' in command.input && !('SchemaVersionNumber' in command.input)) {
+    if (
+      command.input &&
+      'SchemaId' in command.input &&
+      !('SchemaVersionNumber' in command.input) &&
+      !('SchemaVersionId' in command.input)
+    ) {
       return Promise.resolve({
         SchemaName: command.input.SchemaId.SchemaArn?.split('/').pop(),
         RegistryName: 'test-registry',
@@ -34,26 +39,107 @@ vi.mock('@aws-sdk/client-glue', () => {
         Description: 'Test schema for event catalog',
       });
     }
-    // Check if it's a GetSchemaVersionCommand
-    if (command.input && 'SchemaVersionNumber' in command.input) {
+    // Check if it's a ListSchemaVersionsCommand by looking for SchemaVersions in the expected response
+    if (command.constructor.name === 'ListSchemaVersionsCommand') {
       const schemaName = command.input.SchemaId?.SchemaArn?.split('/').pop();
-      const avroSchema = {
-        type: 'record',
-        name: schemaName,
-        fields: [
+      if (schemaName === 'customer_data') {
+        return Promise.resolve({
+          Schemas: [
+            { SchemaVersionId: 'v1', VersionNumber: 1, CreatedTime: '2024-01-01T00:00:00Z' },
+            { SchemaVersionId: 'v2', VersionNumber: 2, CreatedTime: '2024-01-02T00:00:00Z' },
+            { SchemaVersionId: 'v3', VersionNumber: 3, CreatedTime: '2024-01-03T00:00:00Z' },
+          ],
+        });
+      }
+      return Promise.resolve({
+        Schemas: [{ SchemaVersionId: 'v1', VersionNumber: 1, CreatedTime: '2024-01-01T00:00:00Z' }],
+      });
+    }
+    // Check if it's a GetSchemaVersionCommand with version ID
+    if (command.input && 'SchemaVersionId' in command.input) {
+      const versionId = command.input.SchemaVersionId;
+      const versionNumber = parseInt(versionId.replace('v', ''));
+      // Determine schema name from context or default to customer_data for multi-version test
+      const schemaName = versionId.includes('order')
+        ? 'order_events'
+        : versionId.includes('inventory')
+          ? 'inventory_updates'
+          : 'customer_data';
+
+      let fields = [];
+
+      if (schemaName === 'customer_data') {
+        fields = [
           { name: 'id', type: 'string', doc: 'Primary key' },
           { name: 'name', type: 'string', doc: 'Customer name' },
           { name: 'email', type: 'string', doc: 'Email address' },
-          { name: 'created_at', type: 'long', logicalType: 'timestamp-millis', doc: 'Creation timestamp' },
-        ],
+        ];
+
+        // Add more fields for newer versions
+        if (versionNumber >= 2) {
+          fields.push({ name: 'phone', type: 'string', doc: 'Phone number' });
+        }
+        if (versionNumber >= 3) {
+          fields.push({ name: 'address', type: 'string', doc: 'Address' });
+        }
+      } else {
+        fields = [
+          { name: 'id', type: 'string', doc: 'Primary key' },
+          { name: 'name', type: 'string', doc: 'Event name' },
+          { name: 'timestamp', type: 'long', doc: 'Event timestamp' },
+          { name: 'created_at', type: 'long', doc: 'Creation timestamp' },
+        ];
+      }
+
+      const avroSchema = {
+        type: 'record',
+        name: schemaName,
+        fields: fields,
       };
+
       return Promise.resolve({
-        SchemaVersionId: `${schemaName}-v1`,
-        VersionNumber: 1,
+        SchemaVersionId: versionId,
+        VersionNumber: versionNumber,
         Status: 'AVAILABLE',
         SchemaDefinition: JSON.stringify(avroSchema, null, 2),
         DataFormat: 'AVRO',
-        CreatedTime: '2024-01-01T00:00:00Z',
+        CreatedTime: `2024-01-0${versionNumber}T00:00:00Z`,
+      });
+    }
+    // Check if it's a GetSchemaVersionCommand with LatestVersion
+    if (command.input && 'SchemaVersionNumber' in command.input && command.input.SchemaVersionNumber.LatestVersion) {
+      const schemaName = command.input.SchemaId?.SchemaArn?.split('/').pop();
+      const latestVersion = schemaName === 'customer_data' ? 3 : 1;
+
+      const fields = [
+        { name: 'id', type: 'string', doc: 'Primary key' },
+        { name: 'name', type: 'string', doc: 'Customer name' },
+        { name: 'email', type: 'string', doc: 'Email address' },
+      ];
+
+      if (schemaName === 'customer_data' && latestVersion >= 2) {
+        fields.push({ name: 'phone', type: 'string', doc: 'Phone number' });
+      }
+      if (schemaName === 'customer_data' && latestVersion >= 3) {
+        fields.push({ name: 'address', type: 'string', doc: 'Address' });
+      }
+      if (schemaName !== 'customer_data') {
+        fields.push({ name: 'created_at', type: 'long', doc: 'Creation timestamp' });
+      }
+
+      const avroSchema = {
+        type: 'record',
+        name: schemaName,
+        fields: fields,
+      };
+
+      return Promise.resolve({
+        SchemaVersionId: `${schemaName}-v${latestVersion}`,
+        VersionNumber: latestVersion,
+        Status: 'AVAILABLE',
+        SchemaDefinition: JSON.stringify(avroSchema, null, 2),
+        DataFormat: 'AVRO',
+        CreatedTime: `2024-01-0${latestVersion}T00:00:00Z`,
       });
     }
     // Check if it's a GetTagsCommand
@@ -83,6 +169,7 @@ vi.mock('@aws-sdk/client-glue', () => {
     GetSchemaCommand: vi.fn().mockImplementation((input) => ({ input })),
     GetSchemaVersionCommand: vi.fn().mockImplementation((input) => ({ input })),
     GetTagsCommand: vi.fn().mockImplementation((input) => ({ input })),
+    ListSchemaVersionsCommand: vi.fn().mockImplementation((input) => ({ input })),
   };
 });
 
@@ -136,7 +223,7 @@ describe('AWS Glue Schema Registry Generator', () => {
 
       expect(customerEvent).toBeDefined();
       expect(customerEvent?.name).toBe('customer_data');
-      expect(customerEvent?.version).toBe('1');
+      expect(customerEvent?.version).toBe('3');
 
       expect(orderEvent).toBeDefined();
       expect(orderEvent?.name).toBe('order_events');
@@ -164,7 +251,7 @@ describe('AWS Glue Schema Registry Generator', () => {
       expect(schema.type).toBe('record');
       expect(schema.name).toBe('customer_data');
       expect(schema.fields).toBeDefined();
-      expect(schema.fields).toHaveLength(4);
+      expect(schema.fields).toHaveLength(5);
       expect(schema.fields[0]).toEqual({
         name: 'id',
         type: 'string',
@@ -451,6 +538,36 @@ describe('AWS Glue Schema Registry Generator', () => {
           }
         )
       ).rejects.toThrow('Please provide services for your schemas. Please see the generator example and API docs');
+    });
+  });
+
+  describe('Include all versions functionality', () => {
+    it('should only fetch latest version when includeAllVersions is false or not provided', async () => {
+      await plugin(
+        {},
+        {
+          region: 'us-east-1',
+          registryName: 'test-registry',
+          includeAllVersions: false,
+        }
+      );
+
+      const { getEvent } = utils(catalogDir);
+
+      // Should only have the latest version (v3) for customer_data
+      const customerEvent = await getEvent('customer_data', 'latest');
+      expect(customerEvent).toBeDefined();
+      expect(customerEvent?.version).toBe('3');
+
+      // Check that the latest version has all fields
+      const schemaPath = join(catalogDir, 'events', 'customer_data', 'customer_data-schema.avsc');
+      const schemaContent = await fs.readFile(schemaPath, 'utf-8');
+      const schema = JSON.parse(schemaContent);
+      expect(schema.fields).toHaveLength(5); // id, name, email, phone, address
+
+      // Should not have older versions
+      const versionedPath = join(catalogDir, 'events', 'customer_data', 'versioned');
+      expect(existsSync(versionedPath)).toBe(false);
     });
   });
 });
