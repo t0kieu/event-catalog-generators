@@ -1,5 +1,11 @@
 # @eventcatalog/generator-aws-glue
 
+## 0.0.5
+
+### Patch Changes
+
+- 2efd797: fix(plugin): glue registry now gets all versions of schemas
+
 ## 0.0.4
 
 ### Patch Changes
