@@ -295,7 +295,7 @@ export default async (config: any, options: Props) => {
         const isReceived = operation.action() === 'receive' || operation.action() === 'subscribe';
         const isSent = operation.action() === 'send' || operation.action() === 'publish';
 
-        const messageId = message.id().toLowerCase();
+        const messageId = message.id();
 
         if (eventType !== 'event' && eventType !== 'command' && eventType !== 'query') {
           throw new Error('Invalid message type');
@@ -445,7 +445,7 @@ export default async (config: any, options: Props) => {
       }
     );
 
-    // What files need added to the service (speficiation files)
+    // What files need added to the service (specification files)
     const specFiles = [
       // add any previous spec files to the list
       ...serviceSpecificationsFiles,
