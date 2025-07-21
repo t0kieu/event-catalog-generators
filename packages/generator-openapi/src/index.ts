@@ -123,7 +123,7 @@ export default async (_: any, options: Props) => {
 
         // Do we need to create a new domain?
         if (!domain || (domain && domain.version !== domainVersion)) {
-          const generatedMarkdownForDomain = generateMarkdownForDomain(document);
+          const generatedMarkdownForDomain = generateMarkdownForDomain();
           await writeDomain({
             id: domainId,
             name: domainName,
