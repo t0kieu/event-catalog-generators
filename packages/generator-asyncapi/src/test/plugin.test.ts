@@ -122,6 +122,54 @@ describe('AsyncAPI EventCatalog Plugin', () => {
         const domain = await getDomain('orders', '1.0.0');
         expect(domain.owners).toEqual(['John Doe', 'Jane Doe']);
       });
+
+      describe('domain options', () => {
+        describe('config option: template', () => {
+          it('if a `template` value is given in the domain config options, then the generator uses that template to generate the domain markdown', async () => {
+            const { getDomain } = utils(catalogDir);
+
+            await plugin(config, {
+              services: [{ path: join(asyncAPIExamplesDir, 'simple.asyncapi.yml'), id: 'account-service' }],
+              domain: {
+                id: 'orders',
+                name: 'Orders Domain',
+                version: '1.0.0',
+                owners: ['John Doe', 'Jane Doe'],
+                generateMarkdown: ({ domain, markdown }) => {
+                  return `
+                  # My custom template
+
+                  The domain is ${domain.name}
+
+                  ${markdown}
+                `;
+                },
+              },
+            });
+
+            const domain = await getDomain('orders', '1.0.0');
+
+            expect(domain.markdown).toContain('# My custom template');
+            expect(domain.markdown).toContain('The domain is Orders Domain');
+
+            // The default markdown should be included as we added it in our custom template
+            expect(domain.markdown).toContain('## Architecture diagram');
+          });
+
+          it('if no `template` value is given in the domain config options, then the generator uses the default markdown', async () => {
+            const { getDomain } = utils(catalogDir);
+
+            await plugin(config, {
+              services: [{ path: join(asyncAPIExamplesDir, 'simple.asyncapi.yml'), id: 'account-service' }],
+              domain: { id: 'orders', name: 'Orders Domain', version: '1.0.0', owners: ['John Doe', 'Jane Doe'] },
+            });
+
+            const domain = await getDomain('orders', '1.0.0');
+
+            expect(domain.markdown).toContain('## Architecture diagram');
+          });
+        });
+      });
     });
 
     describe('services', () => {
@@ -626,7 +674,7 @@ describe('AsyncAPI EventCatalog Plugin', () => {
           const { getService } = utils(catalogDir);
 
           await plugin(config, {
-            services: [{ path: join(asyncAPIExamplesDir, 'simple.asyncapi.yml'), id: 'account-service', id: 'custom-id' }],
+            services: [{ path: join(asyncAPIExamplesDir, 'simple.asyncapi.yml'), id: 'custom-id' }],
           });
 
           const service = await getService('custom-id', '1.0.0');
@@ -722,6 +770,51 @@ describe('AsyncAPI EventCatalog Plugin', () => {
               services: [{ path: 'path/to/spec', id: 'sevice_id' }],
             } as any)
           ).rejects.toThrow('The domain version is required. please provide a domain version');
+        });
+      });
+
+      describe('config option: generateMarkdown', () => {
+        it('if a `generateMarkdown` value is given in the service config options, then the generator uses that function to generate the service markdown', async () => {
+          const { getService } = utils(catalogDir);
+
+          await plugin(config, {
+            services: [
+              {
+                path: join(asyncAPIExamplesDir, 'simple.asyncapi.yml'),
+                id: 'account-service',
+                generateMarkdown: ({ service, document, markdown }) => {
+                  console.log('markdown', markdown);
+                  return `
+                # My custom markdown
+
+                The service is ${service.name}
+                The document is ${document.info().title()}
+
+                ${markdown}
+              `;
+                },
+              },
+            ],
+          });
+
+          const service = await getService('account-service', '1.0.0');
+
+          expect(service.markdown).toContain('My custom markdown');
+          expect(service.markdown).toContain('The service is Account Service');
+          expect(service.markdown).toContain('The document is Account Service');
+
+          // The default markdown should be included as we added it in our cusotm template
+          expect(service.markdown).toContain('## Architecture diagram');
+          expect(service.markdown).toContain('## External documentation');
+        });
+        it('if no `generateMarkdown` value is given in the service config options, then the generator uses the default markdown', async () => {
+          const { getService } = utils(catalogDir);
+
+          await plugin(config, { services: [{ path: join(asyncAPIExamplesDir, 'simple.asyncapi.yml'), id: 'account-service' }] });
+
+          const service = await getService('account-service', '1.0.0');
+
+          expect(service.markdown).toContain('## Architecture diagram');
         });
       });
     });
@@ -951,6 +1044,44 @@ describe('AsyncAPI EventCatalog Plugin', () => {
 
         expect(event.owners).toEqual(['John Doe', 'Jane Doe']);
         expect(service.owners).toEqual(['John Doe', 'Jane Doe']);
+      });
+
+      describe('config option: generateMarkdown', () => {
+        it('if a `generateMarkdown` value is given in the message config options, then the generator uses that function to generate the message markdown', async () => {
+          const { getEvent } = utils(catalogDir);
+
+          await plugin(config, {
+            services: [{ path: join(asyncAPIExamplesDir, 'simple.asyncapi.yml'), id: 'account-service' }],
+            messages: {
+              generateMarkdown: ({ message, markdown }) => {
+                console.log('markdown', markdown);
+                console.log('message', message);
+                return `
+                  # My custom markdown
+
+                  ${markdown}
+                `;
+              },
+            },
+          });
+
+          const event = await getEvent('usersignedup', '1.0.0');
+
+          expect(event.markdown).toContain('# My custom markdown');
+
+          // The default markdown should be included as we added it in our custom template
+          expect(event.markdown).toContain('## Schema');
+        });
+
+        it('if no `generateMarkdown` value is given in the message config options, then the default markdown is used', async () => {
+          const { getEvent } = utils(catalogDir);
+
+          await plugin(config, { services: [{ path: join(asyncAPIExamplesDir, 'simple.asyncapi.yml'), id: 'account-service' }] });
+
+          const event = await getEvent('usersignedup', '1.0.0');
+
+          expect(event.markdown).toContain('## Schema');
+        });
       });
 
       describe('schemas', () => {
