@@ -104,7 +104,7 @@ describe('generator-federation', () => {
       expect(domains).toHaveLength(1);
 
       const subdomains = await fs.readdir(path.join(catalogDir, 'domains', 'E-Commerce', 'subdomains'));
-      expect(subdomains).toHaveLength(3);
+      expect(subdomains).toHaveLength(4);
 
       const teams = await fs.readdir(path.join(catalogDir, 'teams'));
       expect(teams).toHaveLength(4);
