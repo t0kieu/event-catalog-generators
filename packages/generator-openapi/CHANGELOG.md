@@ -1,5 +1,11 @@
 # @eventcatalog/generator-openapi
 
+## 7.2.1
+
+### Patch Changes
+
+- ac0fc47: feat(core): openapi/asyncapi plugin now supports custom markdown for …
+
 ## 7.2.0
 
 ### Minor Changes
