@@ -92,7 +92,7 @@ export default async (_: any, options: Props) => {
       const version = document.info.version;
       const specPath = specification.path;
 
-      const service = buildService({ ...serviceSpec, path: specPath }, document);
+      const service = buildService({ ...serviceSpec, path: specPath }, document, serviceSpec.generateMarkdown);
       let serviceMarkdown = service.markdown;
       let serviceSpecificationsFiles = [];
       let serviceSpecifications = service.specifications;
