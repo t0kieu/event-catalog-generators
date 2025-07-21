@@ -28,7 +28,11 @@ export const getSummary = (document: OpenAPI.Document) => {
   return summary && summary.length < 150 ? summary : '';
 };
 
-export const buildService = (serviceOptions: Service, document: OpenAPI.Document) => {
+export const buildService = (
+  serviceOptions: Service,
+  document: OpenAPI.Document,
+  generateMarkdown?: (document: OpenAPI.Document, filename: string) => string
+) => {
   const schemaPath = path.basename(serviceOptions.path as string) || 'openapi.yml';
   const documentTags = document.tags || [];
   const serviceId = serviceOptions.id || slugify(document.info.title, { lower: true, strict: true });
@@ -41,7 +45,7 @@ export const buildService = (serviceOptions: Service, document: OpenAPI.Document
     specifications: {
       openapiPath: schemaPath,
     },
-    markdown: defaultMarkdown(document, schemaPath),
+    markdown: generateMarkdown ? generateMarkdown(document, schemaPath) : defaultMarkdown(document, schemaPath),
     badges: documentTags.map((tag) => ({ content: tag.name, textColor: 'blue', backgroundColor: 'blue' })),
     owners: serviceOptions.owners || [],
     setMessageOwnersToServiceOwners: serviceOptions.setMessageOwnersToServiceOwners || true,

@@ -637,12 +637,53 @@ describe('OpenAPI EventCatalog Plugin', () => {
             const { getService } = utils(catalogDir);
 
             await plugin(config, {
-              services: [{ path: join(openAPIExamples, 'petstore.yml'), id: 'swagger-petstore', id: 'my-custom-service-name' }],
+              services: [{ path: join(openAPIExamples, 'petstore.yml'), id: 'my-custom-service-name' }],
             });
 
             const service = await getService('my-custom-service-name', '1.0.0');
 
             expect(service).toBeDefined();
+          });
+        });
+        describe('config option: template', () => {
+          it('if a `template` value is given in the service config options, then the generator uses that template to generate the service markdown', async () => {
+            const { getService } = utils(catalogDir);
+
+            await plugin(config, {
+              services: [
+                {
+                  path: join(openAPIExamples, 'petstore.yml'),
+                  id: 'my-custom-service-name',
+                  generateMarkdown: (document: any, filename: string) => {
+                    return `
+                # My custom template
+                  ${document.info.description}
+                `;
+                  },
+                },
+              ],
+            });
+
+            const service = await getService('my-custom-service-name', '1.0.0');
+
+            expect(service).toBeDefined();
+
+            expect(service.markdown).toContain('# My custom template');
+            expect(service.markdown).toContain('This is a sample server Petstore server');
+          });
+          it('it no template is given, the default markdown is used', async () => {
+            const { getService } = utils(catalogDir);
+
+            await plugin(config, {
+              services: [{ path: join(openAPIExamples, 'petstore.yml'), id: 'my-custom-service-name' }],
+            });
+
+            const service = await getService('my-custom-service-name', '1.0.0');
+
+            expect(service).toBeDefined();
+
+            expect(service.markdown).toContain('## Architecture diagram');
+            expect(service.markdown).toContain('<NodeGraph />');
           });
         });
       });
