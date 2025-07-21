@@ -43,15 +43,61 @@ const optionsSchema = z.object({
       path: z.string({ required_error: 'The service path is required. please provide the path to specification file' }),
       name: z.string().optional(),
       owners: z.array(z.string()).optional(),
+      generateMarkdown: z
+        .function()
+        .args(
+          z.object({
+            service: z.object({
+              id: z.string(),
+              name: z.string(),
+              version: z.string(),
+            }),
+            // AsyncAPI Interface
+            document: z.any(),
+            markdown: z.string().optional(),
+          })
+        )
+        .returns(z.string())
+        .optional(),
     }),
     { message: 'Please provide correct services configuration' }
   ),
+  messages: z
+    .object({
+      generateMarkdown: z
+        .function()
+        .args(
+          z.object({
+            message: z.any(),
+            document: z.any(),
+            markdown: z.string().optional(),
+          })
+        )
+        .returns(z.string())
+        .optional(),
+    })
+    .optional(),
   domain: z
     .object({
       id: z.string({ required_error: 'The domain id is required. please provide a domain id' }),
       name: z.string({ required_error: 'The domain name is required. please provide a domain name' }),
       owners: z.array(z.string()).optional(),
       version: z.string({ required_error: 'The domain version is required. please provide a domain version' }),
+      // function that takes options (including domain) and returns a string
+      generateMarkdown: z
+        .function()
+        .args(
+          z.object({
+            domain: z.object({
+              id: z.string(),
+              name: z.string(),
+              version: z.string(),
+            }),
+            markdown: z.string().optional(),
+          })
+        )
+        .returns(z.string())
+        .optional(),
     })
     .optional(),
   debug: z.boolean().optional(),
@@ -183,7 +229,15 @@ export default async (config: any, options: Props) => {
 
     let serviceSpecifications = {};
     let serviceSpecificationsFiles = [];
-    let serviceMarkdown = generateMarkdownForService(document);
+
+    const generatedMarkdownForService = generateMarkdownForService(document);
+    let serviceMarkdown = service.generateMarkdown
+      ? service.generateMarkdown({
+          service: { id: service.id, name: serviceName, version },
+          document,
+          markdown: generatedMarkdownForService,
+        })
+      : generatedMarkdownForService;
     let styles = null;
     // Have to ../ as the SDK will put the files into hard coded folders
     let servicePath = options.domain
@@ -210,11 +264,14 @@ export default async (config: any, options: Props) => {
 
       // Do we need to create a new domain?
       if (!domain || (domain && domain.version !== domainVersion)) {
+        const generatedMarkdownForDomain = generateMarkdownForDomain(document);
         await writeDomain({
           id: domainId,
           name: domainName,
           version: domainVersion,
-          markdown: generateMarkdownForDomain(document),
+          markdown: options.domain?.generateMarkdown
+            ? options.domain.generateMarkdown({ domain: options.domain, markdown: generatedMarkdownForDomain })
+            : generatedMarkdownForDomain,
           ...(domainOwners && { owners: domainOwners }),
           // services: [{ id: serviceId, version: version }],
         });
@@ -309,7 +366,10 @@ export default async (config: any, options: Props) => {
           collection: folder,
         } = MESSAGE_OPERATIONS[eventType];
 
-        let messageMarkdown = generateMarkdownForMessage(document, message);
+        const generatedMarkdownForMessage = generateMarkdownForMessage(document, message);
+        let messageMarkdown = options.messages?.generateMarkdown
+          ? options.messages.generateMarkdown({ message, document, markdown: generatedMarkdownForMessage })
+          : generatedMarkdownForMessage;
         const badges = message.tags().all() || [];
 
         console.log(chalk.blue(`Processing message: ${getMessageName(message)} (v${messageVersion})`));

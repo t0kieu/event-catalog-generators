@@ -5,6 +5,7 @@ export type Domain = {
   name: string;
   version: string;
   owners?: string[];
+  generateMarkdown?: ({}: { domain: Domain; markdown: string }) => string;
 };
 
 export type Service = {
@@ -12,7 +13,11 @@ export type Service = {
   path: string | string[];
   owners?: string[];
   setMessageOwnersToServiceOwners?: boolean;
-  generateMarkdown?: (document: OpenAPI.Document, filename: string) => string;
+  generateMarkdown?: ({}: { service: Service; document: OpenAPI.Document; markdown: string }) => string;
+};
+
+export type Message = {
+  generateMarkdown?: ({}: { operation: Operation; markdown: string }) => string;
 };
 
 export type Operation = {

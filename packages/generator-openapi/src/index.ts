@@ -7,7 +7,7 @@ import { defaultMarkdown as generateMarkdownForDomain } from './utils/domains';
 import { buildService } from './utils/services';
 import { buildMessage } from './utils/messages';
 import { getOperationsByType } from './utils/openapi';
-import { Domain, Service } from './types';
+import { Domain, Service, Message } from './types';
 import { getMessageTypeUtils } from './utils/catalog-shorthand';
 import { OpenAPI } from 'openapi-types';
 import checkLicense from '../../../shared/checkLicense';
@@ -23,6 +23,7 @@ export type HTTP_METHOD_TO_MESSAGE_TYPE = Partial<Record<HTTP_METHOD, MESSAGE_TY
 
 type Props = {
   services: Service[];
+  messages?: Message;
   domain?: Domain;
   debug?: boolean;
   saveParsedSpecFile?: boolean;
@@ -122,11 +123,14 @@ export default async (_: any, options: Props) => {
 
         // Do we need to create a new domain?
         if (!domain || (domain && domain.version !== domainVersion)) {
+          const generatedMarkdownForDomain = generateMarkdownForDomain();
           await writeDomain({
             id: domainId,
             name: domainName,
             version: domainVersion,
-            markdown: generateMarkdownForDomain(),
+            markdown: options.domain?.generateMarkdown
+              ? options.domain.generateMarkdown({ domain: options.domain, markdown: generatedMarkdownForDomain })
+              : generatedMarkdownForDomain,
             ...(options.domain?.owners ? { owners: options.domain.owners } : {}),
           });
           console.log(chalk.cyan(` - Domain (v${domainVersion}) created`));
@@ -250,7 +254,12 @@ const processMessagesForOpenAPISpec = async (
 
   // Go through all messages
   for (const operation of operations) {
-    const { requestBodiesAndResponses, sidebar, ...message } = await buildMessage(pathToSpec, document, operation);
+    const { requestBodiesAndResponses, sidebar, ...message } = await buildMessage(
+      pathToSpec,
+      document,
+      operation,
+      options.messages?.generateMarkdown
+    );
     let messageMarkdown = message.markdown;
     const messageType = operation.type;
     const messageAction = operation.action;
