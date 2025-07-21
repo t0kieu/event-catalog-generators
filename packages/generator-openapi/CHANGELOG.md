@@ -1,5 +1,11 @@
 # @eventcatalog/generator-openapi
 
+## 7.2.0
+
+### Minor Changes
+
+- f12284f: feat(core): openapi plugin now supports custom markdown for services
+
 ## 7.1.1
 
 ### Patch Changes
