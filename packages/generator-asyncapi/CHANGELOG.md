@@ -1,5 +1,11 @@
 # @eventcatalog/sdk
 
+## 4.4.0
+
+### Minor Changes
+
+- f74f9b3: feat(plugin): added ability to mark resources as drafts
+
 ## 4.3.0
 
 ### Minor Changes
