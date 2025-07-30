@@ -1,5 +1,5 @@
 ---
-'@eventcatalog/generator-asyncapi': major
+'@eventcatalog/generator-asyncapi': patch
 ---
 
-Implement parsing tags from AsyncAPI's channels
+feat(plugin): asyncapi plugin now adds badges from channel tags
