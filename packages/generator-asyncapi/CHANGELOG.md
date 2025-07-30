@@ -1,5 +1,11 @@
 # @eventcatalog/sdk
 
+## 4.4.1
+
+### Patch Changes
+
+- 3521c37: feat(plugin): asyncapi plugin now adds badges from channel tags
+
 ## 4.4.0
 
 ### Minor Changes
