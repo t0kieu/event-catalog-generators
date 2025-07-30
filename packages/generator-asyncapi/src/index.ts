@@ -22,7 +22,7 @@ import {
 } from './utils/messages';
 import { defaultMarkdown as generateMarkdownForService, getSummary as getServiceSummary } from './utils/services';
 import { defaultMarkdown as generateMarkdownForDomain } from './utils/domains';
-import { defaultMarkdown as generateMarkdownForChannel, getChannelProtocols } from './utils/channels';
+import { defaultMarkdown as generateMarkdownForChannel, getChannelProtocols, getChannelTags } from './utils/channels';
 import checkLicense from '../../../shared/checkLicense';
 
 import { EventType, MessageOperations } from './types';
@@ -300,6 +300,7 @@ export default async (config: any, options: Props) => {
         const channelId = channel.id();
         const params = channelAsJSON?.parameters || {};
         const protocols = getChannelProtocols(channel);
+        const channelTags: string[] = getChannelTags(channel);
         const channelVersion = channel.extensions().get('x-eventcatalog-channel-version')?.value() || version;
         let channelMarkdown = generateMarkdownForChannel(document, channel);
 
@@ -337,6 +338,9 @@ export default async (config: any, options: Props) => {
             ...(Object.keys(paramsForCatalog).length > 0 && { parameters: paramsForCatalog }),
             ...(channel.address() && { address: channel.address() }),
             ...(channelAsJSON?.summary && { summary: channelAsJSON.summary }),
+            ...(channelTags.length > 0 && {
+              badges: channelTags.map((tagName) => ({ content: tagName, textColor: 'blue', backgroundColor: 'blue' })),
+            }),
             ...(protocols.length > 0 && { protocols }),
             ...((isDomainMarkedAsDraft || isServiceMarkedAsDraft) && { draft: true }),
           },

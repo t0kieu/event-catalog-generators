@@ -1187,6 +1187,18 @@ describe('AsyncAPI EventCatalog Plugin', () => {
             address: 'smartylighting.streetlights.1.0.event.{streetlightId}.lighting.measured',
             summary: 'Inform about environmental lighting conditions of a particular streetlight.',
             version: '1.0.0',
+            badges: [
+              {
+                content: 'kind:remote',
+                textColor: 'blue',
+                backgroundColor: 'blue',
+              },
+              {
+                content: 'visibility:private',
+                textColor: 'blue',
+                backgroundColor: 'blue',
+              },
+            ],
             markdown: expect.toMatchMarkdown(`## Overview
               The topic on which measured values may be produced and consumed.
               <ChannelInformation />`),
@@ -1298,6 +1310,33 @@ describe('AsyncAPI EventCatalog Plugin', () => {
           expect(versionedChannel).toBeDefined();
           expect(newChannel).toBeDefined();
         });
+      });
+
+      it('if a channel has any tags, these are added to the channel in EventCatalog', async () => {
+        const { getChannel, getChannels } = utils(catalogDir);
+
+        await plugin(config, {
+          services: [{ path: join(asyncAPIExamplesDir, 'streetlights-kafka-asyncapi.yml'), id: 'streetlights-service' }],
+          parseChannels: true,
+        });
+
+        const channels = await getChannels();
+        expect(channels).toHaveLength(4);
+
+        const lightingMeasured = await getChannel('lightingMeasured');
+
+        expect(lightingMeasured.badges).toEqual([
+          {
+            content: 'kind:remote',
+            textColor: 'blue',
+            backgroundColor: 'blue',
+          },
+          {
+            content: 'visibility:private',
+            textColor: 'blue',
+            backgroundColor: 'blue',
+          },
+        ]);
       });
     });
 
