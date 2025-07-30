@@ -142,6 +142,7 @@ components:
     OrderUpdated:
       description: 'Event triggered when an order is updated'
       x-eventcatalog-message-type: event
+      x-eventcatalog-draft: true
       headers:
         type: object
         properties:
@@ -250,6 +251,7 @@ components:
     ShipmentDelivered:
       description: 'Event triggered when a shipment is delivered'
       x-eventcatalog-message-type: event
+      x-eventcatalog-draft: true
       headers:
         type: object
         properties:
