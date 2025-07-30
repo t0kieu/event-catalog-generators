@@ -97,6 +97,11 @@ export default async (_: any, options: Props) => {
       let serviceMarkdown = service.markdown;
       let serviceSpecificationsFiles = [];
       let serviceSpecifications = service.specifications;
+      const isDomainMarkedAsDraft = options.domain?.draft || null;
+
+      // @ts-ignore
+      const isServiceMarkedAsDraft =
+        isDomainMarkedAsDraft || document.info?.['x-eventcatalog-draft'] || serviceSpec.draft || null;
 
       // Have to ../ as the SDK will put the files into hard coded folders
       let servicePath = options.domain
@@ -132,6 +137,7 @@ export default async (_: any, options: Props) => {
               ? options.domain.generateMarkdown({ domain: options.domain, markdown: generatedMarkdownForDomain })
               : generatedMarkdownForDomain,
             ...(options.domain?.owners ? { owners: options.domain.owners } : {}),
+            ...(isDomainMarkedAsDraft && { draft: true }),
           });
           console.log(chalk.cyan(` - Domain (v${domainVersion}) created`));
         }
@@ -166,6 +172,7 @@ export default async (_: any, options: Props) => {
         ...options,
         owners: service.setMessageOwnersToServiceOwners ? service.owners : [],
         serviceHasMultipleSpecFiles: Array.isArray(serviceSpec.path),
+        isDraft: isServiceMarkedAsDraft,
       });
 
       let owners = service.owners || [];
@@ -196,6 +203,8 @@ export default async (_: any, options: Props) => {
         }
       }
 
+      console.log('isServiceMarkedAsDraft', service);
+
       await writeService(
         {
           ...service,
@@ -206,6 +215,7 @@ export default async (_: any, options: Props) => {
           ...(owners ? { owners } : {}),
           ...(repository ? { repository } : {}),
           ...(styles ? { styles } : {}),
+          ...(isServiceMarkedAsDraft ? { draft: true } : {}),
         },
         { path: join(servicePath), override: true }
       );
@@ -242,12 +252,13 @@ const processMessagesForOpenAPISpec = async (
   pathToSpec: string,
   document: OpenAPI.Document,
   servicePath: string,
-  options: Props & { owners: string[]; pathForMessages?: string; serviceHasMultipleSpecFiles: boolean }
+  options: Props & { owners: string[]; pathForMessages?: string; serviceHasMultipleSpecFiles: boolean; isDraft?: boolean }
 ) => {
   const operations = await getOperationsByType(pathToSpec, options.httpMethodsToMessages);
   const sidebarBadgeType = options.sidebarBadgeType || 'HTTP_METHOD';
   const version = document.info.version;
   const preserveExistingMessages = options.preserveExistingMessages ?? true;
+  const isDraft = options.isDraft ?? null;
 
   let receives = [],
     sends = [];
@@ -303,6 +314,7 @@ const processMessagesForOpenAPISpec = async (
         ...(options.owners ? { owners: options.owners } : {}),
         // only if its defined add it to the sidebar
         ...(sidebarBadgeType === 'HTTP_METHOD' ? { sidebar } : {}),
+        ...(isDraft ? { draft: true } : {}),
       },
       { path: options.pathForMessages || messagePath, override: true }
     );

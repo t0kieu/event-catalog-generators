@@ -177,6 +177,7 @@ export const buildMessage = async (
     sidebar: {
       badge: httpVerb,
     },
+    ...(extensions['x-eventcatalog-draft'] ? { draft: true } : {}),
     ...(operation.deprecated ? { deprecated: operation.deprecated } : {}),
   };
 };
