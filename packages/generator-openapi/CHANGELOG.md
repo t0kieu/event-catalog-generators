@@ -1,5 +1,11 @@
 # @eventcatalog/generator-openapi
 
+## 7.3.1
+
+### Patch Changes
+
+- f9d9464: fix(plugin): openapi plugin now esacpes curly brackets for markdown
+
 ## 7.3.0
 
 ### Minor Changes
