@@ -39,6 +39,11 @@ servers:
 channels:
   lightingMeasured:
     address: 'smartylighting.streetlights.1.0.event.{streetlightId}.lighting.measured'
+    tags:
+      - name: 'kind:remote'
+        description: This server is a remote server. Not exposed by the application
+      - name: 'visibility:private'
+        description: This resource is private and only available to certain users
     bindings:
       kafka:
         topic: 'my-topic'
