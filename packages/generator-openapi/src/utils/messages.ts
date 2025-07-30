@@ -86,7 +86,7 @@ ${
   message.description
     ? `
 ## Overview
-${message.description}
+${escapeSpecialCharactersThatBreakMarkdown(message.description)}
 `
     : ''
 }
@@ -122,6 +122,31 @@ ${markdownForResponses(openAPIOperation)}
 `;
 };
 
+export const escapeSpecialCharactersThatBreakMarkdown = (text: string) => {
+  // find code blocks, and don't escape the curly braces within them, but escape the rest
+  const codeBlockRegex = /```[\s\S]*?```/g;
+  const codeBlocks: string[] = [];
+  const placeholders: string[] = [];
+
+  // Replace code blocks with placeholders and store them
+  let processedText = text.replace(codeBlockRegex, (match, index) => {
+    const placeholder = `__CODE_BLOCK_${index}__`;
+    codeBlocks.push(match);
+    placeholders.push(placeholder);
+    return placeholder;
+  });
+
+  // Escape curly braces in the text outside of code blocks
+  processedText = processedText.replace(/{/g, '\\{').replace(/}/g, '\\}');
+
+  // Restore code blocks with their original curly braces
+  placeholders.forEach((placeholder, index) => {
+    processedText = processedText.replace(placeholder, codeBlocks[index]);
+  });
+
+  return processedText;
+};
+
 export const getSummary = (message: Operation) => {
   const messageSummary = message.summary ? message.summary : '';
   const messageDescription = message.description ? message.description : '';
@@ -132,7 +157,7 @@ export const getSummary = (message: Operation) => {
     eventCatalogMessageSummary = messageDescription && messageDescription.length < 150 ? messageDescription : '';
   }
 
-  return eventCatalogMessageSummary;
+  return escapeSpecialCharactersThatBreakMarkdown(eventCatalogMessageSummary);
 };
 
 export const buildMessage = async (

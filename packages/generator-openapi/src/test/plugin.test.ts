@@ -832,6 +832,37 @@ describe('OpenAPI EventCatalog Plugin', () => {
         );
       });
 
+      it('if the message description has curly braces, they are escaped in the markdown', async () => {
+        const { getEvent } = utils(catalogDir);
+
+        await plugin(config, {
+          services: [{ path: join(openAPIExamples, 'petstore-with-special-characters.yml'), id: 'swagger-petstore' }],
+        });
+
+        const event = await getEvent('list-pets');
+        expect(event.markdown).toContain('example: \\{ true: false \\}');
+      });
+
+      it('if the message description has code blocks, the curly braces are not escaped', async () => {
+        const { getEvent } = utils(catalogDir);
+
+        await plugin(config, {
+          services: [{ path: join(openAPIExamples, 'petstore-with-special-characters.yml'), id: 'swagger-petstore' }],
+        });
+
+        const event = await getEvent('list-pets');
+        // Get the code block from the markdown
+        const codeBlock = event.markdown.match(/```json\n([\s\S]*?)\n```/);
+        expect(codeBlock).toBeDefined();
+        expect(codeBlock?.[1]).toContain('"this should not be escaped"');
+
+        // Verify that curly braces in the code block are NOT escaped
+        expect(codeBlock?.[1]).toContain('{');
+        expect(codeBlock?.[1]).toContain('}');
+        expect(codeBlock?.[1]).not.toContain('\\{');
+        expect(codeBlock?.[1]).not.toContain('\\}');
+      });
+
       describe('OpenAPI eventcatalog extensions', () => {
         it('messages marked as "events" using the custom `x-eventcatalog-message-type` header in an OpenAPI are documented in EventCatalog as events ', async () => {
           const { getEvent } = utils(catalogDir);
@@ -1114,8 +1145,6 @@ describe('OpenAPI EventCatalog Plugin', () => {
 
           const command = await getCommand('createPets');
 
-          console.log(command.markdown);
-
           expect(command.markdown).toContain(`### Responses
 
 #### <span className="text-gray-500">default</span>
@@ -1151,8 +1180,6 @@ describe('OpenAPI EventCatalog Plugin', () => {
           });
 
           const command = await getCommand('createPets');
-
-          console.log(command.markdown);
 
           expect(command.markdown).toContain('## My custom template');
 
