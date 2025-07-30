@@ -139,6 +139,76 @@ describe('OpenAPI EventCatalog Plugin', () => {
 
         expect(domain.owners).toEqual(['John Doe', 'Jane Doe']);
       });
+
+      describe('domain options', () => {
+        describe('config option: template', () => {
+          it('if a `template` value is given in the domain config options, then the generator uses that template to generate the domain markdown', async () => {
+            const { getDomain } = utils(catalogDir);
+
+            await plugin(config, {
+              services: [{ path: join(openAPIExamples, 'petstore.yml'), id: 'swagger-petstore' }],
+              domain: {
+                id: 'orders',
+                name: 'Orders',
+                version: '1.0.0',
+                owners: ['John Doe', 'Jane Doe'],
+                generateMarkdown: ({ domain, markdown }) => {
+                  return `
+                    # My custom template
+
+                    The domain is ${domain.name}
+
+                    ${markdown}
+                `;
+                },
+              },
+            });
+
+            const domain = await getDomain('orders', '1.0.0');
+
+            expect(domain.owners).toEqual(['John Doe', 'Jane Doe']);
+
+            expect(domain.markdown).toContain('# My custom template');
+            expect(domain.markdown).toContain('The domain is Orders');
+
+            // The default markdown should be included as we added it in our custom template
+            expect(domain.markdown).toContain('## Architecture diagram');
+          });
+          it('it no template is given, the default markdown is used', async () => {
+            const { getService } = utils(catalogDir);
+
+            await plugin(config, {
+              services: [{ path: join(openAPIExamples, 'petstore.yml'), id: 'my-custom-service-name' }],
+            });
+
+            const service = await getService('my-custom-service-name', '1.0.0');
+
+            expect(service).toBeDefined();
+
+            expect(service.markdown).toContain('## Architecture diagram');
+            expect(service.markdown).toContain('<NodeGraph />');
+          });
+        });
+        describe('config option: draft', () => {
+          it('if a `draft` value is given in the domain config options, then the domain, services and all messages are added as `draft`', async () => {
+            const { getDomain, getService, getEvent, getEvents } = utils(catalogDir);
+
+            await plugin(config, {
+              services: [{ path: join(openAPIExamples, 'petstore.yml'), id: 'swagger-petstore' }],
+              domain: { id: 'orders', name: 'Orders Domain', version: '1.0.0', draft: true },
+            });
+
+            const domain = await getDomain('orders', '1.0.0');
+            expect(domain.draft).toEqual(true);
+
+            const service = await getService('swagger-petstore', '1.0.0');
+            expect(service.draft).toEqual(true);
+
+            const event = await getEvent('petAdopted');
+            expect(event.draft).toEqual(true);
+          });
+        });
+      });
     });
 
     describe('services', () => {
@@ -631,18 +701,107 @@ describe('OpenAPI EventCatalog Plugin', () => {
         expect(service.owners).toEqual(['John Doe', 'Jane Doe']);
       });
 
+      it('if the service has `x-eventcatalog-draft` header set to true, the service is added as `draft` and all the messages are added as `draft`', async () => {
+        const { getService, getEvent } = utils(catalogDir);
+
+        await plugin(config, {
+          services: [{ path: join(openAPIExamples, 'petstore-draft.yml'), id: 'swagger-petstore' }],
+        });
+
+        const service = await getService('swagger-petstore', '1.0.0');
+        expect(service.draft).toEqual(true);
+
+        const event = await getEvent('petAdopted');
+        expect(event.draft).toEqual(true);
+      });
+
+      it('the service has no draft settings, all resources do not have a draft value', async () => {
+        const { getService, getEvent } = utils(catalogDir);
+
+        await plugin(config, {
+          services: [{ path: join(openAPIExamples, 'petstore.yml'), id: 'swagger-petstore' }],
+        });
+
+        const service = await getService('swagger-petstore', '1.0.0');
+        expect(service.draft).toEqual(undefined);
+
+        const event = await getEvent('petAdopted');
+        expect(event.draft).toEqual(undefined);
+      });
+
       describe('service options', () => {
         describe('config option: id', () => {
           it('if an `id` value is given in the service config options, then the generator uses that id and does not generate one from the title', async () => {
             const { getService } = utils(catalogDir);
 
             await plugin(config, {
-              services: [{ path: join(openAPIExamples, 'petstore.yml'), id: 'swagger-petstore', id: 'my-custom-service-name' }],
+              services: [{ path: join(openAPIExamples, 'petstore.yml'), id: 'my-custom-service-name' }],
             });
 
             const service = await getService('my-custom-service-name', '1.0.0');
 
             expect(service).toBeDefined();
+          });
+        });
+        describe('config option: template', () => {
+          it('if a `template` value is given in the service config options, then the generator uses that template to generate the service markdown', async () => {
+            const { getService } = utils(catalogDir);
+
+            await plugin(config, {
+              services: [
+                {
+                  path: join(openAPIExamples, 'petstore.yml'),
+                  id: 'my-custom-service-name',
+                  generateMarkdown: ({ document, markdown }) => {
+                    return `
+                # My custom template
+
+                ${markdown}
+                  ${document.info.description}
+                `;
+                  },
+                },
+              ],
+            });
+
+            const service = await getService('my-custom-service-name', '1.0.0');
+
+            expect(service).toBeDefined();
+
+            expect(service.markdown).toContain('# My custom template');
+            expect(service.markdown).toContain('This is a sample server Petstore server');
+
+            // The default markdown should be included as we added it in our custom template
+            expect(service.markdown).toContain('## Architecture diagram');
+          });
+          it('it no template is given, the default markdown is used', async () => {
+            const { getService } = utils(catalogDir);
+
+            await plugin(config, {
+              services: [{ path: join(openAPIExamples, 'petstore.yml'), id: 'my-custom-service-name' }],
+            });
+
+            const service = await getService('my-custom-service-name', '1.0.0');
+
+            expect(service).toBeDefined();
+
+            expect(service.markdown).toContain('## Architecture diagram');
+            expect(service.markdown).toContain('<NodeGraph />');
+          });
+        });
+        describe('config option: draft', () => {
+          it('if a `draft` value is given in the service config options, then the service and all messages are added as `draft`', async () => {
+            const { getService, getEvent } = utils(catalogDir);
+
+            await plugin(config, {
+              services: [{ path: join(openAPIExamples, 'petstore.yml'), id: 'swagger-petstore', draft: true }],
+            });
+
+            const service = await getService('swagger-petstore', '1.0.0');
+            expect(service.draft).toEqual(true);
+
+            const event = await getEvent('petAdopted');
+            expect(event.draft).toEqual(true);
           });
         });
       });
@@ -723,6 +882,17 @@ describe('OpenAPI EventCatalog Plugin', () => {
               summary: 'Info for a specific pet',
             })
           );
+        });
+
+        it('messages marked as "draft" using the custom `x-eventcatalog-draft` header in an OpenAPI are documented in EventCatalog as draft', async () => {
+          const { getEvent } = utils(catalogDir);
+
+          await plugin(config, {
+            services: [{ path: join(openAPIExamples, 'petstore-draft-messages.yml'), id: 'swagger-petstore' }],
+          });
+
+          const event = await getEvent('petAdopted');
+          expect(event.draft).toEqual(true);
         });
 
         it('messages marked as "sends" using the custom `x-eventcatalog-message-action` header in an OpenAPI are mapped against the service as messages the service sends ', async () => {
@@ -961,6 +1131,43 @@ describe('OpenAPI EventCatalog Plugin', () => {
 
           expect(command.markdown).toContain(`### Parameters
 - **limit** (query): How many items to return at one time (max 100)`);
+        });
+      });
+
+      describe('config option: generateMarkdown', () => {
+        it('if a `generateMarkdown` value is given in the message config options, then the generator uses that function to generate the message markdown', async () => {
+          const { getCommand } = utils(catalogDir);
+
+          await plugin(config, {
+            messages: {
+              generateMarkdown: ({ operation, markdown }) => {
+                return `
+              ## My custom template
+              ${markdown}
+            `;
+              },
+            },
+            services: [{ path: join(openAPIExamples, 'petstore.yml'), id: 'swagger-petstore' }],
+          });
+
+          const command = await getCommand('createPets');
+
+          console.log(command.markdown);
+
+          expect(command.markdown).toContain('## My custom template');
+
+          // The default markdown should be included as we added it in our custom template
+          expect(command.markdown).toContain('### Request Body');
+        });
+
+        it('if no `generateMarkdown` value is given in the message config options, then the default markdown is used', async () => {
+          const { getCommand } = utils(catalogDir);
+
+          await plugin(config, { services: [{ path: join(openAPIExamples, 'petstore.yml'), id: 'swagger-petstore' }] });
+
+          const command = await getCommand('createPets');
+
+          expect(command.markdown).toContain('### Request Body');
         });
       });
     });

@@ -1,5 +1,23 @@
 # @eventcatalog/generator-openapi
 
+## 7.3.0
+
+### Minor Changes
+
+- f74f9b3: feat(plugin): added ability to mark resources as drafts
+
+## 7.2.1
+
+### Patch Changes
+
+- ac0fc47: feat(core): openapi/asyncapi plugin now supports custom markdown for …
+
+## 7.2.0
+
+### Minor Changes
+
+- f12284f: feat(core): openapi plugin now supports custom markdown for services
+
 ## 7.1.1
 
 ### Patch Changes

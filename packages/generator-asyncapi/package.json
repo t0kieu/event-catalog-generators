@@ -1,6 +1,6 @@
 {
   "name": "@eventcatalog/generator-asyncapi",
-  "version": "4.2.1",
+  "version": "4.4.0",
   "description": "AsyncAPI generator for EventCatalog",
   "scripts": {
     "build": "tsup",
@@ -38,7 +38,7 @@
   "dependencies": {
     "@asyncapi/avro-schema-parser": "^3.0.24",
     "@asyncapi/parser": "^3.4.0",
-    "@eventcatalog/sdk": "^2.5.5",
+    "@eventcatalog/sdk": "^2.6.9",
     "chalk": "^4",
     "fs-extra": "^11.2.0",
     "glob": "^11.0.0",

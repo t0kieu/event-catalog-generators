@@ -7,7 +7,7 @@ import { defaultMarkdown as generateMarkdownForDomain } from './utils/domains';
 import { buildService } from './utils/services';
 import { buildMessage } from './utils/messages';
 import { getOperationsByType } from './utils/openapi';
-import { Domain, Service } from './types';
+import { Domain, Service, Message } from './types';
 import { getMessageTypeUtils } from './utils/catalog-shorthand';
 import { OpenAPI } from 'openapi-types';
 import checkLicense from '../../../shared/checkLicense';
@@ -23,6 +23,7 @@ export type HTTP_METHOD_TO_MESSAGE_TYPE = Partial<Record<HTTP_METHOD, MESSAGE_TY
 
 type Props = {
   services: Service[];
+  messages?: Message;
   domain?: Domain;
   debug?: boolean;
   saveParsedSpecFile?: boolean;
@@ -92,10 +93,15 @@ export default async (_: any, options: Props) => {
       const version = document.info.version;
       const specPath = specification.path;
 
-      const service = buildService({ ...serviceSpec, path: specPath }, document);
+      const service = buildService({ ...serviceSpec, path: specPath }, document, serviceSpec.generateMarkdown);
       let serviceMarkdown = service.markdown;
       let serviceSpecificationsFiles = [];
       let serviceSpecifications = service.specifications;
+      const isDomainMarkedAsDraft = options.domain?.draft || null;
+
+      const isServiceMarkedAsDraft =
+        // @ts-ignore
+        isDomainMarkedAsDraft || document.info?.['x-eventcatalog-draft'] || serviceSpec.draft || null;
 
       // Have to ../ as the SDK will put the files into hard coded folders
       let servicePath = options.domain
@@ -122,12 +128,16 @@ export default async (_: any, options: Props) => {
 
         // Do we need to create a new domain?
         if (!domain || (domain && domain.version !== domainVersion)) {
+          const generatedMarkdownForDomain = generateMarkdownForDomain();
           await writeDomain({
             id: domainId,
             name: domainName,
             version: domainVersion,
-            markdown: generateMarkdownForDomain(),
+            markdown: options.domain?.generateMarkdown
+              ? options.domain.generateMarkdown({ domain: options.domain, markdown: generatedMarkdownForDomain })
+              : generatedMarkdownForDomain,
             ...(options.domain?.owners ? { owners: options.domain.owners } : {}),
+            ...(isDomainMarkedAsDraft && { draft: true }),
           });
           console.log(chalk.cyan(` - Domain (v${domainVersion}) created`));
         }
@@ -162,6 +172,7 @@ export default async (_: any, options: Props) => {
         ...options,
         owners: service.setMessageOwnersToServiceOwners ? service.owners : [],
         serviceHasMultipleSpecFiles: Array.isArray(serviceSpec.path),
+        isDraft: isServiceMarkedAsDraft,
       });
 
       let owners = service.owners || [];
@@ -192,6 +203,8 @@ export default async (_: any, options: Props) => {
         }
       }
 
+      console.log('isServiceMarkedAsDraft', service);
+
       await writeService(
         {
           ...service,
@@ -202,6 +215,7 @@ export default async (_: any, options: Props) => {
           ...(owners ? { owners } : {}),
           ...(repository ? { repository } : {}),
           ...(styles ? { styles } : {}),
+          ...(isServiceMarkedAsDraft ? { draft: true } : {}),
         },
         { path: join(servicePath), override: true }
       );
@@ -238,19 +252,25 @@ const processMessagesForOpenAPISpec = async (
   pathToSpec: string,
   document: OpenAPI.Document,
   servicePath: string,
-  options: Props & { owners: string[]; pathForMessages?: string; serviceHasMultipleSpecFiles: boolean }
+  options: Props & { owners: string[]; pathForMessages?: string; serviceHasMultipleSpecFiles: boolean; isDraft?: boolean }
 ) => {
   const operations = await getOperationsByType(pathToSpec, options.httpMethodsToMessages);
   const sidebarBadgeType = options.sidebarBadgeType || 'HTTP_METHOD';
   const version = document.info.version;
   const preserveExistingMessages = options.preserveExistingMessages ?? true;
+  const isDraft = options.isDraft ?? null;
 
   let receives = [],
     sends = [];
 
   // Go through all messages
   for (const operation of operations) {
-    const { requestBodiesAndResponses, sidebar, ...message } = await buildMessage(pathToSpec, document, operation);
+    const { requestBodiesAndResponses, sidebar, ...message } = await buildMessage(
+      pathToSpec,
+      document,
+      operation,
+      options.messages?.generateMarkdown
+    );
     let messageMarkdown = message.markdown;
     const messageType = operation.type;
     const messageAction = operation.action;
@@ -294,6 +314,7 @@ const processMessagesForOpenAPISpec = async (
         ...(options.owners ? { owners: options.owners } : {}),
         // only if its defined add it to the sidebar
         ...(sidebarBadgeType === 'HTTP_METHOD' ? { sidebar } : {}),
+        ...(isDraft ? { draft: true } : {}),
       },
       { path: options.pathForMessages || messagePath, override: true }
     );

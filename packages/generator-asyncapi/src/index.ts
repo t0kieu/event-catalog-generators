@@ -41,17 +41,65 @@ const optionsSchema = z.object({
     z.object({
       id: z.string({ required_error: 'The service id is required. please provide the service id' }),
       path: z.string({ required_error: 'The service path is required. please provide the path to specification file' }),
+      draft: z.boolean().optional(),
       name: z.string().optional(),
       owners: z.array(z.string()).optional(),
+      generateMarkdown: z
+        .function()
+        .args(
+          z.object({
+            service: z.object({
+              id: z.string(),
+              name: z.string(),
+              version: z.string(),
+            }),
+            // AsyncAPI Interface
+            document: z.any(),
+            markdown: z.string().optional(),
+          })
+        )
+        .returns(z.string())
+        .optional(),
     }),
     { message: 'Please provide correct services configuration' }
   ),
+  messages: z
+    .object({
+      generateMarkdown: z
+        .function()
+        .args(
+          z.object({
+            message: z.any(),
+            document: z.any(),
+            markdown: z.string().optional(),
+          })
+        )
+        .returns(z.string())
+        .optional(),
+    })
+    .optional(),
   domain: z
     .object({
       id: z.string({ required_error: 'The domain id is required. please provide a domain id' }),
       name: z.string({ required_error: 'The domain name is required. please provide a domain name' }),
       owners: z.array(z.string()).optional(),
       version: z.string({ required_error: 'The domain version is required. please provide a domain version' }),
+      draft: z.boolean().optional(),
+      // function that takes options (including domain) and returns a string
+      generateMarkdown: z
+        .function()
+        .args(
+          z.object({
+            domain: z.object({
+              id: z.string(),
+              name: z.string(),
+              version: z.string(),
+            }),
+            markdown: z.string().optional(),
+          })
+        )
+        .returns(z.string())
+        .optional(),
     })
     .optional(),
   debug: z.boolean().optional(),
@@ -168,6 +216,9 @@ export default async (config: any, options: Props) => {
     const operations = document.allOperations();
     const channels = document.allChannels();
     const documentTags = document.info().tags().all() || [];
+    const isDomainMarkedAsDraft = options.domain?.draft || false;
+    const isServiceMarkedAsDraft =
+      isDomainMarkedAsDraft || document.info().extensions().get('x-eventcatalog-draft')?.value() || service.draft || false;
 
     const serviceId = service.id;
 
@@ -183,7 +234,15 @@ export default async (config: any, options: Props) => {
 
     let serviceSpecifications = {};
     let serviceSpecificationsFiles = [];
-    let serviceMarkdown = generateMarkdownForService(document);
+
+    const generatedMarkdownForService = generateMarkdownForService(document);
+    let serviceMarkdown = service.generateMarkdown
+      ? service.generateMarkdown({
+          service: { id: service.id, name: serviceName, version },
+          document,
+          markdown: generatedMarkdownForService,
+        })
+      : generatedMarkdownForService;
     let styles = null;
     // Have to ../ as the SDK will put the files into hard coded folders
     let servicePath = options.domain
@@ -199,6 +258,7 @@ export default async (config: any, options: Props) => {
       const { id: domainId, name: domainName, version: domainVersion, owners: domainOwners } = options.domain;
       const domain = await getDomain(options.domain.id, domainVersion || 'latest');
       const currentDomain = await getDomain(options.domain.id, 'latest');
+      const domainIsDraft = isDomainMarkedAsDraft || currentDomain?.draft || false;
 
       console.log(chalk.blue(`\nProcessing domain: ${domainName} (v${domainVersion})`));
 
@@ -210,12 +270,16 @@ export default async (config: any, options: Props) => {
 
       // Do we need to create a new domain?
       if (!domain || (domain && domain.version !== domainVersion)) {
+        const generatedMarkdownForDomain = generateMarkdownForDomain(document);
         await writeDomain({
           id: domainId,
           name: domainName,
           version: domainVersion,
-          markdown: generateMarkdownForDomain(document),
+          markdown: options.domain?.generateMarkdown
+            ? options.domain.generateMarkdown({ domain: options.domain, markdown: generatedMarkdownForDomain })
+            : generatedMarkdownForDomain,
           ...(domainOwners && { owners: domainOwners }),
+          ...(domainIsDraft && { draft: true }),
           // services: [{ id: serviceId, version: version }],
         });
         console.log(chalk.cyan(` - Domain (v${domainVersion}) created`));
@@ -278,6 +342,7 @@ export default async (config: any, options: Props) => {
               badges: channelTags.map((tagName) => ({ content: tagName, textColor: 'blue', backgroundColor: 'blue' })),
             }),
             ...(protocols.length > 0 && { protocols }),
+            ...((isDomainMarkedAsDraft || isServiceMarkedAsDraft) && { draft: true }),
           },
           { override: true }
         );
@@ -293,6 +358,8 @@ export default async (config: any, options: Props) => {
         const messageVersion = message.extensions().get('x-eventcatalog-message-version')?.value() || version;
         const deprecatedDate = message.extensions().get('x-eventcatalog-deprecated-date')?.value() || null;
         const deprecatedMessage = message.extensions().get('x-eventcatalog-deprecated-message')?.value() || null;
+        const isMessageMarkedAsDraft =
+          isDomainMarkedAsDraft || isServiceMarkedAsDraft || message.extensions().get('x-eventcatalog-draft')?.value() || null;
 
         // does this service own or just consume the message?
         const serviceOwnsMessageContract = isServiceMessageOwner(message);
@@ -313,7 +380,10 @@ export default async (config: any, options: Props) => {
           collection: folder,
         } = MESSAGE_OPERATIONS[eventType];
 
-        let messageMarkdown = generateMarkdownForMessage(document, message);
+        const generatedMarkdownForMessage = generateMarkdownForMessage(document, message);
+        let messageMarkdown = options.messages?.generateMarkdown
+          ? options.messages.generateMarkdown({ message, document, markdown: generatedMarkdownForMessage })
+          : generatedMarkdownForMessage;
         const badges = message.tags().all() || [];
 
         console.log(chalk.blue(`Processing message: ${getMessageName(message)} (v${messageVersion})`));
@@ -355,6 +425,7 @@ export default async (config: any, options: Props) => {
               ...(deprecatedDate && {
                 deprecated: { date: deprecatedDate, ...(deprecatedMessage && { message: deprecatedMessage }) },
               }),
+              ...(isMessageMarkedAsDraft && { draft: true }),
             },
             {
               override: true,
@@ -442,6 +513,7 @@ export default async (config: any, options: Props) => {
         ...(owners && { owners }),
         ...(repository && { repository }),
         ...(styles && { styles }),
+        ...(isServiceMarkedAsDraft && { draft: true }),
       },
       {
         path: servicePath,

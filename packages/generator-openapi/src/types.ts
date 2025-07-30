@@ -1,10 +1,12 @@
-import { OpenAPIV3_1 } from 'openapi-types';
+import { OpenAPIV3_1, OpenAPI } from 'openapi-types';
 
 export type Domain = {
   id: string;
   name: string;
   version: string;
   owners?: string[];
+  generateMarkdown?: ({}: { domain: Domain; markdown: string }) => string;
+  draft?: boolean;
 };
 
 export type Service = {
@@ -12,6 +14,12 @@ export type Service = {
   path: string | string[];
   owners?: string[];
   setMessageOwnersToServiceOwners?: boolean;
+  draft?: boolean;
+  generateMarkdown?: ({}: { service: Service; document: OpenAPI.Document; markdown: string }) => string;
+};
+
+export type Message = {
+  generateMarkdown?: ({}: { operation: Operation; markdown: string }) => string;
 };
 
 export type Operation = {

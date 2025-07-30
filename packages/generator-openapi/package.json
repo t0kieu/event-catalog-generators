@@ -1,6 +1,6 @@
 {
   "name": "@eventcatalog/generator-openapi",
-  "version": "7.1.1",
+  "version": "7.3.0",
   "description": "OpenAPI generator for EventCatalog",
   "scripts": {
     "build": "tsup",
@@ -37,7 +37,7 @@
   "dependencies": {
     "@apidevtools/swagger-parser": "^10.1.0",
     "@changesets/cli": "^2.27.7",
-    "@eventcatalog/sdk": "^2.3.7",
+    "@eventcatalog/sdk": "^2.6.9",
     "chalk": "^4",
     "js-yaml": "^4.1.0",
     "openapi-types": "^12.1.3",

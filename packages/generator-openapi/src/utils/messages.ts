@@ -1,6 +1,6 @@
 import { OpenAPI } from 'openapi-types';
 import { getSchemasByOperationId } from './openapi';
-import { OpenAPIOperation, OpenAPIParameter, Operation } from '../types';
+import { Message, OpenAPIOperation, OpenAPIParameter, Operation } from '../types';
 import slugify from 'slugify';
 
 const markdownForParameters = (parameters: OpenAPIParameter[]) => {
@@ -135,7 +135,12 @@ export const getSummary = (message: Operation) => {
   return eventCatalogMessageSummary;
 };
 
-export const buildMessage = async (pathToFile: string, document: OpenAPI.Document, operation: Operation) => {
+export const buildMessage = async (
+  pathToFile: string,
+  document: OpenAPI.Document,
+  operation: Operation,
+  generateMarkdown?: ({}: { operation: Operation; markdown: string }) => string
+) => {
   const requestBodiesAndResponses = await getSchemasByOperationId(pathToFile, operation.operationId);
   const extensions = operation.extensions || {};
 
@@ -156,19 +161,23 @@ export const buildMessage = async (pathToFile: string, document: OpenAPI.Documen
   }
 
   const httpVerb = operation.method.toUpperCase() || '';
+  const generatedMarkdownForMessage = defaultMarkdown(operation, requestBodiesAndResponses);
 
   return {
     id: extensions['x-eventcatalog-message-id'] || uniqueIdentifier,
     version: extensions['x-eventcatalog-message-version'] || document.info.version,
     name: extensions['x-eventcatalog-message-name'] || uniqueIdentifier,
     summary: getSummary(operation),
-    markdown: defaultMarkdown(operation, requestBodiesAndResponses),
+    markdown: generateMarkdown
+      ? generateMarkdown({ operation, markdown: generatedMarkdownForMessage })
+      : generatedMarkdownForMessage,
     schemaPath: requestBodiesAndResponses?.requestBody ? 'request-body.json' : '',
     badges,
     requestBodiesAndResponses,
     sidebar: {
       badge: httpVerb,
     },
+    ...(extensions['x-eventcatalog-draft'] ? { draft: true } : {}),
     ...(operation.deprecated ? { deprecated: operation.deprecated } : {}),
   };
 };
