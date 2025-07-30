@@ -169,6 +169,26 @@ describe('AsyncAPI EventCatalog Plugin', () => {
             expect(domain.markdown).toContain('## Architecture diagram');
           });
         });
+
+        describe('config option: draft', () => {
+          it('if a `draft` value is given in the domain config options, then the domain, services and all messages are added as `draft`', async () => {
+            const { getDomain, getService, getEvent } = utils(catalogDir);
+
+            await plugin(config, {
+              services: [{ path: join(asyncAPIExamplesDir, 'simple.asyncapi.yml'), id: 'account-service' }],
+              domain: { id: 'orders', name: 'Orders Domain', version: '1.0.0', draft: true },
+            });
+
+            const domain = await getDomain('orders', '1.0.0');
+            expect(domain.draft).toEqual(true);
+
+            const service = await getService('account-service', '1.0.0');
+            expect(service.draft).toEqual(true);
+
+            const event = await getEvent('usersignedup');
+            expect(event.draft).toEqual(true);
+          });
+        });
       });
     });
 
@@ -666,6 +686,34 @@ describe('AsyncAPI EventCatalog Plugin', () => {
         const service = await getService('account-service', '1.0.0');
         expect(service.owners).toEqual(['John Doe', 'Jane Doe']);
       });
+
+      it('if the service has a `x-eventcatalog-draft` header set to `true`, the service is added as `draft` and all the messages are added as `draft`', async () => {
+        const { getService, getEvent, getChannels } = utils(catalogDir);
+
+        await plugin(config, {
+          services: [{ path: join(asyncAPIExamplesDir, 'draft-service.yml'), id: 'account-service' }],
+        });
+
+        const service = await getService('account-service', '1.0.0');
+        expect(service.draft).toEqual(true);
+
+        const event = await getEvent('usersignedup');
+        expect(event.draft).toEqual(true);
+      });
+
+      it('when no draft settings are provided, all resources do not have a draft value', async () => {
+        const { getService, getEvent } = utils(catalogDir);
+
+        await plugin(config, {
+          services: [{ path: join(asyncAPIExamplesDir, 'simple.asyncapi.yml'), id: 'account-service' }],
+        });
+
+        const service = await getService('account-service', '1.0.0');
+        expect(service.draft).toEqual(undefined);
+
+        const event = await getEvent('usersignedup');
+        expect(event.draft).toEqual(undefined);
+      });
     });
 
     describe('generator options', () => {
@@ -844,7 +892,7 @@ describe('AsyncAPI EventCatalog Plugin', () => {
         );
       });
 
-      it('messages marked as "events" using the custom `ec-message-type` header in an AsyncAPI are documented in EventCatalog as events ', async () => {
+      it('messages marked as "events" using the custom `x-eventcatalog-message-type` header in an AsyncAPI are documented in EventCatalog as events ', async () => {
         const { getEvent } = utils(catalogDir);
 
         await plugin(config, { services: [{ path: join(asyncAPIExamplesDir, 'simple.asyncapi.yml'), id: 'account-service' }] });
@@ -892,7 +940,7 @@ describe('AsyncAPI EventCatalog Plugin', () => {
         );
       });
 
-      it('messages marked as "queries" using the custom `ec-message-type` header in an AsyncAPI are documented in EventCatalog as queries ', async () => {
+      it('messages marked as "queries" using the custom `x-eventcatalog-message-type` header in an AsyncAPI are documented in EventCatalog as queries ', async () => {
         const { getQuery } = utils(catalogDir);
 
         await plugin(config, { services: [{ path: join(asyncAPIExamplesDir, 'simple.asyncapi.yml'), id: 'account-service' }] });
@@ -915,6 +963,16 @@ describe('AsyncAPI EventCatalog Plugin', () => {
             schemaPath: 'schema.json',
           })
         );
+      });
+
+      it('messages are added as `draft` when custom `x-eventcatalog-draft` header is set to `true`', async () => {
+        const { getEvent } = utils(catalogDir);
+
+        await plugin(config, { services: [{ path: join(asyncAPIExamplesDir, 'draft-messages.yml'), id: 'account-service' }] });
+
+        const event = await getEvent('usersignedup');
+
+        expect(event.draft).toEqual(true);
       });
 
       it('when the message already exists in EventCatalog but the versions do not match, the existing message is versioned', async () => {

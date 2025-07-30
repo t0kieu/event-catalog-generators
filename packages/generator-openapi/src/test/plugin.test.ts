@@ -189,6 +189,25 @@ describe('OpenAPI EventCatalog Plugin', () => {
             expect(service.markdown).toContain('<NodeGraph />');
           });
         });
+        describe('config option: draft', () => {
+          it('if a `draft` value is given in the domain config options, then the domain, services and all messages are added as `draft`', async () => {
+            const { getDomain, getService, getEvent, getEvents } = utils(catalogDir);
+
+            await plugin(config, {
+              services: [{ path: join(openAPIExamples, 'petstore.yml'), id: 'swagger-petstore' }],
+              domain: { id: 'orders', name: 'Orders Domain', version: '1.0.0', draft: true },
+            });
+
+            const domain = await getDomain('orders', '1.0.0');
+            expect(domain.draft).toEqual(true);
+
+            const service = await getService('swagger-petstore', '1.0.0');
+            expect(service.draft).toEqual(true);
+
+            const event = await getEvent('petAdopted');
+            expect(event.draft).toEqual(true);
+          });
+        });
       });
     });
 
@@ -682,6 +701,34 @@ describe('OpenAPI EventCatalog Plugin', () => {
         expect(service.owners).toEqual(['John Doe', 'Jane Doe']);
       });
 
+      it('if the service has `x-eventcatalog-draft` header set to true, the service is added as `draft` and all the messages are added as `draft`', async () => {
+        const { getService, getEvent } = utils(catalogDir);
+
+        await plugin(config, {
+          services: [{ path: join(openAPIExamples, 'petstore-draft.yml'), id: 'swagger-petstore' }],
+        });
+
+        const service = await getService('swagger-petstore', '1.0.0');
+        expect(service.draft).toEqual(true);
+
+        const event = await getEvent('petAdopted');
+        expect(event.draft).toEqual(true);
+      });
+
+      it('the service has no draft settings, all resources do not have a draft value', async () => {
+        const { getService, getEvent } = utils(catalogDir);
+
+        await plugin(config, {
+          services: [{ path: join(openAPIExamples, 'petstore.yml'), id: 'swagger-petstore' }],
+        });
+
+        const service = await getService('swagger-petstore', '1.0.0');
+        expect(service.draft).toEqual(undefined);
+
+        const event = await getEvent('petAdopted');
+        expect(event.draft).toEqual(undefined);
+      });
+
       describe('service options', () => {
         describe('config option: id', () => {
           it('if an `id` value is given in the service config options, then the generator uses that id and does not generate one from the title', async () => {
@@ -740,6 +787,21 @@ describe('OpenAPI EventCatalog Plugin', () => {
 
             expect(service.markdown).toContain('## Architecture diagram');
             expect(service.markdown).toContain('<NodeGraph />');
+          });
+        });
+        describe('config option: draft', () => {
+          it('if a `draft` value is given in the service config options, then the service and all messages are added as `draft`', async () => {
+            const { getService, getEvent } = utils(catalogDir);
+
+            await plugin(config, {
+              services: [{ path: join(openAPIExamples, 'petstore.yml'), id: 'swagger-petstore', draft: true }],
+            });
+
+            const service = await getService('swagger-petstore', '1.0.0');
+            expect(service.draft).toEqual(true);
+
+            const event = await getEvent('petAdopted');
+            expect(event.draft).toEqual(true);
           });
         });
       });
@@ -820,6 +882,17 @@ describe('OpenAPI EventCatalog Plugin', () => {
               summary: 'Info for a specific pet',
             })
           );
+        });
+
+        it('messages marked as "draft" using the custom `x-eventcatalog-draft` header in an OpenAPI are documented in EventCatalog as draft', async () => {
+          const { getEvent } = utils(catalogDir);
+
+          await plugin(config, {
+            services: [{ path: join(openAPIExamples, 'petstore-draft-messages.yml'), id: 'swagger-petstore' }],
+          });
+
+          const event = await getEvent('petAdopted');
+          expect(event.draft).toEqual(true);
         });
 
         it('messages marked as "sends" using the custom `x-eventcatalog-message-action` header in an OpenAPI are mapped against the service as messages the service sends ', async () => {
