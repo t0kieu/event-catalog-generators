@@ -99,8 +99,8 @@ export default async (_: any, options: Props) => {
       let serviceSpecifications = service.specifications;
       const isDomainMarkedAsDraft = options.domain?.draft || null;
 
-      // @ts-ignore
       const isServiceMarkedAsDraft =
+        // @ts-ignore
         isDomainMarkedAsDraft || document.info?.['x-eventcatalog-draft'] || serviceSpec.draft || null;
 
       // Have to ../ as the SDK will put the files into hard coded folders
