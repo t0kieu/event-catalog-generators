@@ -332,7 +332,7 @@ export default async (config: any, options: Props) => {
         await writeChannel(
           {
             id: channelId,
-            name: channelAsJSON?.title || channel.id(),
+            name: channelAsJSON?.title || channel.address() || channel.id(),
             markdown: channelMarkdown,
             version: channelVersion,
             ...(Object.keys(paramsForCatalog).length > 0 && { parameters: paramsForCatalog }),
