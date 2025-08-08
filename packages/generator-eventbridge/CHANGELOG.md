@@ -1,5 +1,11 @@
 # @eventcatalog/generator-eventbridge
 
+## 3.1.2
+
+### Patch Changes
+
+- 2849afa: fix(plugin): eventbridge plugin no longer loses events when writing to a service after initialization
+
 ## 3.1.1
 
 ### Patch Changes
