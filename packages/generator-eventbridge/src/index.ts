@@ -202,7 +202,7 @@ export default async (config: EventCatalogConfig, options: GeneratorProps) => {
       servicePath = service.id;
     }
 
-    await processEvents(eventsToWrite, options, servicePath);
+    
 
     // Manage domain
     if (options.domain) {
@@ -298,6 +298,10 @@ export default async (config: EventCatalogConfig, options: GeneratorProps) => {
       },
       { path: servicePath, override: true, format }
     );
+
+    // We have to process the events last, as we need to get the service path from the service we just wrote
+    await processEvents(eventsToWrite, options, servicePath);
+
   }
 
   console.log(chalk.green(`\nFinished generating event catalog with EventBridge schema registry ${options.registryName}`));
