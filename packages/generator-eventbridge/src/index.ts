@@ -352,7 +352,6 @@ const processEvents = async (events: Event[], options: GeneratorProps, servicePa
           'This EventBridge Event Bus serves as a message routing system on AWS. It handles events and routes them to targets.';
 
         try {
-          console.log('GO');
           const eventBusCommand = new DescribeEventBusCommand({
             Name: event.eventBusName,
           });
