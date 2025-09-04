@@ -203,8 +203,6 @@ export default async (_: any, options: Props) => {
         }
       }
 
-      console.log('isServiceMarkedAsDraft', service);
-
       await writeService(
         {
           ...service,

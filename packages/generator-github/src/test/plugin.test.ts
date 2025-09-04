@@ -826,7 +826,6 @@ describe('generator-github', () => {
         source: 'https://github.com/event-catalog/eventcatalog.git',
         path: 'examples/default',
       });
-      console.log('HELLO WORLD');
     },
     {
       timeout: 20000,
