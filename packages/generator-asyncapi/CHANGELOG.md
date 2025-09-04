@@ -1,5 +1,11 @@
 # @eventcatalog/sdk
 
+## 4.5.0
+
+### Minor Changes
+
+- 4d496cb: feat(plugins): added support for offline license checks
+
 ## 4.4.1
 
 ### Patch Changes
