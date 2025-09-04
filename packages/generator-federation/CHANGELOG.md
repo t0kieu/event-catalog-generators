@@ -1,5 +1,11 @@
 # @eventcatalog/generator-federation
 
+## 2.2.0
+
+### Minor Changes
+
+- 4d496cb: feat(plugins): added support for offline license checks
+
 ## 2.1.0
 
 ### Minor Changes

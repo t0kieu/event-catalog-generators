@@ -1,5 +1,11 @@
 # @eventcatalog/generator-openapi
 
+## 7.4.0
+
+### Minor Changes
+
+- 4d496cb: feat(plugins): added support for offline license checks
+
 ## 7.3.1
 
 ### Patch Changes
