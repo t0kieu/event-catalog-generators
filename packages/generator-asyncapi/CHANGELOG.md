@@ -1,5 +1,11 @@
 # @eventcatalog/sdk
 
+## 4.5.1
+
+### Patch Changes
+
+- 001e0ed: feat(core): added ability to add prefix to messages
+
 ## 4.5.0
 
 ### Minor Changes

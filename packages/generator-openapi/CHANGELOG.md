@@ -1,5 +1,11 @@
 # @eventcatalog/generator-openapi
 
+## 7.4.1
+
+### Patch Changes
+
+- 001e0ed: feat(core): added ability to add prefix to messages
+
 ## 7.4.0
 
 ### Minor Changes
