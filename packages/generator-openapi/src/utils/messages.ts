@@ -1,6 +1,6 @@
 import { OpenAPI } from 'openapi-types';
 import { getSchemasByOperationId } from './openapi';
-import { Message, OpenAPIOperation, OpenAPIParameter, Operation } from '../types';
+import { Message, MessageIdConfig, OpenAPIOperation, OpenAPIParameter, Operation } from '../types';
 import slugify from 'slugify';
 
 const markdownForParameters = (parameters: OpenAPIParameter[]) => {
@@ -164,7 +164,8 @@ export const buildMessage = async (
   pathToFile: string,
   document: OpenAPI.Document,
   operation: Operation,
-  generateMarkdown?: ({}: { operation: Operation; markdown: string }) => string
+  generateMarkdown?: ({}: { operation: Operation; markdown: string }) => string,
+  messageIdConfig?: MessageIdConfig
 ) => {
   const requestBodiesAndResponses = await getSchemasByOperationId(pathToFile, operation.operationId);
   const extensions = operation.extensions || {};
@@ -187,6 +188,16 @@ export const buildMessage = async (
 
   const httpVerb = operation.method.toUpperCase() || '';
   const generatedMarkdownForMessage = defaultMarkdown(operation, requestBodiesAndResponses);
+
+  if (messageIdConfig?.prefix) {
+    const separator = messageIdConfig.separator || '-';
+    uniqueIdentifier = [messageIdConfig.prefix, uniqueIdentifier].join(separator);
+  }
+
+  if (messageIdConfig?.prefixWithServiceId) {
+    const separator = messageIdConfig.separator || '-';
+    uniqueIdentifier = [apiName, uniqueIdentifier].join(separator);
+  }
 
   return {
     id: extensions['x-eventcatalog-message-id'] || uniqueIdentifier,

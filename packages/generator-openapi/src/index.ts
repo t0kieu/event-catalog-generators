@@ -267,7 +267,8 @@ const processMessagesForOpenAPISpec = async (
       pathToSpec,
       document,
       operation,
-      options.messages?.generateMarkdown
+      options.messages?.generateMarkdown,
+      options.messages?.id
     );
     let messageMarkdown = message.markdown;
     const messageType = operation.type;
