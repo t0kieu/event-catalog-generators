@@ -65,6 +65,13 @@ const optionsSchema = z.object({
   ),
   messages: z
     .object({
+      id: z
+        .object({
+          prefix: z.string().optional(),
+          separator: z.string().optional(),
+          prefixWithServiceId: z.boolean().optional(),
+        })
+        .optional(),
       generateMarkdown: z
         .function()
         .args(
@@ -366,10 +373,18 @@ export default async (config: any, options: Props) => {
         const isReceived = operation.action() === 'receive' || operation.action() === 'subscribe';
         const isSent = operation.action() === 'send' || operation.action() === 'publish';
 
-        const messageId = message.id().toLowerCase();
+        let messageId = message.id().toLowerCase();
 
         if (eventType !== 'event' && eventType !== 'command' && eventType !== 'query') {
           throw new Error('Invalid message type');
+        }
+
+        if (options.messages?.id?.prefix) {
+          messageId = [options.messages.id.prefix, messageId].join(options.messages.id.separator || '-');
+        }
+
+        if (options.messages?.id?.prefixWithServiceId) {
+          messageId = [serviceId, messageId].join(options.messages.id.separator || '-');
         }
 
         const {

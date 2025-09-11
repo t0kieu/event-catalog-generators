@@ -18,8 +18,15 @@ export type Service = {
   generateMarkdown?: ({}: { service: Service; document: OpenAPI.Document; markdown: string }) => string;
 };
 
+export type MessageIdConfig = {
+  prefix?: string;
+  separator?: string;
+  prefixWithServiceId?: boolean;
+};
+
 export type Message = {
   generateMarkdown?: ({}: { operation: Operation; markdown: string }) => string;
+  id?: MessageIdConfig;
 };
 
 export type Operation = {

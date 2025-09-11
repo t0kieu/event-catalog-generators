@@ -1197,6 +1197,53 @@ describe('OpenAPI EventCatalog Plugin', () => {
           expect(command.markdown).toContain('### Request Body');
         });
       });
+
+      describe('config option: id', () => {
+        it('if a `messages.id.prefix` value is given then the id of the message is prefixed with that value', async () => {
+          const { getCommand } = utils(catalogDir);
+
+          await plugin(config, {
+            messages: {
+              id: {
+                prefix: 'hello',
+              },
+            },
+            services: [{ path: join(openAPIExamples, 'petstore.yml'), id: 'swagger-petstore' }],
+          });
+
+          const command = await getCommand('hello-createPets');
+
+          console.log('HELLO WORLD', command);
+
+          expect(command.id).toEqual('hello-createPets');
+        });
+
+        it('if `messages.id.prefixWithServiceId` is set to true then the id of the message is prefixed with the service id', async () => {
+          const { getCommand } = utils(catalogDir);
+
+          await plugin(config, {
+            messages: { id: { prefixWithServiceId: true } },
+            services: [{ path: join(openAPIExamples, 'petstore.yml'), id: 'swagger-petstore' }],
+          });
+
+          const command = await getCommand('swagger-petstore-createPets');
+
+          expect(command.id).toEqual('swagger-petstore-createPets');
+        });
+
+        it('if a `messages.id.separator` value is given then the that separator is used to join the prefix and the message id', async () => {
+          const { getCommand } = utils(catalogDir);
+
+          await plugin(config, {
+            messages: { id: { separator: '_', prefix: 'hello' } },
+            services: [{ path: join(openAPIExamples, 'petstore.yml'), id: 'swagger-petstore' }],
+          });
+
+          const command = await getCommand('hello_createPets');
+
+          expect(command.id).toEqual('hello_createPets');
+        });
+      });
     });
 
     describe('$ref', () => {
