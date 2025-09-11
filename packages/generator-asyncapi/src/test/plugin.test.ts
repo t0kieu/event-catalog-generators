@@ -1142,6 +1142,47 @@ describe('AsyncAPI EventCatalog Plugin', () => {
         });
       });
 
+      describe('config option: id', () => {
+        it('if a `messages.id.prefix` value is given then the id of the message is prefixed with that value', async () => {
+          const { getEvent } = utils(catalogDir);
+
+          await plugin(config, {
+            messages: { id: { prefix: 'hello' } },
+            services: [{ path: join(asyncAPIExamplesDir, 'simple.asyncapi.yml'), id: 'account-service' }],
+          });
+
+          const event = await getEvent('hello-usersignedup', '1.0.0');
+
+          expect(event.id).toEqual('hello-usersignedup');
+        });
+
+        it('if `messages.id.prefixWithServiceId` is set to true then the id of the message is prefixed with the service id', async () => {
+          const { getEvent } = utils(catalogDir);
+
+          await plugin(config, {
+            messages: { id: { prefixWithServiceId: true } },
+            services: [{ path: join(asyncAPIExamplesDir, 'simple.asyncapi.yml'), id: 'account-service' }],
+          });
+
+          const event = await getEvent('account-service-usersignedup', '1.0.0');
+
+          expect(event.id).toEqual('account-service-usersignedup');
+        });
+
+        it('if a `messages.id.separator` value is given then the that separator is used to join the prefix and the message id', async () => {
+          const { getEvent } = utils(catalogDir);
+
+          await plugin(config, {
+            messages: { id: { separator: '_', prefix: 'hello' } },
+            services: [{ path: join(asyncAPIExamplesDir, 'simple.asyncapi.yml'), id: 'account-service' }],
+          });
+
+          const event = await getEvent('hello_usersignedup', '1.0.0');
+
+          expect(event.id).toEqual('hello_usersignedup');
+        });
+      });
+
       describe('schemas', () => {
         it('when a message has a schema defined in the AsyncAPI file, the schema is documented in EventCatalog', async () => {
           await plugin(config, { services: [{ path: join(asyncAPIExamplesDir, 'simple.asyncapi.yml'), id: 'account-service' }] });
