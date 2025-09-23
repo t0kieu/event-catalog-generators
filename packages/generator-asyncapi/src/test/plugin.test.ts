@@ -295,7 +295,7 @@ describe('AsyncAPI EventCatalog Plugin', () => {
         );
       });
 
-      it('when the AsyncAPI service is already defined in EventCatalog and the versions match, the owners and repo are persisted', async () => {
+      it('when the AsyncAPI service is already defined in EventCatalog and the versions match, the owners, repo, badges and attachments are persisted', async () => {
         // Create a service with the same name and version as the AsyncAPI file for testing
         const { writeService, getService } = utils(catalogDir);
 
@@ -309,6 +309,8 @@ describe('AsyncAPI EventCatalog Plugin', () => {
             url: 'https://github.com/dboyne/eventcatalog',
           },
           markdown: 'Here is my original markdown, please do not override this!',
+          badges: [{ backgroundColor: 'red', textColor: 'white', content: 'Custom Badge' }],
+          attachments: ['https://github.com/dboyne/eventcatalog/blob/main/README.md'],
         });
 
         await plugin(config, { services: [{ path: join(asyncAPIExamplesDir, 'simple.asyncapi.yml'), id: 'account-service' }] });
@@ -328,16 +330,12 @@ describe('AsyncAPI EventCatalog Plugin', () => {
             markdown: 'Here is my original markdown, please do not override this!',
             badges: [
               {
-                content: 'Events',
-                textColor: 'blue',
-                backgroundColor: 'blue',
-              },
-              {
-                content: 'Authentication',
-                textColor: 'blue',
-                backgroundColor: 'blue',
+                content: 'Custom Badge',
+                textColor: 'white',
+                backgroundColor: 'red',
               },
             ],
+            attachments: ['https://github.com/dboyne/eventcatalog/blob/main/README.md'],
           })
         );
       });
@@ -994,7 +992,7 @@ describe('AsyncAPI EventCatalog Plugin', () => {
         expect(newEvent).toBeDefined();
       });
 
-      it('when a message already exists in EventCatalog the markdown is persisted and not overwritten', async () => {
+      it('when a message already exists in EventCatalog the markdown, badges and attachments are persisted and not overwritten', async () => {
         const { writeEvent, getEvent } = utils(catalogDir);
 
         await writeEvent({
@@ -1002,12 +1000,16 @@ describe('AsyncAPI EventCatalog Plugin', () => {
           version: '0.0.1',
           name: 'UserSignedUp',
           markdown: 'please dont override me!',
+          badges: [{ backgroundColor: 'red', textColor: 'white', content: 'Custom Badge' }],
+          attachments: ['https://github.com/dboyne/eventcatalog/blob/main/README.md'],
         });
 
         await plugin(config, { services: [{ path: join(asyncAPIExamplesDir, 'simple.asyncapi.yml'), id: 'account-service' }] });
 
         const newEvent = await getEvent('usersignedup', '1.0.0');
         expect(newEvent.markdown).toEqual('please dont override me!');
+        expect(newEvent.badges).toEqual([{ backgroundColor: 'red', textColor: 'white', content: 'Custom Badge' }]);
+        expect(newEvent.attachments).toEqual(['https://github.com/dboyne/eventcatalog/blob/main/README.md']);
       });
 
       it('when a message already exists in EventCatalog with the same version the metadata is updated', async () => {

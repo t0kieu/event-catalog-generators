@@ -272,7 +272,7 @@ describe('OpenAPI EventCatalog Plugin', () => {
         );
       });
 
-      it('when the OpenAPI service is already defined in EventCatalog and the versions match, the markdown is persisted and not overwritten', async () => {
+      it('when the OpenAPI service is already defined in EventCatalog and the versions match, the markdown, badges and attachments are persisted and not overwritten', async () => {
         // Create a service with the same name and version as the OpenAPI file for testing
         const { writeService, getService } = utils(catalogDir);
 
@@ -282,6 +282,8 @@ describe('OpenAPI EventCatalog Plugin', () => {
             version: '1.0.0',
             name: 'Random Name',
             markdown: 'Here is my original markdown, please do not override this!',
+            badges: [{ backgroundColor: 'red', textColor: 'white', content: 'Custom Badge' }],
+            attachments: ['https://github.com/dboyne/eventcatalog/blob/main/README.md'],
           },
           { path: 'Swagger Petstore' }
         );
@@ -296,13 +298,8 @@ describe('OpenAPI EventCatalog Plugin', () => {
             version: '1.0.0',
             summary: 'This is a sample server Petstore server.',
             markdown: 'Here is my original markdown, please do not override this!',
-            badges: [
-              {
-                content: 'Pets',
-                textColor: 'blue',
-                backgroundColor: 'blue',
-              },
-            ],
+            badges: [{ backgroundColor: 'red', textColor: 'white', content: 'Custom Badge' }],
+            attachments: ['https://github.com/dboyne/eventcatalog/blob/main/README.md'],
           })
         );
       });
@@ -992,7 +989,7 @@ describe('OpenAPI EventCatalog Plugin', () => {
         expect(newEvent).toBeDefined();
       });
 
-      it('when a the message already exists in EventCatalog the markdown is persisted and not overwritten by default', async () => {
+      it('when a the message already exists in EventCatalog the markdown, badges and attachments are persisted and not overwritten by default', async () => {
         const { writeCommand, getCommand } = utils(catalogDir);
 
         await writeCommand({
@@ -1001,12 +998,16 @@ describe('OpenAPI EventCatalog Plugin', () => {
           version: '0.0.1',
           summary: 'Create a pet',
           markdown: 'please dont override me!',
+          badges: [{ backgroundColor: 'red', textColor: 'white', content: 'Custom Badge' }],
+          attachments: ['https://github.com/dboyne/eventcatalog/blob/main/README.md'],
         });
 
         await plugin(config, { services: [{ path: join(openAPIExamples, 'petstore.yml'), id: 'swagger-petstore' }] });
 
         const command = await getCommand('createPets', '1.0.0');
         expect(command.markdown).toEqual('please dont override me!');
+        expect(command.badges).toEqual([{ backgroundColor: 'red', textColor: 'white', content: 'Custom Badge' }]);
+        expect(command.attachments).toEqual(['https://github.com/dboyne/eventcatalog/blob/main/README.md']);
       });
 
       it('when preserveExistingMessages is set to false, the markdown is not persisted and overwritten  ', async () => {

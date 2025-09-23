@@ -238,6 +238,8 @@ export default async (config: any, options: Props) => {
 
     let owners = service.owners || null;
     let repository = null;
+    let badges = null;
+    let attachments = null;
 
     let serviceSpecifications = {};
     let serviceSpecificationsFiles = [];
@@ -401,6 +403,9 @@ export default async (config: any, options: Props) => {
           : generatedMarkdownForMessage;
         const badges = message.tags().all() || [];
 
+        let messageBadges = null;
+        let messageAttachments = null;
+
         console.log(chalk.blue(`Processing message: ${getMessageName(message)} (v${messageVersion})`));
 
         let messagePath = join(servicePath, folder, message.id());
@@ -413,8 +418,10 @@ export default async (config: any, options: Props) => {
           const catalogedMessage = await getMessage(message.id().toLowerCase(), 'latest');
 
           if (catalogedMessage) {
-            // persist markdown if it exists
+            // persist markdown, badges and attachments if it exists
             messageMarkdown = catalogedMessage.markdown;
+            messageBadges = catalogedMessage.badges || null;
+            messageAttachments = catalogedMessage.attachments || null;
 
             if (catalogedMessage.version !== messageVersion) {
               // if the version does not match, we need to version the message
@@ -433,9 +440,11 @@ export default async (config: any, options: Props) => {
               name: getMessageName(message),
               summary: getMessageSummary(message),
               markdown: messageMarkdown,
-              badges: badges.map((badge) => ({ content: badge.name(), textColor: 'blue', backgroundColor: 'blue' })),
+              badges:
+                messageBadges || badges.map((badge) => ({ content: badge.name(), textColor: 'blue', backgroundColor: 'blue' })),
               ...(messageHasSchema(message) && { schemaPath: getSchemaFileName(message) }),
               ...(owners && { owners }),
+              ...(messageAttachments && { attachments: messageAttachments }),
               ...(channelsForMessage.length > 0 && { channels: channelsForMessage }),
               ...(deprecatedDate && {
                 deprecated: { date: deprecatedDate, ...(deprecatedMessage && { message: deprecatedMessage }) },
@@ -491,6 +500,9 @@ export default async (config: any, options: Props) => {
       owners = latestServiceInCatalog.owners || owners;
       repository = latestServiceInCatalog.repository || null;
       styles = latestServiceInCatalog.styles || null;
+      badges = latestServiceInCatalog.badges || null;
+      attachments = latestServiceInCatalog.attachments || null;
+
       // Found a service, and versions do not match, we need to version the one already there
       if (latestServiceInCatalog.version !== version) {
         await versionService(serviceId);
@@ -516,7 +528,7 @@ export default async (config: any, options: Props) => {
         name: serviceName,
         version: version,
         summary: getServiceSummary(document),
-        badges: documentTags.map((tag) => ({ content: tag.name(), textColor: 'blue', backgroundColor: 'blue' })),
+        badges: badges || documentTags.map((tag) => ({ content: tag.name(), textColor: 'blue', backgroundColor: 'blue' })),
         markdown: serviceMarkdown,
         sends,
         receives,
@@ -529,6 +541,7 @@ export default async (config: any, options: Props) => {
         ...(repository && { repository }),
         ...(styles && { styles }),
         ...(isServiceMarkedAsDraft && { draft: true }),
+        ...(attachments && { attachments }),
       },
       {
         path: servicePath,

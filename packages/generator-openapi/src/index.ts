@@ -97,6 +97,8 @@ export default async (_: any, options: Props) => {
       let serviceMarkdown = service.markdown;
       let serviceSpecificationsFiles = [];
       let serviceSpecifications = service.specifications;
+      let serviceBadges = null;
+      let serviceAttachments = null;
       const isDomainMarkedAsDraft = options.domain?.draft || null;
 
       const isServiceMarkedAsDraft =
@@ -190,6 +192,8 @@ export default async (_: any, options: Props) => {
         owners = latestServiceInCatalog.owners || ([] as any);
         repository = latestServiceInCatalog.repository || null;
         styles = latestServiceInCatalog.styles || null;
+        serviceBadges = latestServiceInCatalog.badges || null;
+        serviceAttachments = latestServiceInCatalog.attachments || null;
         // persist any specifications that are already in the catalog
         serviceSpecifications = {
           ...serviceSpecifications,
@@ -206,6 +210,7 @@ export default async (_: any, options: Props) => {
       await writeService(
         {
           ...service,
+          badges: serviceBadges || service.badges,
           markdown: serviceMarkdown,
           specifications: serviceSpecifications,
           sends,
@@ -214,6 +219,7 @@ export default async (_: any, options: Props) => {
           ...(repository ? { repository } : {}),
           ...(styles ? { styles } : {}),
           ...(isServiceMarkedAsDraft ? { draft: true } : {}),
+          ...(serviceAttachments ? { attachments: serviceAttachments } : {}),
         },
         { path: join(servicePath), override: true }
       );
@@ -273,6 +279,8 @@ const processMessagesForOpenAPISpec = async (
     let messageMarkdown = message.markdown;
     const messageType = operation.type;
     const messageAction = operation.action;
+    let messageBadges = null;
+    let messageAttachments = null;
 
     console.log(chalk.blue(`Processing message: ${message.name} (v${message.version})`));
 
@@ -288,6 +296,10 @@ const processMessagesForOpenAPISpec = async (
     const catalogedMessage = await getMessage(message.id, 'latest');
 
     if (catalogedMessage) {
+      // always preserve badges and attachments
+      messageBadges = catalogedMessage.badges || null;
+      messageAttachments = catalogedMessage.attachments || null;
+
       // only keep the markdown if the message is being preserved
       if (preserveExistingMessages) {
         messageMarkdown = catalogedMessage.markdown;
@@ -309,8 +321,10 @@ const processMessagesForOpenAPISpec = async (
     await writeMessage(
       {
         ...message,
+        badges: messageBadges || message.badges,
         markdown: messageMarkdown,
         ...(options.owners ? { owners: options.owners } : {}),
+        ...(messageAttachments ? { attachments: messageAttachments } : {}),
         // only if its defined add it to the sidebar
         ...(sidebarBadgeType === 'HTTP_METHOD' ? { sidebar } : {}),
         ...(isDraft ? { draft: true } : {}),
