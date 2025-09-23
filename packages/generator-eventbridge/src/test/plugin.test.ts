@@ -261,7 +261,7 @@ describe('EventBridge EventCatalog Plugin', () => {
       expect(service.name).toEqual('Orders Service');
     });
 
-    it('when the service is already defined in EventCatalog and the versions match, only metadata is updated and markdown is persisted', async () => {
+    it('when the service is already defined in EventCatalog and the versions match, only metadata is updated and markdown, badges and attachments are persisted', async () => {
       const { writeService, getService } = utils(catalogDir);
 
       await writeService({
@@ -269,6 +269,8 @@ describe('EventBridge EventCatalog Plugin', () => {
         version: '1.0.0',
         name: 'Random Name',
         markdown: 'old markdown',
+        badges: [{ backgroundColor: 'red', textColor: 'white', content: 'Custom Badge' }],
+        attachments: ['https://github.com/dboyne/eventcatalog/blob/main/README.md'],
       });
 
       await plugin(config, {
@@ -285,6 +287,8 @@ describe('EventBridge EventCatalog Plugin', () => {
           name: 'Orders Service',
           version: '1.0.0',
           markdown: 'old markdown',
+          badges: [{ backgroundColor: 'red', textColor: 'white', content: 'Custom Badge' }],
+          attachments: ['https://github.com/dboyne/eventcatalog/blob/main/README.md'],
         })
       );
     });
@@ -1003,7 +1007,7 @@ describe('EventBridge EventCatalog Plugin', () => {
       expect(newEvent).toBeDefined();
     });
 
-    it('when a the message already exists in EventCatalog the markdown is persisted and not overwritten', async () => {
+    it('when a the message already exists in EventCatalog the markdown, badges and attachments are persisted and not overwritten', async () => {
       const { writeEvent, getEvent } = utils(catalogDir);
 
       await writeEvent({
@@ -1011,6 +1015,8 @@ describe('EventBridge EventCatalog Plugin', () => {
         version: '0.0.1',
         name: 'UserSignedUp',
         markdown: 'Please do not overwrite me',
+        badges: [{ backgroundColor: 'red', textColor: 'white', content: 'Custom Badge' }],
+        attachments: ['https://github.com/dboyne/eventcatalog/blob/main/README.md'],
       });
 
       await plugin(config, {
@@ -1029,6 +1035,8 @@ describe('EventBridge EventCatalog Plugin', () => {
       const newEvent = await getEvent('UserSignedUp', 'latest');
 
       expect(newEvent.markdown).toEqual('Please do not overwrite me');
+      expect(newEvent.badges).toEqual([{ backgroundColor: 'red', textColor: 'white', content: 'Custom Badge' }]);
+      expect(newEvent.attachments).toEqual(['https://github.com/dboyne/eventcatalog/blob/main/README.md']);
     });
 
     it('the event bus name is added as a badge onto the event when `eventBusName` is set on the generator', async () => {

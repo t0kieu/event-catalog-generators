@@ -246,6 +246,8 @@ export default async (config: EventCatalogConfig, options: GeneratorProps) => {
     let styles = null;
     let serviceSpecifications = {};
     let serviceSpecificationsFiles = [];
+    let serviceBadges = null;
+    let serviceAttachments = null;
     let sends = sendsEvents.map((event) => ({ id: event.detailType || event.schemaName, version: event.version || 'latest' }));
     let receives = receivesEvents.map((event) => ({
       id: event.detailType || event.schemaName,
@@ -259,6 +261,8 @@ export default async (config: EventCatalogConfig, options: GeneratorProps) => {
       serviceMarkdown = latestServiceInCatalog.markdown;
       owners = latestServiceInCatalog.owners || [];
       styles = latestServiceInCatalog.styles || null;
+      serviceBadges = latestServiceInCatalog.badges || null;
+      serviceAttachments = latestServiceInCatalog.attachments || null;
       // Found a service, and versions do not match, we need to version the one already there
       if (latestServiceInCatalog.version !== service.version) {
         await versionService(service.id);
@@ -293,6 +297,8 @@ export default async (config: EventCatalogConfig, options: GeneratorProps) => {
         specifications: serviceSpecifications,
         owners: owners,
         ...(styles && { styles }),
+        ...(serviceBadges && { badges: serviceBadges }),
+        ...(serviceAttachments && { attachments: serviceAttachments }),
       },
       { path: servicePath, override: true, format }
     );
@@ -323,13 +329,16 @@ const processEvents = async (events: Event[], options: GeneratorProps, servicePa
 
     const schemaPath = event.jsonSchema ? event.jsonDraftFileName : event.openApiSchema ? event.openApiFileName : '';
     let messageMarkdown = generateMarkdownForMessage(event);
+    let messageBadges = getBadgesForMessage(event, options.eventBusName);
+    let messageAttachments = null;
     const catalogedEvent = await getEvent(event.id, event.version);
     let eventChannel = [] as any;
 
     if (catalogedEvent) {
       // Persist markdown between versions
       messageMarkdown = catalogedEvent.markdown;
-
+      messageBadges = catalogedEvent.badges || messageBadges;
+      messageAttachments = catalogedEvent.attachments;
       // if the version matches, we can override the message but keep markdown as it  was
       if (catalogedEvent.version === event.version) {
         await rmEventById(event.id, event.version);
@@ -396,7 +405,8 @@ const processEvents = async (events: Event[], options: GeneratorProps, servicePa
         version: event.version?.toString() || '',
         schemaPath,
         markdown: messageMarkdown,
-        badges: getBadgesForMessage(event, options.eventBusName),
+        badges: messageBadges,
+        ...(messageAttachments && { attachments: messageAttachments }),
         ...(eventChannel.length > 0 && { channels: eventChannel }),
       },
       { path: messagePath, format }
