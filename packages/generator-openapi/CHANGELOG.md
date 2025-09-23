@@ -1,5 +1,11 @@
 # @eventcatalog/generator-openapi
 
+## 7.4.2
+
+### Patch Changes
+
+- ece0c47: fix(plugins): badges and attachments are now persisted between genera…
+
 ## 7.4.1
 
 ### Patch Changes

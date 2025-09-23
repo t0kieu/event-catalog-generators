@@ -1,5 +1,11 @@
 # @eventcatalog/sdk
 
+## 4.5.2
+
+### Patch Changes
+
+- ece0c47: fix(plugins): badges and attachments are now persisted between genera…
+
 ## 4.5.1
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @eventcatalog/generator-eventbridge
 
+## 3.2.1
+
+### Patch Changes
+
+- ece0c47: fix(plugins): badges and attachments are now persisted between genera…
+
 ## 3.2.0
 
 ### Minor Changes
