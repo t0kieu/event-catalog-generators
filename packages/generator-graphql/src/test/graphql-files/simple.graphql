@@ -1,0 +1,18 @@
+type Query {
+  getUser(id: ID!): User
+  getUsers: [User!]!
+  getProfile(userId: ID!): Profile
+}
+
+type User {
+  id: ID!
+  name: String!
+  email: String!
+  profile: Profile
+}
+
+type Profile {
+  id: ID!
+  bio: String
+  avatar: String
+}
