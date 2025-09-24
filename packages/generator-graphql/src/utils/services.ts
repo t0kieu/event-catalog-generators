@@ -3,22 +3,49 @@ import { GraphQLSchema } from 'graphql';
 
 export const defaultMarkdown = ({
   service,
-  schema
+  schema,
+  schemaPath,
 }: {
   service: Service;
   schema: GraphQLSchema;
+  schemaPath: string;
 }) => {
-  return `# ${service.name || service.id}
+  const queries = schema.getQueryType()?.getFields() || {};
+  const mutations = schema.getMutationType()?.getFields() || {};
+  const subscriptions = schema.getSubscriptionType()?.getFields() || {};
 
-This service was generated from a GraphQL schema.
+  const generateLinks = (operations: any, type: 'queries' | 'commands' | 'events') => {
+    const operationNames = Object.keys(operations);
+    if (operationNames.length === 0) return 'None';
 
-## Schema Information
+    const tableHeader = `| Operation | Version | Link |
+|-----------|---------|------|`;
 
-- **Queries**: ${Object.keys(schema.getQueryType()?.getFields() || {}).length}
-- **Mutations**: ${Object.keys(schema.getMutationType()?.getFields() || {}).length}
-- **Subscriptions**: ${Object.keys(schema.getSubscriptionType()?.getFields() || {}).length}
+    const tableRows = operationNames
+      .map((name) => `| ${name} | ${service.version} | [View Details](/docs/${type}/${name}/${service.version}) |`)
+      .join('\n');
 
-<NodeGraph />`;
+    return `${tableHeader}\n${tableRows}`;
+  };
+
+  return `## Architecture
+
+<NodeGraph />
+
+## Schema
+<Schema file="${schemaPath}" />
+
+## Operations
+
+### Queries
+${generateLinks(queries, 'queries')}
+
+### Mutations (Commands)
+${generateLinks(mutations, 'commands')}
+
+### Subscriptions (Events)
+${generateLinks(subscriptions, 'events')}
+`;
 };
 
 export const getSummary = ({ service }: { service: Service }) => {

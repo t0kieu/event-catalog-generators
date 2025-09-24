@@ -4,6 +4,22 @@ type Query {
   getProfile(userId: ID!): Profile
 }
 
+type Mutation {
+  createUser(input: CreateUserInput!): User
+  updateUser(id: ID!, input: UpdateUserInput!): User
+  deleteUser(id: ID!): Boolean
+  updateProfile(userId: ID!, input: UpdateProfileInput!): Profile
+}
+
+type Subscription {
+  userCreated: User
+  userUpdated: User
+  """
+  Triggered when a user is deleted
+  """
+  userDeleted: ID
+}
+
 type User {
   id: ID!
   name: String!
@@ -13,6 +29,21 @@ type User {
 
 type Profile {
   id: ID!
+  bio: String
+  avatar: String
+}
+
+input CreateUserInput {
+  name: String!
+  email: String!
+}
+
+input UpdateUserInput {
+  name: String
+  email: String
+}
+
+input UpdateProfileInput {
   bio: String
   avatar: String
 }

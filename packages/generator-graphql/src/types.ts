@@ -1,6 +1,7 @@
 export interface Service {
   id: string;
   path: string;
+  version: string;
   draft?: boolean;
   name?: string;
   owners?: string[];

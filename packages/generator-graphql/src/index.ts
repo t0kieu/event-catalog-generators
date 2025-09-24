@@ -1,7 +1,5 @@
 import utils from '@eventcatalog/sdk';
 import { readFile } from 'node:fs/promises';
-import argv from 'minimist';
-import yaml from 'js-yaml';
 import { z } from 'zod';
 import chalk from 'chalk';
 import path from 'path';
@@ -9,23 +7,17 @@ import pkgJSON from '../package.json';
 import { checkForPackageUpdate } from '../../../shared/check-for-package-update';
 
 // GraphQL imports
-import { buildSchema, printSchema } from 'graphql';
+import { buildSchema } from 'graphql';
 
 import {
   defaultMarkdown as generateMarkdownForMessage,
   getMessageName,
   getSummary as getMessageSummary,
-  getMessageTypeForOperation,
   getOperationsFromSchema,
 } from './utils/messages';
 import { defaultMarkdown as generateMarkdownForService, getSummary as getServiceSummary } from './utils/services';
 import { defaultMarkdown as generateMarkdownForDomain } from './utils/domains';
 import checkLicense from '../../../shared/checkLicense';
-
-import { Service, Domain, Message } from './types';
-import { join } from 'node:path';
-
-const cliArgs = argv(process.argv.slice(2));
 
 const optionsSchema = z.object({
   licenseKey: z.string().optional(),
@@ -34,6 +26,8 @@ const optionsSchema = z.object({
     z.object({
       id: z.string({ required_error: 'The service id is required. please provide the service id' }),
       path: z.string({ required_error: 'The service path is required. please provide the path to GraphQL schema file' }),
+      summary: z.string().optional(),
+      version: z.string(),
       draft: z.boolean().optional(),
       name: z.string().optional(),
       owners: z.array(z.string()).optional(),
@@ -55,6 +49,7 @@ const optionsSchema = z.object({
       name: z.string(),
       version: z.string(),
       markdown: z.string().optional(),
+      owners: z.array(z.string()).optional(),
     })
     .optional(),
   messages: z
@@ -66,6 +61,7 @@ const optionsSchema = z.object({
             field: z.any(),
             operationType: z.enum(['query', 'mutation', 'subscription']),
             serviceName: z.string(),
+            schema: z.any().optional(),
           })
         )
         .returns(z.string())
@@ -95,13 +91,21 @@ export default async (_: any, options: Options) => {
   const {
     writeService,
     writeDomain,
-    writeMessage,
+    // writeMessage,
     getService,
     getDomain,
-    rmService,
     versionService,
-    rmDomain,
     versionDomain,
+    addFileToService,
+    writeQuery,
+    getQuery,
+    versionQuery,
+    getCommand,
+    writeCommand,
+    versionCommand,
+    getEvent,
+    versionEvent,
+    writeEvent,
   } = utils(process.env.PROJECT_DIR);
 
   const validatedOptions = optionsSchema.parse(options);
@@ -116,110 +120,164 @@ export default async (_: any, options: Options) => {
       // Load the GraphQL schema
       const schemaContent = await readFile(service.path, 'utf-8');
       const schema = buildSchema(schemaContent);
+      let schemaPath = path.basename(service.path as string) || 'schema.graphql';
+      let serviceMarkdown = generateMarkdownForService({ service, schema, schemaPath });
+
+      let receives = [] as any;
+      let sends = [] as any;
 
       if (debug) {
         console.log(chalk.gray(`Schema loaded successfully for service: ${service.id}`));
       }
 
       // Check if service exists and handle versioning
-      const existingService = await getService(service.id);
-      if (existingService) {
-        await versionService(service.id);
-        await rmService(service.id);
+      const latestServiceInCatalog = await getService(service.id, 'latest');
+      if (latestServiceInCatalog) {
+        serviceMarkdown = latestServiceInCatalog.markdown;
+        if (latestServiceInCatalog.version !== service.version) {
+          await versionService(service.id);
+          console.log(chalk.cyan(` - Versioned previous service (v${latestServiceInCatalog.version})`));
+        }
       }
 
-      // Generate service documentation
-      const serviceMarkdown = service.generateMarkdown
-        ? service.generateMarkdown({ service, schema })
-        : generateMarkdownForService({ service, schema });
-
-      await writeService({
-        id: service.id,
-        name: service.name || service.id,
-        version: '1.0.0',
-        summary: getServiceSummary({ service }),
-        markdown: serviceMarkdown,
-        ...(service.draft && { draft: service.draft }),
-        ...(service.owners && { owners: service.owners }),
-      });
-
-      // Save the schema file if requested
-      if (saveParsedSpecFile) {
-        await writeService({
-          id: service.id,
-          name: service.name || service.id,
-          version: '1.0.0',
-          summary: getServiceSummary({ service }),
-          markdown: serviceMarkdown,
-          schemaFile: {
-            fileName: 'schema.graphql',
-            content: printSchema(schema),
-          },
-          ...(service.draft && { draft: service.draft }),
-          ...(service.owners && { owners: service.owners }),
-        });
-      }
-
-      // Process queries
+      //Process queries
       const queries = getOperationsFromSchema(schema.getQueryType(), 'query');
 
       for (const { field, operationType } of queries) {
-        const messageType = getMessageTypeForOperation(operationType);
-        const messageName = getMessageName(field);
-        const messageMarkdown = messages?.generateMarkdown
-          ? messages.generateMarkdown({ field, operationType, serviceName: service.name || service.id })
-          : generateMarkdownForMessage({ field, operationType, serviceName: service.name || service.id });
+        const id = getMessageName(field);
+        const latestQueryInCatalog = await getQuery(id, 'latest');
 
-        await writeMessage({
-          id: messageName,
-          name: messageName,
-          version: '1.0.0',
-          summary: getMessageSummary({ field, operationType }),
-          markdown: messageMarkdown,
-          type: messageType,
-          producers: [{ id: service.id, version: '1.0.0' }],
-        });
+        // We take the service version as the query version for now
+        let queryVersion = service.version;
+        const messageName = getMessageName(field);
+        let messageMarkdown = messages?.generateMarkdown
+          ? messages.generateMarkdown({ field, operationType, serviceName: service.name || service.id })
+          : generateMarkdownForMessage({ field, operationType, serviceName: service.name || service.id, schema });
+
+        // persist data between versions
+        if (latestQueryInCatalog) {
+          messageMarkdown = latestQueryInCatalog.markdown;
+          if (latestQueryInCatalog.version !== queryVersion) {
+            await versionQuery(id);
+            console.log(chalk.cyan(` - Versioned previous query: (v${latestQueryInCatalog.version})`));
+          }
+        }
+
+        await writeQuery(
+          {
+            id: messageName,
+            name: messageName,
+            version: queryVersion,
+            summary: getMessageSummary({ field, operationType }),
+            markdown: messageMarkdown,
+            channels: [{ id: 'graphql', version: '1.0.0' }],
+            badges: [{ content: 'GraphQL:Query', backgroundColor: 'blue', textColor: 'white' }],
+          },
+          { override: true }
+        );
+
+        // Add query to receives
+        receives = [...receives, { id: messageName, version: '1.0.0' }];
       }
 
       // Process mutations
       const mutations = getOperationsFromSchema(schema.getMutationType(), 'mutation');
+
       for (const { field, operationType } of mutations) {
-        const messageType = getMessageTypeForOperation(operationType);
-        const messageName = getMessageName(field);
-        const messageMarkdown = messages?.generateMarkdown
-          ? messages.generateMarkdown({ field, operationType, serviceName: service.name || service.id })
-          : generateMarkdownForMessage({ field, operationType, serviceName: service.name || service.id });
+        const id = getMessageName(field);
+        const latestMutationInCatalog = await getCommand(id, 'latest');
 
-        await writeMessage({
-          id: messageName,
-          name: messageName,
-          version: '1.0.0',
-          summary: getMessageSummary({ field, operationType }),
-          markdown: messageMarkdown,
-          type: messageType,
-          producers: [{ id: service.id, version: '1.0.0' }],
-        });
+        // We take the service version as the query version for now
+        let queryVersion = service.version;
+        const messageName = getMessageName(field);
+        let messageMarkdown = messages?.generateMarkdown
+          ? messages.generateMarkdown({ field, operationType, serviceName: service.name || service.id })
+          : generateMarkdownForMessage({ field, operationType, serviceName: service.name || service.id, schema });
+
+        // persist data between versions
+        if (latestMutationInCatalog) {
+          messageMarkdown = latestMutationInCatalog.markdown;
+          if (latestMutationInCatalog.version !== queryVersion) {
+            await versionCommand(id);
+            console.log(chalk.cyan(` - Versioned previous mutation: (v${latestMutationInCatalog.version})`));
+          }
+        }
+
+        await writeCommand(
+          {
+            id: messageName,
+            name: messageName,
+            version: queryVersion,
+            summary: getMessageSummary({ field, operationType }),
+            markdown: messageMarkdown,
+            channels: [{ id: 'graphql', version: '1.0.0' }],
+            badges: [{ content: 'GraphQL:Mutation', backgroundColor: 'green', textColor: 'white' }],
+          },
+          { override: true }
+        );
+
+        // Add query to receives
+        receives = [...receives, { id: messageName, version: '1.0.0' }];
       }
 
-      // Process subscriptions
       const subscriptions = getOperationsFromSchema(schema.getSubscriptionType(), 'subscription');
-      for (const { field, operationType } of subscriptions) {
-        const messageType = getMessageTypeForOperation(operationType);
-        const messageName = getMessageName(field);
-        const messageMarkdown = messages?.generateMarkdown
-          ? messages.generateMarkdown({ field, operationType, serviceName: service.name || service.id })
-          : generateMarkdownForMessage({ field, operationType, serviceName: service.name || service.id });
 
-        await writeMessage({
-          id: messageName,
-          name: messageName,
-          version: '1.0.0',
-          summary: getMessageSummary({ field, operationType }),
-          markdown: messageMarkdown,
-          type: messageType,
-          producers: [{ id: service.id, version: '1.0.0' }],
-        });
+      for (const { field, operationType } of subscriptions) {
+        const id = getMessageName(field);
+        const latestEventInCatalog = await getEvent(id, 'latest');
+
+        // We take the service version as the query version for now
+        let queryVersion = service.version;
+        const messageName = getMessageName(field);
+        let messageMarkdown = messages?.generateMarkdown
+          ? messages.generateMarkdown({ field, operationType, serviceName: service.name || service.id })
+          : generateMarkdownForMessage({ field, operationType, serviceName: service.name || service.id, schema });
+
+        // persist data between versions
+        if (latestEventInCatalog) {
+          messageMarkdown = latestEventInCatalog.markdown;
+          if (latestEventInCatalog.version !== queryVersion) {
+            await versionEvent(id);
+            console.log(chalk.cyan(` - Versioned previous subscription: (v${latestEventInCatalog.version})`));
+          }
+        }
+
+        await writeEvent(
+          {
+            id: messageName,
+            name: messageName,
+            version: queryVersion,
+            summary: getMessageSummary({ field, operationType }),
+            markdown: messageMarkdown,
+            channels: [{ id: 'graphql', version: '1.0.0' }],
+            badges: [{ content: 'GraphQL:Subscription', backgroundColor: 'purple', textColor: 'white' }],
+          },
+          { override: true }
+        );
+
+        // Add query to receives
+        sends = [...sends, { id: messageName, version: '1.0.0' }];
       }
+
+      await writeService(
+        {
+          id: service.id,
+          name: service.name || service.id,
+          version: service.version || '1.0.0',
+          summary: service.summary,
+          markdown: serviceMarkdown,
+          ...(service.draft && { draft: service.draft }),
+          ...(service.owners && { owners: service.owners }),
+          ...(receives.length > 0 ? { receives } : {}),
+          ...(sends.length > 0 ? { sends } : {}),
+          schemaPath,
+        },
+        { override: true }
+      );
+
+      // Add the file to the service
+      await addFileToService(service.id, { fileName: schemaPath, content: schemaContent });
+
 
       console.log(chalk.green(`✅ Successfully processed GraphQL schema: ${service.id}`));
     } catch (error) {
@@ -231,10 +289,13 @@ export default async (_: any, options: Options) => {
 
   // Handle domain if specified
   if (domain) {
-    const existingDomain = await getDomain(domain.id, domain.version);
-    if (existingDomain && existingDomain.version !== domain.version) {
+    const currentDomain = await getDomain(domain.id, 'latest');
+
+    console.log(chalk.blue(`\nProcessing domain: ${domain.name} (v${domain.version})`));
+
+    if (currentDomain && currentDomain.version !== domain.version) {
       await versionDomain(domain.id);
-      await rmDomain(domain.id);
+      console.log(chalk.cyan(` - Versioned previous domain (v${currentDomain.version})`));
     }
 
     const domainMarkdown = generateMarkdownForDomain({ domain });
@@ -246,6 +307,7 @@ export default async (_: any, options: Options) => {
       version: domain.version,
       markdown: domainMarkdown,
       services: domainServices,
+      ...(domain.owners && { owners: domain.owners }),
     });
 
     console.log(chalk.green(`✅ Domain "${domain.name}" created/updated with ${services.length} service(s)`));
