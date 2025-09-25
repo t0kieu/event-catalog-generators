@@ -389,38 +389,14 @@ importers:
   packages/generator-graphql:
     dependencies:
       '@eventcatalog/sdk':
-        specifier: ^2.6.9
-        version: 2.7.3
+        specifier: ^2.7.6
+        version: 2.7.6
       chalk:
         specifier: ^4
         version: 4.1.2
-      fs-extra:
-        specifier: ^11.2.0
-        version: 11.3.0
-      glob:
-        specifier: ^11.0.0
-        version: 11.0.3
       graphql:
         specifier: ^16.8.1
         version: 16.11.0
-      gray-matter:
-        specifier: ^4.0.3
-        version: 4.0.3
-      js-yaml:
-        specifier: ^4.1.0
-        version: 4.1.0
-      lodash:
-        specifier: ^4.17.21
-        version: 4.17.21
-      minimist:
-        specifier: ^1.2.8
-        version: 1.2.8
-      slugify:
-        specifier: ^1.6.6
-        version: 1.6.6
-      update-notifier:
-        specifier: ^7.3.1
-        version: 7.3.1
       zod:
         specifier: ^3.23.8
         version: 3.25.67
@@ -428,18 +404,6 @@ importers:
       '@changesets/cli':
         specifier: ^2.27.9
         version: 2.29.5
-      '@types/fs-extra':
-        specifier: ^11.0.4
-        version: 11.0.4
-      '@types/js-yaml':
-        specifier: ^4.0.9
-        version: 4.0.9
-      '@types/lodash':
-        specifier: ^4.17.7
-        version: 4.17.18
-      '@types/minimist':
-        specifier: ^1.2.5
-        version: 1.2.5
       '@types/node':
         specifier: ^20.16.1
         version: 20.19.1
@@ -1042,6 +1006,9 @@ packages:
 
   '@eventcatalog/sdk@2.7.3':
     resolution: { integrity: sha512-/QFL05P7GgucycdcQcARPrDcpSFevh4CgKgof4ALKg4TqnDBOaTW28lH/jaLAPeGROvvPkDIts+07a0F3WnL0A== }
+
+  '@eventcatalog/sdk@2.7.6':
+    resolution: { integrity: sha512-4KtcpxQ2ThdlNX8p++IDT8NEmeFLt0Y7Ee9iNu1xn9LGdx3DT3XUpMM3MN+o2Z5BWp35DeFSFlBQbfcWooS2RA== }
 
   '@huggingface/jinja@0.4.1':
     resolution: { integrity: sha512-3WXbMFaPkk03LRCM0z0sylmn8ddDm4ubjU7X+Hg4M2GOuMklwoGAFXp9V2keq7vltoB/c7McE5aHUVVddAewsw== }
@@ -4557,6 +4524,16 @@ snapshots:
       slugify: 1.6.6
 
   '@eventcatalog/sdk@2.7.3':
+    dependencies:
+      '@changesets/cli': 2.29.5
+      fs-extra: 11.3.0
+      glob: 11.0.3
+      gray-matter: 4.0.3
+      proper-lockfile: 4.1.2
+      semver: 7.6.3
+      slugify: 1.6.6
+
+  '@eventcatalog/sdk@2.7.6':
     dependencies:
       '@changesets/cli': 2.29.5
       fs-extra: 11.3.0

@@ -110,22 +110,23 @@ function generateCodeSnippet(field: GraphQLField<any, any>, operationType: Graph
 
   // Generate the fields to select in the response with proper type introspection
   const returnFields = generateReturnFields(field.type, schema);
+  const fieldWithReturnFields = returnFields ? `${field.name}${argsString} ${returnFields}` : `${field.name}${argsString}`;
 
   switch (operationType) {
     case 'query':
       return `query {
-  ${field.name}${argsString} ${returnFields}
+  ${fieldWithReturnFields}
 }`;
     case 'mutation':
       return `mutation {
-  ${field.name}${argsString} ${returnFields}
+  ${fieldWithReturnFields}
 }`;
     case 'subscription':
       return `subscription {
-  ${field.name}${argsString} ${returnFields}
+  ${fieldWithReturnFields}
 }`;
     default:
-      return `${field.name}${argsString} ${returnFields}`;
+      return fieldWithReturnFields;
   }
 }
 
@@ -190,22 +191,38 @@ function generateReturnFields(type: any, schema?: GraphQLSchema, depth: number =
     const fieldEntries = Object.entries(fields);
 
     if (fieldEntries.length > 0) {
+      const baseIndent = '  '.repeat(depth + 2); // 2 spaces per depth level, starting at level 2
       const selectedFields = fieldEntries
         .slice(0, 5) // Limit to first 5 fields to keep examples manageable
         .map(([fieldName, field]) => {
           const subFields = generateReturnFields(field.type, schema, depth + 1);
-          return `    ${fieldName}${subFields}`;
+          if (subFields) {
+            // For nested objects, format with proper indentation
+            const lines = subFields.split('\n');
+            const formattedSubFields = lines
+              .map((line, index) => {
+                if (index === 0) return line; // First line (opening brace)
+                if (index === lines.length - 1) return `${baseIndent}${line}`; // Last line (closing brace)
+                return `${baseIndent}${line}`; // Middle lines (fields)
+              })
+              .join('\n');
+            return `${baseIndent}${fieldName} ${formattedSubFields}`;
+          }
+          return `${baseIndent}${fieldName}`;
         })
         .join('\n');
 
+      const closingIndent = '  '.repeat(depth + 1);
       return `{
 ${selectedFields}
-  }`;
+${closingIndent}}`;
     }
   }
 
   // For unknown object types, add a basic field selection template
+  const baseIndent = '  '.repeat(depth + 2);
+  const closingIndent = '  '.repeat(depth + 1);
   return `{
-    # Add fields you want to select
-  }`;
+${baseIndent}# Add fields you want to select
+${closingIndent}}`;
 }

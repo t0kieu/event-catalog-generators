@@ -31,7 +31,7 @@ describe('GraphQL EventCatalog Plugin', () => {
   });
 
   afterEach(async () => {
-    // await fs.rm(join(catalogDir), { recursive: true });
+    await fs.rm(join(catalogDir), { recursive: true });
   });
 
   describe('service generation', () => {
@@ -212,7 +212,7 @@ describe('GraphQL EventCatalog Plugin', () => {
         );
       });
 
-      it('when the GraphQL service is already defined in EventCatalog and the versions match, the markdown is persisted and not overwritten', async () => {
+      it('when the GraphQL service is already defined in EventCatalog and the versions match, the markdown, badges and attachments are persisted and not overwritten', async () => {
         // Create a service with the same name and version as the OpenAPI file for testing
         const { writeService, getService } = utils(catalogDir);
 
@@ -221,6 +221,8 @@ describe('GraphQL EventCatalog Plugin', () => {
           version: '1.0.0',
           name: 'Random Name',
           markdown: 'Here is my original markdown, please do not override this!',
+          badges: [{ content: 'Random', textColor: 'blue', backgroundColor: 'blue' }],
+          attachments: [{ title: 'Random', url: 'https://random.com' }],
         });
 
         await plugin(config, {
@@ -246,6 +248,8 @@ describe('GraphQL EventCatalog Plugin', () => {
             version: '1.0.0',
             summary: 'This is a sample server Petstore server.',
             markdown: 'Here is my original markdown, please do not override this!',
+            badges: [{ content: 'Random', textColor: 'blue', backgroundColor: 'blue' }],
+            attachments: [{ title: 'Random', url: 'https://random.com' }],
           })
         );
       });
@@ -296,6 +300,13 @@ describe('GraphQL EventCatalog Plugin', () => {
         const service = await getService('swagger-petstore', '1.0.0');
 
         expect(service.schemaPath).toEqual('petstore.graphql');
+        expect(service.specifications).toEqual([
+          {
+            path: 'petstore.graphql',
+            type: 'graphql',
+            name: 'Petstore ServiceGraphQL API',
+          },
+        ]);
 
         const schema = await fs.readFile(join(catalogDir, 'services', 'swagger-petstore', 'petstore.graphql'));
         expect(schema).toBeDefined();
@@ -329,7 +340,9 @@ describe('GraphQL EventCatalog Plugin', () => {
               id: 'getUser',
               name: 'getUser',
               version: '1.0.0',
-              channels: [{ id: 'graphql', version: '1.0.0' }],
+              sidebar: {
+                badge: 'Query',
+              },
             })
           );
 
@@ -338,7 +351,9 @@ describe('GraphQL EventCatalog Plugin', () => {
               id: 'getUsers',
               name: 'getUsers',
               version: '1.0.0',
-              channels: [{ id: 'graphql', version: '1.0.0' }],
+              sidebar: {
+                badge: 'Query',
+              },
             })
           );
 
@@ -347,7 +362,9 @@ describe('GraphQL EventCatalog Plugin', () => {
               id: 'getProfile',
               name: 'getProfile',
               version: '1.0.0',
-              channels: [{ id: 'graphql', version: '1.0.0' }],
+              sidebar: {
+                badge: 'Query',
+              },
             })
           );
 
@@ -360,7 +377,7 @@ describe('GraphQL EventCatalog Plugin', () => {
           );
         });
 
-        it('if a query is already defined in EventCatalog and the versions match, the markdown is persisted and not overwritten', async () => {
+        it('if a query is already defined in EventCatalog and the versions match, the markdown, badges and attachments are persisted and not overwritten', async () => {
           const { writeQuery, getQuery } = utils(catalogDir);
 
           await writeQuery({
@@ -368,6 +385,8 @@ describe('GraphQL EventCatalog Plugin', () => {
             name: 'getUser',
             version: '1.0.0',
             markdown: 'Here is my original markdown, please do not override this!',
+            badges: [{ content: 'Random', textColor: 'blue', backgroundColor: 'blue' }],
+            attachments: [{ title: 'Random', url: 'https://random.com' }],
           });
 
           await plugin(config, {
@@ -384,6 +403,8 @@ describe('GraphQL EventCatalog Plugin', () => {
 
           const getUserMessage = await getQuery('getUser', '1.0.0');
           expect(getUserMessage.markdown).toEqual('Here is my original markdown, please do not override this!');
+          expect(getUserMessage.badges).toEqual([{ content: 'Random', textColor: 'blue', backgroundColor: 'blue' }]);
+          expect(getUserMessage.attachments).toEqual([{ title: 'Random', url: 'https://random.com' }]);
         });
 
         it('if a query is already defined in EventCatalog and the versions do not match, the previous query is versioned', async () => {
@@ -443,7 +464,9 @@ describe('GraphQL EventCatalog Plugin', () => {
               id: 'createUser',
               name: 'createUser',
               version: '1.0.0',
-              channels: [{ id: 'graphql', version: '1.0.0' }],
+              sidebar: {
+                badge: 'Mutation',
+              },
             })
           );
 
@@ -452,7 +475,9 @@ describe('GraphQL EventCatalog Plugin', () => {
               id: 'updateUser',
               name: 'updateUser',
               version: '1.0.0',
-              channels: [{ id: 'graphql', version: '1.0.0' }],
+              sidebar: {
+                badge: 'Mutation',
+              },
             })
           );
 
@@ -461,7 +486,9 @@ describe('GraphQL EventCatalog Plugin', () => {
               id: 'deleteUser',
               name: 'deleteUser',
               version: '1.0.0',
-              channels: [{ id: 'graphql', version: '1.0.0' }],
+              sidebar: {
+                badge: 'Mutation',
+              },
             })
           );
 
@@ -470,7 +497,9 @@ describe('GraphQL EventCatalog Plugin', () => {
               id: 'updateProfile',
               name: 'updateProfile',
               version: '1.0.0',
-              channels: [{ id: 'graphql', version: '1.0.0' }],
+              sidebar: {
+                badge: 'Mutation',
+              },
             })
           );
 
@@ -484,7 +513,7 @@ describe('GraphQL EventCatalog Plugin', () => {
           );
         });
 
-        it('if a mutation is already defined in EventCatalog and the versions match, the markdown is persisted and not overwritten', async () => {
+        it('if a mutation is already defined in EventCatalog and the versions match, the markdown, badges and attachments are persisted and not overwritten', async () => {
           const { writeCommand, getCommand } = utils(catalogDir);
 
           await writeCommand({
@@ -492,6 +521,8 @@ describe('GraphQL EventCatalog Plugin', () => {
             name: 'createUser',
             version: '1.0.0',
             markdown: 'Here is my original markdown, please do not override this!',
+            badges: [{ content: 'Random', textColor: 'blue', backgroundColor: 'blue' }],
+            attachments: [{ title: 'Random', url: 'https://random.com' }],
           });
 
           await plugin(config, {
@@ -508,6 +539,8 @@ describe('GraphQL EventCatalog Plugin', () => {
 
           const getUserMessage = await getCommand('createUser', '1.0.0');
           expect(getUserMessage.markdown).toEqual('Here is my original markdown, please do not override this!');
+          expect(getUserMessage.badges).toEqual([{ content: 'Random', textColor: 'blue', backgroundColor: 'blue' }]);
+          expect(getUserMessage.attachments).toEqual([{ title: 'Random', url: 'https://random.com' }]);
         });
 
         it('if a mutation is already defined in EventCatalog and the versions do not match, the previous mutation is versioned', async () => {
@@ -567,7 +600,9 @@ describe('GraphQL EventCatalog Plugin', () => {
               id: 'userCreated',
               name: 'userCreated',
               version: '1.0.0',
-              channels: [{ id: 'graphql', version: '1.0.0' }],
+              sidebar: {
+                badge: 'Subscription',
+              },
             })
           );
 
@@ -576,7 +611,9 @@ describe('GraphQL EventCatalog Plugin', () => {
               id: 'userUpdated',
               name: 'userUpdated',
               version: '1.0.0',
-              channels: [{ id: 'graphql', version: '1.0.0' }],
+              sidebar: {
+                badge: 'Subscription',
+              },
             })
           );
 
@@ -585,7 +622,9 @@ describe('GraphQL EventCatalog Plugin', () => {
               id: 'userDeleted',
               name: 'userDeleted',
               version: '1.0.0',
-              channels: [{ id: 'graphql', version: '1.0.0' }],
+              sidebar: {
+                badge: 'Subscription',
+              },
             })
           );
 
@@ -598,7 +637,7 @@ describe('GraphQL EventCatalog Plugin', () => {
           );
         });
 
-        it('if a subscription is already defined in EventCatalog and the versions match, the markdown is persisted and not overwritten', async () => {
+        it('if a subscription is already defined in EventCatalog and the versions match, the markdown, badges and attachments are persisted and not overwritten', async () => {
           const { writeEvent, getEvent } = utils(catalogDir);
 
           await writeEvent({
@@ -606,6 +645,8 @@ describe('GraphQL EventCatalog Plugin', () => {
             name: 'userCreated',
             version: '1.0.0',
             markdown: 'Here is my original markdown, please do not override this!',
+            badges: [{ content: 'Random', textColor: 'blue', backgroundColor: 'blue' }],
+            attachments: [{ title: 'Random', url: 'https://random.com' }],
           });
 
           await plugin(config, {
@@ -622,6 +663,8 @@ describe('GraphQL EventCatalog Plugin', () => {
 
           const getUserMessage = await getEvent('userCreated', '1.0.0');
           expect(getUserMessage.markdown).toEqual('Here is my original markdown, please do not override this!');
+          expect(getUserMessage.badges).toEqual([{ content: 'Random', textColor: 'blue', backgroundColor: 'blue' }]);
+          expect(getUserMessage.attachments).toEqual([{ title: 'Random', url: 'https://random.com' }]);
         });
 
         it('if a subscription is already defined in EventCatalog and the versions do not match, the previous subscription is versioned', async () => {
@@ -652,6 +695,100 @@ describe('GraphQL EventCatalog Plugin', () => {
           const latestQuery = await getEvent('userCreated', '1.0.0');
           expect(latestQuery.version).toEqual('1.0.0');
         });
+      });
+    });
+
+    describe('comment extraction from GraphQL schema', () => {
+      it('extracts GraphQL field descriptions as summaries for queries, mutations, and subscriptions', async () => {
+        const { getQuery, getCommand, getEvent } = utils(catalogDir);
+
+        await plugin(config, {
+          services: [
+            {
+              path: join(graphQLExamples, 'simple.graphql'),
+              id: 'user-service',
+              version: '1.0.0',
+              summary: 'This is a sample server User service.',
+              name: 'User Service',
+            },
+          ],
+        });
+
+        const getUserQuery = await getQuery('getUser');
+        const getUsersQuery = await getQuery('getUsers');
+        const getProfileQuery = await getQuery('getProfile');
+
+        const createUserCommand = await getCommand('createUser');
+        const updateUserCommand = await getCommand('updateUser');
+        const deleteUserCommand = await getCommand('deleteUser');
+        const updateProfileCommand = await getCommand('updateProfile');
+
+        const userCreatedEvent = await getEvent('userCreated');
+        const userUpdatedEvent = await getEvent('userUpdated');
+        const userDeletedEvent = await getEvent('userDeleted');
+
+        // Verify query summaries from GraphQL descriptions
+        expect(getUserQuery.summary).toBe('Fetch a user by their unique ID');
+        expect(getUsersQuery.summary).toBe('Retrieve all users from the system');
+        expect(getProfileQuery.summary).toBe('Get user profile information by user ID');
+
+        // Verify mutation/command summaries from GraphQL descriptions
+        expect(createUserCommand.summary).toBe('Create a new user account');
+        expect(updateUserCommand.summary).toBe("Update an existing user's information");
+        expect(deleteUserCommand.summary).toBe('Delete a user from the system');
+        expect(updateProfileCommand.summary).toBe('Update user profile details');
+
+        // Verify subscription/event summaries from GraphQL descriptions
+        expect(userCreatedEvent.summary).toBe('Subscribe to user creation events');
+        expect(userUpdatedEvent.summary).toBe('Subscribe to user update events');
+        expect(userDeletedEvent.summary).toBe('Triggered when a user is deleted');
+      });
+
+      it('falls back to default summary format when no GraphQL field description is provided', async () => {
+        // Create a test schema without descriptions
+        const schemaWithoutComments = `
+          type Query {
+            testQuery: String
+          }
+
+          type Mutation {
+            testMutation: String
+          }
+
+          type Subscription {
+            testSubscription: String
+          }
+        `;
+
+        // Write test schema to a temporary file
+        const tempSchemaPath = join(__dirname, 'temp-no-comments.graphql');
+        await fs.writeFile(tempSchemaPath, schemaWithoutComments);
+
+        const { getQuery, getCommand, getEvent } = utils(catalogDir);
+
+        await plugin(config, {
+          services: [
+            {
+              path: tempSchemaPath,
+              id: 'test-service',
+              version: '1.0.0',
+              summary: 'Test service without comments',
+              name: 'Test Service',
+            },
+          ],
+        });
+
+        const testQuery = await getQuery('testQuery');
+        const testCommand = await getCommand('testMutation');
+        const testEvent = await getEvent('testSubscription');
+
+        // Verify fallback summaries
+        expect(testQuery.summary).toBe('query operation: testQuery');
+        expect(testCommand.summary).toBe('mutation operation: testMutation');
+        expect(testEvent.summary).toBe('subscription operation: testSubscription');
+
+        // Clean up temp file
+        await fs.unlink(tempSchemaPath);
       });
     });
   });

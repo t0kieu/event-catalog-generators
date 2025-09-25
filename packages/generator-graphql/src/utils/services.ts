@@ -32,9 +32,6 @@ export const defaultMarkdown = ({
 
 <NodeGraph />
 
-## Schema
-<Schema file="${schemaPath}" />
-
 ## Operations
 
 ### Queries

@@ -122,6 +122,8 @@ export default async (_: any, options: Options) => {
       const schema = buildSchema(schemaContent);
       let schemaPath = path.basename(service.path as string) || 'schema.graphql';
       let serviceMarkdown = generateMarkdownForService({ service, schema, schemaPath });
+      let serviceBadges = [] as any;
+      let serviceAttachments = [] as any;
 
       let receives = [] as any;
       let sends = [] as any;
@@ -133,7 +135,11 @@ export default async (_: any, options: Options) => {
       // Check if service exists and handle versioning
       const latestServiceInCatalog = await getService(service.id, 'latest');
       if (latestServiceInCatalog) {
+        // persist data between versions
         serviceMarkdown = latestServiceInCatalog.markdown;
+        serviceBadges = latestServiceInCatalog.badges || [];
+        serviceAttachments = latestServiceInCatalog.attachments || [];
+
         if (latestServiceInCatalog.version !== service.version) {
           await versionService(service.id);
           console.log(chalk.cyan(` - Versioned previous service (v${latestServiceInCatalog.version})`));
@@ -153,10 +159,14 @@ export default async (_: any, options: Options) => {
         let messageMarkdown = messages?.generateMarkdown
           ? messages.generateMarkdown({ field, operationType, serviceName: service.name || service.id })
           : generateMarkdownForMessage({ field, operationType, serviceName: service.name || service.id, schema });
+        let messageBadges = [{ content: 'GraphQL:Query', backgroundColor: 'blue', textColor: 'white' }];
+        let messageAttachments = [] as any;
 
         // persist data between versions
         if (latestQueryInCatalog) {
           messageMarkdown = latestQueryInCatalog.markdown;
+          messageBadges = latestQueryInCatalog.badges || [];
+          messageAttachments = latestQueryInCatalog.attachments || [];
           if (latestQueryInCatalog.version !== queryVersion) {
             await versionQuery(id);
             console.log(chalk.cyan(` - Versioned previous query: (v${latestQueryInCatalog.version})`));
@@ -170,8 +180,11 @@ export default async (_: any, options: Options) => {
             version: queryVersion,
             summary: getMessageSummary({ field, operationType }),
             markdown: messageMarkdown,
-            channels: [{ id: 'graphql', version: '1.0.0' }],
-            badges: [{ content: 'GraphQL:Query', backgroundColor: 'blue', textColor: 'white' }],
+            ...(messageBadges.length > 0 ? { badges: messageBadges } : {}),
+            ...(messageAttachments.length > 0 ? { attachments: messageAttachments } : {}),
+            sidebar: {
+              badge: 'Query',
+            },
           },
           { override: true }
         );
@@ -193,10 +206,14 @@ export default async (_: any, options: Options) => {
         let messageMarkdown = messages?.generateMarkdown
           ? messages.generateMarkdown({ field, operationType, serviceName: service.name || service.id })
           : generateMarkdownForMessage({ field, operationType, serviceName: service.name || service.id, schema });
+        let messageBadges = [{ content: 'GraphQL:Mutation', backgroundColor: 'green', textColor: 'white' }];
+        let messageAttachments = [] as any;
 
         // persist data between versions
         if (latestMutationInCatalog) {
           messageMarkdown = latestMutationInCatalog.markdown;
+          messageBadges = latestMutationInCatalog.badges || [];
+          messageAttachments = latestMutationInCatalog.attachments || [];
           if (latestMutationInCatalog.version !== queryVersion) {
             await versionCommand(id);
             console.log(chalk.cyan(` - Versioned previous mutation: (v${latestMutationInCatalog.version})`));
@@ -209,9 +226,12 @@ export default async (_: any, options: Options) => {
             name: messageName,
             version: queryVersion,
             summary: getMessageSummary({ field, operationType }),
+            ...(messageBadges.length > 0 ? { badges: messageBadges } : {}),
+            ...(messageAttachments.length > 0 ? { attachments: messageAttachments } : {}),
             markdown: messageMarkdown,
-            channels: [{ id: 'graphql', version: '1.0.0' }],
-            badges: [{ content: 'GraphQL:Mutation', backgroundColor: 'green', textColor: 'white' }],
+            sidebar: {
+              badge: 'Mutation',
+            },
           },
           { override: true }
         );
@@ -233,9 +253,14 @@ export default async (_: any, options: Options) => {
           ? messages.generateMarkdown({ field, operationType, serviceName: service.name || service.id })
           : generateMarkdownForMessage({ field, operationType, serviceName: service.name || service.id, schema });
 
+        let messageBadges = [{ content: 'GraphQL:Subscription', backgroundColor: 'purple', textColor: 'white' }];
+        let messageAttachments = [] as any;
+
         // persist data between versions
         if (latestEventInCatalog) {
           messageMarkdown = latestEventInCatalog.markdown;
+          messageBadges = latestEventInCatalog.badges || [];
+          messageAttachments = latestEventInCatalog.attachments || [];
           if (latestEventInCatalog.version !== queryVersion) {
             await versionEvent(id);
             console.log(chalk.cyan(` - Versioned previous subscription: (v${latestEventInCatalog.version})`));
@@ -249,8 +274,11 @@ export default async (_: any, options: Options) => {
             version: queryVersion,
             summary: getMessageSummary({ field, operationType }),
             markdown: messageMarkdown,
-            channels: [{ id: 'graphql', version: '1.0.0' }],
-            badges: [{ content: 'GraphQL:Subscription', backgroundColor: 'purple', textColor: 'white' }],
+            ...(messageBadges.length > 0 ? { badges: messageBadges } : {}),
+            ...(messageAttachments.length > 0 ? { attachments: messageAttachments } : {}),
+            sidebar: {
+              badge: 'Subscription',
+            },
           },
           { override: true }
         );
@@ -266,18 +294,26 @@ export default async (_: any, options: Options) => {
           version: service.version || '1.0.0',
           summary: service.summary,
           markdown: serviceMarkdown,
+          ...(serviceBadges.length > 0 ? { badges: serviceBadges } : {}),
+          ...(serviceAttachments.length > 0 ? { attachments: serviceAttachments } : {}),
           ...(service.draft && { draft: service.draft }),
           ...(service.owners && { owners: service.owners }),
           ...(receives.length > 0 ? { receives } : {}),
           ...(sends.length > 0 ? { sends } : {}),
           schemaPath,
+          specifications: [
+            {
+              path: schemaPath,
+              type: 'graphql',
+              name: (service.name || service.id) + 'GraphQL API',
+            },
+          ],
         },
         { override: true }
       );
 
       // Add the file to the service
       await addFileToService(service.id, { fileName: schemaPath, content: schemaContent });
-
 
       console.log(chalk.green(`✅ Successfully processed GraphQL schema: ${service.id}`));
     } catch (error) {
