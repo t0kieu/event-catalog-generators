@@ -88,11 +88,11 @@ Raise a GitHub issue on this project, or contact us on [our Discord server](http
 
 ## Commercial use
 
-All plugins are licensed under a [dual-license](./LICENSE.md). To ensure the sustainability of the project, you can freely make use of this software if your projects are Open Source. Otherwise for internal systems you must obtain a [commercial license](./LICENSE-COMMERCIAL.md).
+All plugins are licensed under a [dual-license](./LICENSE-COMMERCIAL.md). To ensure the sustainability of the project, you can freely make use of this software if your projects are Open Source. Otherwise for internal systems you must obtain a [commercial license](./LICENSE-COMMERCIAL.md).
 
 If you would like to obtain a Commercial License, you can get a free trial (14 days) per plugin at https://eventcatalog.cloud or email us at `hello@eventcatalog.dev`
 
-# Sponsors
+<!-- # Sponsors
 
 Thank you to our project sponsors.
 
@@ -106,7 +106,7 @@ Thank you to our project sponsors.
 
 <hr />
 
-_Sponsors help make EventCatalog sustainable, want to help the project? Get in touch! Or [visit our sponsor page](https://github.com/sponsors/event-catalog)._
+_Sponsors help make EventCatalog sustainable, want to help the project? Get in touch! Or [visit our sponsor page](https://github.com/sponsors/event-catalog)._ -->
 
 # Enterprise support
 
