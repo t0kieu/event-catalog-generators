@@ -1,7 +1,7 @@
 import { expect, it, describe, beforeEach, afterEach } from 'vitest';
 import utils from '@eventcatalog/sdk';
 import plugin from '../index';
-import { join } from 'node:path';
+import path, { join } from 'node:path';
 import fs from 'fs/promises';
 import { vi } from 'vitest';
 
@@ -15,6 +15,10 @@ const config = {};
 
 let catalogDir: string;
 const graphQLExamples = join(__dirname, 'graphql-files');
+
+function toPosix(p: string) {
+  return p.split(path.sep).join('/');
+}
 
 describe('GraphQL EventCatalog Plugin', () => {
   beforeEach(async () => {
@@ -241,7 +245,7 @@ describe('GraphQL EventCatalog Plugin', () => {
         });
 
         const path = await getResourcePath(catalogDir, 'petstore-service', '1.1.0');
-        expect(path?.relativePath).toEqual('/domains/users/services/petstore-service/index.mdx');
+        expect(path?.relativePath).toEqual(toPosix('/domains/users/services/petstore-service/index.mdx'));
       });
     });
 
@@ -772,7 +776,7 @@ describe('GraphQL EventCatalog Plugin', () => {
         });
 
         const path = await getResourcePath(catalogDir, 'getUser', '1.0.0');
-        expect(path?.relativePath).toEqual('/services/user-service/queries/getUser/index.mdx');
+        expect(path?.relativePath).toEqual(toPosix('/services/user-service/queries/getUser/index.mdx'));
       });
     });
 
