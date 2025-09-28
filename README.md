@@ -10,6 +10,9 @@ This repository contains the generators for the EventCatalog project.
 - [AsyncAPI](./packages/generator-asyncapi/README.md)
   - [Documentation](https://www.eventcatalog.dev/integrations/asyncapi)
   - [Example Projects](./examples/generator-asyncapi/)
+- [GraphQL](./packages/generator-graphql/README.md)
+  - [Documentation](https://www.eventcatalog.dev/integrations/graphql)
+  - [Example Projects](./examples/generator-graphql/)
 - [EventCatalog AI](./packages/generator-ai/README.md)
   - [Documentation](https://www.eventcatalog.dev/integrations/ai)
 - [EventCatalog Federation](./packages/generator-federation/README.md)
@@ -48,6 +51,10 @@ All plugins require a license key. You can get a license key from [EventCatalog 
   - EventCatalog will parse all messages, sometimes this leads to duplicated messages being created.
   - The `x-eventcatalog-role` extension can be used to control which service owns a message.
   - This is useful when you have multiple AsyncAPI files that define the same message.
+
+**GraphQL Integrations**
+
+- [Integrate GraphQL files into EventCatalog](./examples/generator-graphql/)
 
 **EventBridge Integrations [(watch demo)](https://www.youtube.com/watch?v=MeBuwAflwM4)**
 
