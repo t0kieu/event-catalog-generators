@@ -1,0 +1,164 @@
+scalar UUID
+scalar DateTime
+scalar Decimal
+
+type Query {
+  getProduct(id: UUID!): Product
+  getProducts(
+    categoryId: UUID
+    search: String
+    priceRange: PriceRange
+    inStock: Boolean
+    limit: Int = 20
+    offset: Int = 0
+  ): ProductConnection!
+  getCategory(id: UUID!): Category
+  getCategories(parentId: UUID): [Category!]!
+  getInventory(productId: UUID!): Inventory
+  getReviews(productId: UUID!, limit: Int = 10, offset: Int = 0): ReviewConnection!
+}
+
+type Mutation {
+  createProduct(input: CreateProductInput!): Product!
+  updateProduct(id: UUID!, input: UpdateProductInput!): Product!
+  deleteProduct(id: UUID!): Boolean!
+  createCategory(input: CreateCategoryInput!): Category!
+  updateInventory(productId: UUID!, quantity: Int!): Inventory!
+  addReview(input: AddReviewInput!): Review!
+}
+
+type Product {
+  id: UUID!
+  name: String!
+  description: String!
+  sku: String!
+  price: Decimal!
+  currency: String!
+  category: Category!
+  inventory: Inventory!
+  images: [String!]!
+  attributes: [ProductAttribute!]!
+  reviews: ReviewConnection!
+  averageRating: Float
+  isActive: Boolean!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type Category {
+  id: UUID!
+  name: String!
+  description: String
+  parentId: UUID
+  parent: Category
+  children: [Category!]!
+  products: ProductConnection!
+  isActive: Boolean!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type Inventory {
+  id: UUID!
+  productId: UUID!
+  product: Product!
+  quantity: Int!
+  reservedQuantity: Int!
+  availableQuantity: Int!
+  reorderPoint: Int!
+  maxStock: Int!
+  lastUpdated: DateTime!
+}
+
+type Review {
+  id: UUID!
+  productId: UUID!
+  product: Product!
+  userId: UUID!
+  rating: Int!
+  title: String!
+  comment: String!
+  verified: Boolean!
+  helpful: Int!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type ProductAttribute {
+  name: String!
+  value: String!
+}
+
+type ProductConnection {
+  edges: [ProductEdge!]!
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+type ProductEdge {
+  node: Product!
+  cursor: String!
+}
+
+type ReviewConnection {
+  edges: [ReviewEdge!]!
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+type ReviewEdge {
+  node: Review!
+  cursor: String!
+}
+
+type PageInfo {
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+  startCursor: String
+  endCursor: String
+}
+
+input CreateProductInput {
+  name: String!
+  description: String!
+  sku: String!
+  price: Decimal!
+  currency: String!
+  categoryId: UUID!
+  images: [String!]!
+  attributes: [ProductAttributeInput!]!
+  initialStock: Int!
+}
+
+input UpdateProductInput {
+  name: String
+  description: String
+  price: Decimal
+  categoryId: UUID
+  images: [String!]
+  attributes: [ProductAttributeInput!]
+  isActive: Boolean
+}
+
+input CreateCategoryInput {
+  name: String!
+  description: String
+  parentId: UUID
+}
+
+input AddReviewInput {
+  productId: UUID!
+  rating: Int!
+  title: String!
+  comment: String!
+}
+
+input ProductAttributeInput {
+  name: String!
+  value: String!
+}
+
+input PriceRange {
+  min: Decimal
+  max: Decimal
+}

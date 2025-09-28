@@ -1,0 +1,203 @@
+scalar UUID
+scalar DateTime
+scalar Decimal
+
+type Query {
+  getSubscription(id: UUID!): Subscription
+  getUserSubscriptions(userId: UUID!): [Subscription!]!
+  getSubscriptionPlans(active: Boolean = true): [SubscriptionPlan!]!
+  getSubscriptionPlan(id: UUID!): SubscriptionPlan
+  getBillingProfile(id: UUID!): BillingProfile
+  getUpcomingPayments(userId: UUID!, limit: Int = 10): [Payment!]!
+  getSubscriptionUsage(subscriptionId: UUID!, startDate: DateTime, endDate: DateTime): SubscriptionUsage!
+}
+
+type Mutation {
+  subscribeUser(input: SubscribeUserInput!): Subscription!
+  cancelSubscription(subscriptionId: UUID!, reason: String): Subscription!
+  pauseSubscription(subscriptionId: UUID!, resumeDate: DateTime): Subscription!
+  resumeSubscription(subscriptionId: UUID!): Subscription!
+  upgradeSubscription(subscriptionId: UUID!, newPlanId: UUID!): Subscription!
+  downgradeSubscription(subscriptionId: UUID!, newPlanId: UUID!): Subscription!
+  updateBillingProfile(subscriptionId: UUID!, input: UpdateBillingProfileInput!): BillingProfile!
+  processPayment(subscriptionId: UUID!): Payment!
+  retryFailedPayment(paymentId: UUID!): Payment!
+}
+
+type Subscription {
+  id: UUID!
+  userId: UUID!
+  planId: UUID!
+  plan: SubscriptionPlan!
+  status: SubscriptionStatus!
+  billingProfile: BillingProfile!
+  currentPeriod: SubscriptionPeriod!
+  nextBillingDate: DateTime!
+  trialEndsAt: DateTime
+  cancelledAt: DateTime
+  pausedAt: DateTime
+  resumeAt: DateTime
+  metadata: SubscriptionMetadata
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type SubscriptionPlan {
+  id: UUID!
+  name: String!
+  description: String!
+  price: Decimal!
+  currency: String!
+  billingInterval: BillingInterval!
+  trialDays: Int!
+  features: [PlanFeature!]!
+  limits: PlanLimits!
+  isActive: Boolean!
+  metadata: PlanMetadata
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type BillingProfile {
+  id: UUID!
+  subscriptionId: UUID!
+  paymentMethodId: String!
+  billingAddress: Address!
+  taxId: String
+  currency: String!
+  nextPaymentAmount: Decimal!
+  lastPaymentDate: DateTime
+  failedPaymentAttempts: Int!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type SubscriptionPeriod {
+  id: UUID!
+  subscriptionId: UUID!
+  startDate: DateTime!
+  endDate: DateTime!
+  amount: Decimal!
+  currency: String!
+  status: PeriodStatus!
+  usage: SubscriptionUsage
+  createdAt: DateTime!
+}
+
+type Address {
+  street: String!
+  city: String!
+  state: String!
+  postalCode: String!
+  country: String!
+}
+
+type PlanFeature {
+  name: String!
+  description: String!
+  included: Boolean!
+  limit: Int
+}
+
+type PlanLimits {
+  maxUsers: Int
+  maxProjects: Int
+  storageGB: Int
+  apiCallsPerMonth: Int
+  supportLevel: SupportLevel!
+}
+
+type SubscriptionUsage {
+  subscriptionId: UUID!
+  periodId: UUID!
+  apiCalls: Int!
+  storageUsedGB: Float!
+  activeUsers: Int!
+  lastUpdated: DateTime!
+}
+
+type SubscriptionMetadata {
+  source: String
+  campaignId: String
+  discountCode: String
+}
+
+type PlanMetadata {
+  category: String
+  priority: Int
+  promotionalPrice: Decimal
+  promotionalEndDate: DateTime
+}
+
+type Payment {
+  id: UUID!
+  subscriptionId: UUID!
+  amount: Decimal!
+  currency: String!
+  status: PaymentStatus!
+  method: String!
+  transactionId: String
+  failureReason: String
+  scheduledDate: DateTime!
+  processedDate: DateTime
+  createdAt: DateTime!
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  CANCELLED
+  PAUSED
+  EXPIRED
+  TRIAL
+  PENDING
+}
+
+enum BillingInterval {
+  MONTHLY
+  QUARTERLY
+  YEARLY
+}
+
+enum PeriodStatus {
+  CURRENT
+  UPCOMING
+  COMPLETED
+  CANCELLED
+}
+
+enum SupportLevel {
+  BASIC
+  STANDARD
+  PREMIUM
+  ENTERPRISE
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCESSFUL
+  FAILED
+  REFUNDED
+}
+
+input SubscribeUserInput {
+  userId: UUID!
+  planId: UUID!
+  paymentMethodId: String!
+  billingAddress: AddressInput!
+  trialDays: Int
+  discountCode: String
+}
+
+input UpdateBillingProfileInput {
+  paymentMethodId: String
+  billingAddress: AddressInput
+  taxId: String
+}
+
+input AddressInput {
+  street: String!
+  city: String!
+  state: String!
+  postalCode: String!
+  country: String!
+}

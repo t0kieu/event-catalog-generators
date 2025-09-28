@@ -1,0 +1,312 @@
+scalar UUID
+scalar DateTime
+scalar JSON
+
+type Query {
+  getNotification(id: UUID!): Notification
+  getUserNotifications(
+    userId: UUID!
+    status: NotificationStatus
+    type: NotificationType
+    limit: Int = 20
+    offset: Int = 0
+  ): NotificationConnection!
+  getNotificationPreferences(userId: UUID!): NotificationPreferences!
+  getNotificationTemplates(type: NotificationType): [NotificationTemplate!]!
+  getNotificationStats(userId: UUID!, startDate: DateTime, endDate: DateTime): NotificationStats!
+}
+
+type Mutation {
+  sendNotification(input: SendNotificationInput!): Notification!
+  sendBulkNotifications(input: SendBulkNotificationInput!): [Notification!]!
+  markAsRead(notificationId: UUID!): Notification!
+  markAsUnread(notificationId: UUID!): Notification!
+  markAllAsRead(userId: UUID!): Boolean!
+  deleteNotification(notificationId: UUID!): Boolean!
+  updateNotificationPreferences(userId: UUID!, input: UpdateNotificationPreferencesInput!): NotificationPreferences!
+  createNotificationTemplate(input: CreateNotificationTemplateInput!): NotificationTemplate!
+  scheduleNotification(input: ScheduleNotificationInput!): ScheduledNotification!
+  cancelScheduledNotification(id: UUID!): Boolean!
+}
+
+type Notification {
+  id: UUID!
+  userId: UUID!
+  type: NotificationType!
+  channel: NotificationChannel!
+  title: String!
+  message: String!
+  data: JSON
+  status: NotificationStatus!
+  priority: NotificationPriority!
+  readAt: DateTime
+  deliveredAt: DateTime
+  failureReason: String
+  retryCount: Int!
+  expiresAt: DateTime
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type NotificationPreferences {
+  id: UUID!
+  userId: UUID!
+  email: EmailPreferences!
+  push: PushPreferences!
+  sms: SMSPreferences!
+  inApp: InAppPreferences!
+  doNotDisturb: DoNotDisturbSettings!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type EmailPreferences {
+  enabled: Boolean!
+  address: String!
+  verified: Boolean!
+  types: [NotificationType!]!
+  frequency: NotificationFrequency!
+}
+
+type PushPreferences {
+  enabled: Boolean!
+  deviceTokens: [String!]!
+  types: [NotificationType!]!
+  quietHours: QuietHours
+}
+
+type SMSPreferences {
+  enabled: Boolean!
+  phoneNumber: String
+  verified: Boolean!
+  types: [NotificationType!]!
+}
+
+type InAppPreferences {
+  enabled: Boolean!
+  types: [NotificationType!]!
+  showBadge: Boolean!
+  playSound: Boolean!
+}
+
+type DoNotDisturbSettings {
+  enabled: Boolean!
+  startTime: String!
+  endTime: String!
+  timezone: String!
+  allowUrgent: Boolean!
+}
+
+type QuietHours {
+  enabled: Boolean!
+  startTime: String!
+  endTime: String!
+  timezone: String!
+}
+
+type NotificationTemplate {
+  id: UUID!
+  name: String!
+  type: NotificationType!
+  channel: NotificationChannel!
+  subject: String
+  body: String!
+  variables: [String!]!
+  isActive: Boolean!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type ScheduledNotification {
+  id: UUID!
+  notificationData: SendNotificationInput!
+  scheduledFor: DateTime!
+  status: ScheduledNotificationStatus!
+  executedAt: DateTime
+  failureReason: String
+  createdAt: DateTime!
+}
+
+type NotificationConnection {
+  edges: [NotificationEdge!]!
+  pageInfo: PageInfo!
+  totalCount: Int!
+  unreadCount: Int!
+}
+
+type NotificationEdge {
+  node: Notification!
+  cursor: String!
+}
+
+type NotificationStats {
+  totalSent: Int!
+  totalRead: Int!
+  totalDelivered: Int!
+  totalFailed: Int!
+  readRate: Float!
+  deliveryRate: Float!
+  byType: [NotificationTypeStats!]!
+  byChannel: [NotificationChannelStats!]!
+}
+
+type NotificationTypeStats {
+  type: NotificationType!
+  count: Int!
+  readRate: Float!
+}
+
+type NotificationChannelStats {
+  channel: NotificationChannel!
+  count: Int!
+  deliveryRate: Float!
+}
+
+type PageInfo {
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+  startCursor: String
+  endCursor: String
+}
+
+enum NotificationType {
+  ORDER_CONFIRMATION
+  ORDER_SHIPPED
+  ORDER_DELIVERED
+  PAYMENT_SUCCESSFUL
+  PAYMENT_FAILED
+  SUBSCRIPTION_RENEWED
+  SUBSCRIPTION_CANCELLED
+  ACCOUNT_CREATED
+  PASSWORD_RESET
+  SECURITY_ALERT
+  PROMOTION
+  SYSTEM_MAINTENANCE
+  CUSTOM
+}
+
+enum NotificationChannel {
+  EMAIL
+  PUSH
+  SMS
+  IN_APP
+  WEBHOOK
+}
+
+enum NotificationStatus {
+  PENDING
+  SENT
+  DELIVERED
+  READ
+  FAILED
+  EXPIRED
+}
+
+enum NotificationPriority {
+  LOW
+  NORMAL
+  HIGH
+  URGENT
+}
+
+enum NotificationFrequency {
+  IMMEDIATE
+  DAILY_DIGEST
+  WEEKLY_DIGEST
+  DISABLED
+}
+
+enum ScheduledNotificationStatus {
+  SCHEDULED
+  EXECUTED
+  CANCELLED
+  FAILED
+}
+
+input SendNotificationInput {
+  userId: UUID!
+  type: NotificationType!
+  channel: NotificationChannel!
+  title: String!
+  message: String!
+  data: JSON
+  priority: NotificationPriority = NORMAL
+  expiresAt: DateTime
+  templateId: UUID
+  templateVariables: JSON
+}
+
+input SendBulkNotificationInput {
+  userIds: [UUID!]!
+  type: NotificationType!
+  channel: NotificationChannel!
+  title: String!
+  message: String!
+  data: JSON
+  priority: NotificationPriority = NORMAL
+  expiresAt: DateTime
+}
+
+input UpdateNotificationPreferencesInput {
+  email: EmailPreferencesInput
+  push: PushPreferencesInput
+  sms: SMSPreferencesInput
+  inApp: InAppPreferencesInput
+  doNotDisturb: DoNotDisturbSettingsInput
+}
+
+input EmailPreferencesInput {
+  enabled: Boolean
+  address: String
+  types: [NotificationType!]
+  frequency: NotificationFrequency
+}
+
+input PushPreferencesInput {
+  enabled: Boolean
+  deviceTokens: [String!]
+  types: [NotificationType!]
+  quietHours: QuietHoursInput
+}
+
+input SMSPreferencesInput {
+  enabled: Boolean
+  phoneNumber: String
+  types: [NotificationType!]
+}
+
+input InAppPreferencesInput {
+  enabled: Boolean
+  types: [NotificationType!]
+  showBadge: Boolean
+  playSound: Boolean
+}
+
+input DoNotDisturbSettingsInput {
+  enabled: Boolean
+  startTime: String
+  endTime: String
+  timezone: String
+  allowUrgent: Boolean
+}
+
+input QuietHoursInput {
+  enabled: Boolean
+  startTime: String
+  endTime: String
+  timezone: String
+}
+
+input CreateNotificationTemplateInput {
+  name: String!
+  type: NotificationType!
+  channel: NotificationChannel!
+  subject: String
+  body: String!
+  variables: [String!]!
+}
+
+input ScheduleNotificationInput {
+  notificationData: SendNotificationInput!
+  scheduledFor: DateTime!
+}

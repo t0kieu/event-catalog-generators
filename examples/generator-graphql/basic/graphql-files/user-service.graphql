@@ -1,0 +1,672 @@
+# User Service GraphQL Schema
+# A comprehensive schema for user management with complex relationships and operations
+
+scalar DateTime
+scalar EmailAddress
+scalar PhoneNumber
+scalar UUID
+scalar JSON
+scalar Upload
+
+# Enums
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+  PENDING_VERIFICATION
+  DELETED
+}
+
+enum UserRole {
+  SUPER_ADMIN
+  ADMIN
+  MANAGER
+  USER
+  GUEST
+}
+
+enum AccountType {
+  PERSONAL
+  BUSINESS
+  ENTERPRISE
+}
+
+enum SubscriptionTier {
+  FREE
+  BASIC
+  PREMIUM
+  ENTERPRISE
+}
+
+enum NotificationType {
+  EMAIL
+  SMS
+  PUSH
+  IN_APP
+}
+
+enum AddressType {
+  HOME
+  WORK
+  BILLING
+  SHIPPING
+}
+
+enum AuthProvider {
+  LOCAL
+  GOOGLE
+  FACEBOOK
+  GITHUB
+  MICROSOFT
+  APPLE
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  NON_BINARY
+  PREFER_NOT_TO_SAY
+}
+
+# Input Types
+input CreateUserInput {
+  email: EmailAddress!
+  password: String!
+  firstName: String!
+  lastName: String!
+  phoneNumber: PhoneNumber
+  dateOfBirth: DateTime
+  gender: Gender
+  accountType: AccountType = PERSONAL
+  avatar: Upload
+  preferences: UserPreferencesInput
+  address: AddressInput
+}
+
+input UpdateUserInput {
+  firstName: String
+  lastName: String
+  phoneNumber: PhoneNumber
+  dateOfBirth: DateTime
+  gender: Gender
+  bio: String
+  avatar: Upload
+  preferences: UserPreferencesInput
+}
+
+input UserPreferencesInput {
+  language: String = "en"
+  timezone: String = "UTC"
+  theme: String = "light"
+  notifications: [NotificationPreferenceInput!]
+  privacy: PrivacySettingsInput
+}
+
+input NotificationPreferenceInput {
+  type: NotificationType!
+  enabled: Boolean!
+  categories: [String!]
+}
+
+input PrivacySettingsInput {
+  profileVisibility: String = "public"
+  showEmail: Boolean = false
+  showPhoneNumber: Boolean = false
+  allowSearchByEmail: Boolean = true
+  allowSearchByPhone: Boolean = false
+}
+
+input AddressInput {
+  type: AddressType!
+  street1: String!
+  street2: String
+  city: String!
+  state: String!
+  country: String!
+  postalCode: String!
+  isDefault: Boolean = false
+}
+
+input UserFilterInput {
+  status: [UserStatus!]
+  role: [UserRole!]
+  accountType: [AccountType!]
+  subscriptionTier: [SubscriptionTier!]
+  createdAfter: DateTime
+  createdBefore: DateTime
+  lastActiveAfter: DateTime
+  lastActiveBefore: DateTime
+  search: String
+}
+
+input PaginationInput {
+  first: Int = 20
+  after: String
+  last: Int
+  before: String
+}
+
+input SortInput {
+  field: String!
+  direction: String = "ASC"
+}
+
+# Types
+type User {
+  id: UUID!
+  email: EmailAddress!
+  firstName: String!
+  lastName: String!
+  fullName: String!
+  username: String
+  phoneNumber: PhoneNumber
+  dateOfBirth: DateTime
+  age: Int
+  gender: Gender
+  bio: String
+  avatar: String
+  status: UserStatus!
+  role: UserRole!
+  accountType: AccountType!
+  subscriptionTier: SubscriptionTier!
+  
+  # Relationships
+  profile: UserProfile
+  preferences: UserPreferences!
+  addresses: [Address!]!
+  sessions: [UserSession!]!
+  authProviders: [AuthProvider!]!
+  
+  # Metadata
+  emailVerified: Boolean!
+  phoneVerified: Boolean!
+  twoFactorEnabled: Boolean!
+  lastLoginAt: DateTime
+  lastActiveAt: DateTime
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  
+  # Computed fields
+  isOnline: Boolean!
+  membershipDuration: String!
+  totalLogins: Int!
+  
+  # Related entities
+  orders: [Order!]! # Assuming connection to orders service
+  payments: [Payment!]! # Assuming connection to payment service
+  notifications: [Notification!]!
+  activities: [UserActivity!]!
+  
+  # Permissions and roles
+  permissions: [Permission!]!
+  groups: [UserGroup!]!
+  
+  # Analytics
+  analytics: UserAnalytics
+}
+
+type UserProfile {
+  id: UUID!
+  userId: UUID!
+  company: String
+  jobTitle: String
+  website: String
+  socialLinks: [SocialLink!]!
+  interests: [String!]!
+  skills: [String!]!
+  languages: [String!]!
+  education: [Education!]!
+  experience: [WorkExperience!]!
+  achievements: [Achievement!]!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type SocialLink {
+  platform: String!
+  url: String!
+  username: String
+}
+
+type Education {
+  id: UUID!
+  institution: String!
+  degree: String!
+  fieldOfStudy: String
+  startDate: DateTime
+  endDate: DateTime
+  current: Boolean!
+}
+
+type WorkExperience {
+  id: UUID!
+  company: String!
+  position: String!
+  description: String
+  startDate: DateTime!
+  endDate: DateTime
+  current: Boolean!
+}
+
+type Achievement {
+  id: UUID!
+  title: String!
+  description: String
+  dateEarned: DateTime!
+  issuer: String
+  credentialUrl: String
+}
+
+type UserPreferences {
+  id: UUID!
+  userId: UUID!
+  language: String!
+  timezone: String!
+  theme: String!
+  notifications: [NotificationPreference!]!
+  privacy: PrivacySettings!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type NotificationPreference {
+  id: UUID!
+  type: NotificationType!
+  enabled: Boolean!
+  categories: [String!]!
+}
+
+type PrivacySettings {
+  profileVisibility: String!
+  showEmail: Boolean!
+  showPhoneNumber: Boolean!
+  allowSearchByEmail: Boolean!
+  allowSearchByPhone: Boolean!
+}
+
+type Address {
+  id: UUID!
+  userId: UUID!
+  type: AddressType!
+  street1: String!
+  street2: String
+  city: String!
+  state: String!
+  country: String!
+  postalCode: String!
+  isDefault: Boolean!
+  coordinates: Coordinates
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type Coordinates {
+  latitude: Float!
+  longitude: Float!
+}
+
+type UserSession {
+  id: UUID!
+  userId: UUID!
+  deviceInfo: DeviceInfo!
+  ipAddress: String!
+  userAgent: String!
+  location: Location
+  isActive: Boolean!
+  expiresAt: DateTime!
+  createdAt: DateTime!
+  lastAccessedAt: DateTime!
+}
+
+type DeviceInfo {
+  deviceId: String
+  deviceType: String
+  browser: String
+  operatingSystem: String
+  appVersion: String
+}
+
+type Location {
+  country: String
+  region: String
+  city: String
+  timezone: String
+}
+
+type UserActivity {
+  id: UUID!
+  userId: UUID!
+  action: String!
+  resource: String
+  resourceId: String
+  metadata: JSON
+  ipAddress: String
+  userAgent: String
+  createdAt: DateTime!
+}
+
+type Notification {
+  id: UUID!
+  userId: UUID!
+  title: String!
+  message: String!
+  type: String!
+  category: String
+  data: JSON
+  read: Boolean!
+  readAt: DateTime
+  createdAt: DateTime!
+}
+
+type Permission {
+  id: UUID!
+  name: String!
+  description: String
+  resource: String!
+  action: String!
+}
+
+type UserGroup {
+  id: UUID!
+  name: String!
+  description: String
+  permissions: [Permission!]!
+  members: [User!]!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type UserAnalytics {
+  userId: UUID!
+  totalSessions: Int!
+  averageSessionDuration: Int!
+  lastLoginLocation: Location
+  mostUsedDevice: String
+  loginFrequency: LoginFrequency!
+  activityHeatmap: [ActivityHour!]!
+  featureUsage: [FeatureUsage!]!
+}
+
+type LoginFrequency {
+  daily: Float!
+  weekly: Float!
+  monthly: Float!
+}
+
+type ActivityHour {
+  hour: Int!
+  count: Int!
+}
+
+type FeatureUsage {
+  feature: String!
+  usageCount: Int!
+  lastUsed: DateTime!
+}
+
+# Connection types for pagination
+type UserConnection {
+  edges: [UserEdge!]!
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+type UserEdge {
+  node: User!
+  cursor: String!
+}
+
+type PageInfo {
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+  startCursor: String
+  endCursor: String
+}
+
+# External types (assuming these come from other services)
+type Order {
+  id: UUID!
+  orderNumber: String!
+  status: String!
+  total: Float!
+  createdAt: DateTime!
+}
+
+type Payment {
+  id: UUID!
+  amount: Float!
+  currency: String!
+  status: String!
+  createdAt: DateTime!
+}
+
+# Response types
+type AuthPayload {
+  user: User!
+  token: String!
+  refreshToken: String!
+  expiresIn: Int!
+}
+
+type UserOperationResult {
+  success: Boolean!
+  message: String
+  user: User
+  errors: [String!]
+}
+
+type BulkOperationResult {
+  success: Boolean!
+  message: String
+  processedCount: Int!
+  successCount: Int!
+  failureCount: Int!
+  errors: [String!]
+}
+
+# Queries
+type Query {
+  # Single user queries
+  user(id: UUID!): User
+  userByEmail(email: EmailAddress!): User
+  userByUsername(username: String!): User
+  me: User
+  
+  # Multiple user queries
+  users(
+    filter: UserFilterInput
+    pagination: PaginationInput
+    sort: SortInput
+  ): UserConnection!
+  
+  searchUsers(
+    query: String!
+    filter: UserFilterInput
+    pagination: PaginationInput
+  ): UserConnection!
+  
+  # User-related queries
+  userProfile(userId: UUID!): UserProfile
+  userSessions(userId: UUID!): [UserSession!]!
+  userActivities(
+    userId: UUID!
+    pagination: PaginationInput
+    dateRange: DateRangeInput
+  ): [UserActivity!]!
+  
+  userNotifications(
+    userId: UUID!
+    unreadOnly: Boolean = false
+    pagination: PaginationInput
+  ): [Notification!]!
+  
+  userAnalytics(userId: UUID!): UserAnalytics
+  
+  # Admin queries
+  userStats: UserStats!
+  onlineUsers: [User!]!
+  recentlyActiveUsers(limit: Int = 10): [User!]!
+  
+  # Permission and role queries
+  userGroups: [UserGroup!]!
+  permissions: [Permission!]!
+}
+
+input DateRangeInput {
+  from: DateTime!
+  to: DateTime!
+}
+
+type UserStats {
+  totalUsers: Int!
+  activeUsers: Int!
+  newUsersToday: Int!
+  newUsersThisWeek: Int!
+  newUsersThisMonth: Int!
+  usersByStatus: [UserStatusCount!]!
+  usersByRole: [UserRoleCount!]!
+  usersByAccountType: [UserAccountTypeCount!]!
+}
+
+type UserStatusCount {
+  status: UserStatus!
+  count: Int!
+}
+
+type UserRoleCount {
+  role: UserRole!
+  count: Int!
+}
+
+type UserAccountTypeCount {
+  accountType: AccountType!
+  count: Int!
+}
+
+# Mutations
+type Mutation {
+  # User creation and management
+  createUser(input: CreateUserInput!): UserOperationResult!
+  updateUser(id: UUID!, input: UpdateUserInput!): UserOperationResult!
+  deleteUser(id: UUID!): UserOperationResult!
+  
+  # Bulk operations
+  bulkCreateUsers(users: [CreateUserInput!]!): BulkOperationResult!
+  bulkUpdateUsers(updates: [BulkUpdateUserInput!]!): BulkOperationResult!
+  bulkDeleteUsers(ids: [UUID!]!): BulkOperationResult!
+  
+  # Authentication
+  login(email: EmailAddress!, password: String!): AuthPayload!
+  loginWithProvider(provider: AuthProvider!, token: String!): AuthPayload!
+  logout(sessionId: UUID): UserOperationResult!
+  refreshToken(refreshToken: String!): AuthPayload!
+  
+  # Password management
+  changePassword(oldPassword: String!, newPassword: String!): UserOperationResult!
+  resetPassword(email: EmailAddress!): UserOperationResult!
+  confirmPasswordReset(token: String!, newPassword: String!): UserOperationResult!
+  
+  # Email and phone verification
+  sendEmailVerification(email: EmailAddress!): UserOperationResult!
+  verifyEmail(token: String!): UserOperationResult!
+  sendPhoneVerification(phoneNumber: PhoneNumber!): UserOperationResult!
+  verifyPhone(phoneNumber: PhoneNumber!, code: String!): UserOperationResult!
+  
+  # Two-factor authentication
+  enableTwoFactor: TwoFactorSetupResult!
+  confirmTwoFactor(code: String!): UserOperationResult!
+  disableTwoFactor(password: String!): UserOperationResult!
+  
+  # User status management
+  activateUser(id: UUID!): UserOperationResult!
+  deactivateUser(id: UUID!): UserOperationResult!
+  suspendUser(id: UUID!, reason: String): UserOperationResult!
+  
+  # Profile management
+  updateUserProfile(userId: UUID!, profile: UserProfileInput!): UserOperationResult!
+  uploadAvatar(userId: UUID!, avatar: Upload!): UserOperationResult!
+  
+  # Address management
+  addAddress(userId: UUID!, address: AddressInput!): UserOperationResult!
+  updateAddress(id: UUID!, address: AddressInput!): UserOperationResult!
+  deleteAddress(id: UUID!): UserOperationResult!
+  setDefaultAddress(id: UUID!): UserOperationResult!
+  
+  # Preferences
+  updatePreferences(userId: UUID!, preferences: UserPreferencesInput!): UserOperationResult!
+  
+  # Notifications
+  markNotificationAsRead(id: UUID!): UserOperationResult!
+  markAllNotificationsAsRead(userId: UUID!): UserOperationResult!
+  deleteNotification(id: UUID!): UserOperationResult!
+  
+  # Session management
+  terminateSession(sessionId: UUID!): UserOperationResult!
+  terminateAllSessions(userId: UUID!): UserOperationResult!
+  
+  # User groups and permissions
+  createUserGroup(name: String!, description: String, permissions: [UUID!]!): UserOperationResult!
+  updateUserGroup(id: UUID!, name: String, description: String, permissions: [UUID!]): UserOperationResult!
+  deleteUserGroup(id: UUID!): UserOperationResult!
+  addUserToGroup(userId: UUID!, groupId: UUID!): UserOperationResult!
+  removeUserFromGroup(userId: UUID!, groupId: UUID!): UserOperationResult!
+  
+  # Admin operations
+  assignRole(userId: UUID!, role: UserRole!): UserOperationResult!
+  updateSubscriptionTier(userId: UUID!, tier: SubscriptionTier!): UserOperationResult!
+}
+
+input BulkUpdateUserInput {
+  id: UUID!
+  data: UpdateUserInput!
+}
+
+input UserProfileInput {
+  company: String
+  jobTitle: String
+  website: String
+  bio: String
+  socialLinks: [SocialLinkInput!]
+  interests: [String!]
+  skills: [String!]
+  languages: [String!]
+}
+
+input SocialLinkInput {
+  platform: String!
+  url: String!
+  username: String
+}
+
+type TwoFactorSetupResult {
+  success: Boolean!
+  message: String
+  qrCode: String
+  backupCodes: [String!]
+}
+
+# Subscriptions
+type Subscription {
+  # User updates
+  userUpdated(userId: UUID): User!
+  userStatusChanged(userId: UUID): User!
+  
+  # Real-time notifications
+  notificationReceived(userId: UUID!): Notification!
+  
+  # Session events
+  userLoggedIn: User!
+  userLoggedOut: User!
+  
+  # Admin subscriptions
+  newUserRegistered: User!
+  userDeleted: UUID!
+  
+  # Activity tracking
+  userActivity(userId: UUID!): UserActivity!
+}
+
+# Directives
+directive @auth(requires: UserRole = USER) on FIELD_DEFINITION
+directive @rateLimit(max: Int!, window: Int!) on FIELD_DEFINITION
+directive @deprecated(reason: String = "This field is deprecated") on FIELD_DEFINITION | ENUM_VALUE
