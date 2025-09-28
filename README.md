@@ -10,6 +10,9 @@ This repository contains the generators for the EventCatalog project.
 - [AsyncAPI](./packages/generator-asyncapi/README.md)
   - [Documentation](https://www.eventcatalog.dev/integrations/asyncapi)
   - [Example Projects](./examples/generator-asyncapi/)
+- [GraphQL](./packages/generator-graphql/README.md)
+  - [Documentation](https://www.eventcatalog.dev/integrations/graphql)
+  - [Example Projects](./examples/generator-graphql/)
 - [EventCatalog AI](./packages/generator-ai/README.md)
   - [Documentation](https://www.eventcatalog.dev/integrations/ai)
 - [EventCatalog Federation](./packages/generator-federation/README.md)
@@ -49,6 +52,10 @@ All plugins require a license key. You can get a license key from [EventCatalog 
   - The `x-eventcatalog-role` extension can be used to control which service owns a message.
   - This is useful when you have multiple AsyncAPI files that define the same message.
 
+**GraphQL Integrations**
+
+- [Integrate GraphQL files into EventCatalog](./examples/generator-graphql/)
+
 **EventBridge Integrations [(watch demo)](https://www.youtube.com/watch?v=MeBuwAflwM4)**
 
 - [Import EventBridge schemas into EventCatalog using schema discovery](./examples/generator-eventbridge/basic/)
@@ -81,11 +88,11 @@ Raise a GitHub issue on this project, or contact us on [our Discord server](http
 
 ## Commercial use
 
-All plugins are licensed under a [dual-license](./LICENSE.md). To ensure the sustainability of the project, you can freely make use of this software if your projects are Open Source. Otherwise for internal systems you must obtain a [commercial license](./LICENSE-COMMERCIAL.md).
+All plugins are licensed under a [dual-license](./LICENSE-COMMERCIAL.md). To ensure the sustainability of the project, you can freely make use of this software if your projects are Open Source. Otherwise for internal systems you must obtain a [commercial license](./LICENSE-COMMERCIAL.md).
 
 If you would like to obtain a Commercial License, you can get a free trial (14 days) per plugin at https://eventcatalog.cloud or email us at `hello@eventcatalog.dev`
 
-# Sponsors
+<!-- # Sponsors
 
 Thank you to our project sponsors.
 
@@ -99,7 +106,7 @@ Thank you to our project sponsors.
 
 <hr />
 
-_Sponsors help make EventCatalog sustainable, want to help the project? Get in touch! Or [visit our sponsor page](https://github.com/sponsors/event-catalog)._
+_Sponsors help make EventCatalog sustainable, want to help the project? Get in touch! Or [visit our sponsor page](https://github.com/sponsors/event-catalog)._ -->
 
 # Enterprise support
 
