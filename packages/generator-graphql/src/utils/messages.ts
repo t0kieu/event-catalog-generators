@@ -1,5 +1,4 @@
 import {
-  GraphQLFieldMap,
   GraphQLObjectType,
   isNonNullType,
   isListType,
@@ -7,7 +6,8 @@ import {
   GraphQLArgument,
   GraphQLSchema,
   isObjectType,
-  GraphQLType,
+  parse,
+  print,
 } from 'graphql';
 import { GraphQLOperationType } from '../types';
 
@@ -25,7 +25,11 @@ export const defaultMarkdown = ({
   const args = field.args || [];
   const hasArgs = args.length > 0;
 
-  return `## Operation Details
+  return `## Architecture Diagram
+
+<NodeGraph />
+
+## Operation Details
 
 - **Type**: ${operationType}
 - **Return Type**: ${getTypeString(field.type)}
@@ -37,9 +41,7 @@ ${hasArgs ? generateArgumentsTable(args) : ''}
 
 \`\`\`graphql
 ${generateCodeSnippet(field, operationType, schema)}
-\`\`\`
-
-<NodeGraph />`;
+\`\`\``;
 };
 
 export const getMessageName = (field: GraphQLField<any, any>) => {
@@ -108,25 +110,23 @@ function generateCodeSnippet(field: GraphQLField<any, any>, operationType: Graph
   // Generate arguments string with example values
   const argsString = hasArgs ? `(${args.map((arg) => `${arg.name}: ${getExampleValue(arg.type, schema)}`).join(', ')})` : '';
 
-  // Generate the fields to select in the response with proper type introspection
+  // Generate the fields to select in the response
   const returnFields = generateReturnFields(field.type, schema);
   const fieldWithReturnFields = returnFields ? `${field.name}${argsString} ${returnFields}` : `${field.name}${argsString}`;
 
-  switch (operationType) {
-    case 'query':
-      return `query {
+  // Build a proper GraphQL document and use the built-in formatter
+  const operationName = operationType.charAt(0).toUpperCase() + operationType.slice(1);
+  const document = `${operationType} {
   ${fieldWithReturnFields}
 }`;
-    case 'mutation':
-      return `mutation {
-  ${fieldWithReturnFields}
-}`;
-    case 'subscription':
-      return `subscription {
-  ${fieldWithReturnFields}
-}`;
-    default:
-      return fieldWithReturnFields;
+
+  try {
+    // Parse and reformat using GraphQL's built-in formatter
+    const parsed = parse(document);
+    return print(parsed);
+  } catch (error) {
+    // Fallback to manual formatting if parsing fails
+    return document;
   }
 }
 
@@ -185,44 +185,33 @@ function generateReturnFields(type: any, schema?: GraphQLSchema, depth: number =
     return '';
   }
 
-  // For object types, try to generate realistic field selection
+  // For object types, generate a simple field selection
   if (schema && isObjectType(type)) {
     const fields = type.getFields();
     const fieldEntries = Object.entries(fields);
 
     if (fieldEntries.length > 0) {
-      const baseIndent = '  '.repeat(depth + 2); // 2 spaces per depth level, starting at level 2
+      // Just select scalar fields and first few fields to keep it simple
       const selectedFields = fieldEntries
-        .slice(0, 5) // Limit to first 5 fields to keep examples manageable
+        .slice(0, 5)
         .map(([fieldName, field]) => {
-          const subFields = generateReturnFields(field.type, schema, depth + 1);
-          if (subFields) {
-            // For nested objects, format with proper indentation
-            const lines = subFields.split('\n');
-            const formattedSubFields = lines
-              .map((line, index) => {
-                if (index === 0) return line; // First line (opening brace)
-                if (index === lines.length - 1) return `${baseIndent}${line}`; // Last line (closing brace)
-                return `${baseIndent}${line}`; // Middle lines (fields)
-              })
-              .join('\n');
-            return `${baseIndent}${fieldName} ${formattedSubFields}`;
+          // Check if the field is a scalar or simple type
+          const fieldType = isNonNullType(field.type) ? field.type.ofType : field.type;
+          const isScalar = ['String', 'Int', 'Float', 'Boolean', 'ID'].includes(fieldType.name);
+
+          if (isScalar || depth >= 1) {
+            return fieldName;
           }
-          return `${baseIndent}${fieldName}`;
+
+          // For nested objects at depth 0, add them but don't go deeper
+          const subFields = generateReturnFields(field.type, schema, depth + 1);
+          return subFields ? `${fieldName} ${subFields}` : fieldName;
         })
         .join('\n');
 
-      const closingIndent = '  '.repeat(depth + 1);
-      return `{
-${selectedFields}
-${closingIndent}}`;
+      return `{\n${selectedFields}\n}`;
     }
   }
 
-  // For unknown object types, add a basic field selection template
-  const baseIndent = '  '.repeat(depth + 2);
-  const closingIndent = '  '.repeat(depth + 1);
-  return `{
-${baseIndent}# Add fields you want to select
-${closingIndent}}`;
+  return '';
 }

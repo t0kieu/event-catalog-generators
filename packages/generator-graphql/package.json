@@ -1,7 +1,7 @@
 {
   "name": "@eventcatalog/generator-graphql",
-  "version": "1.0.0",
-  "description": "GraphQL generator for EventCatalog",
+  "version": "0.0.1",
+  "description": "GraphQL generator for EventCatalog.",
   "scripts": {
     "build": "tsup",
     "test": "vitest",
@@ -32,7 +32,7 @@
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
   "dependencies": {
-    "@eventcatalog/sdk": "^2.7.6",
+    "@eventcatalog/sdk": "^2.8.0",
     "chalk": "^4",
     "graphql": "^16.8.1",
     "zod": "^3.23.8"

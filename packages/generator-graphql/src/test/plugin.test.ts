@@ -80,6 +80,47 @@ describe('GraphQL EventCatalog Plugin', () => {
         expect(await getDomain('users', '1.0.0')).toBeUndefined();
       });
 
+      // persist domain markdown
+      it('if the domain is already defined in EventCatalog and the versions match, the markdown, owners, badges and attachments are persisted and not overwritten', async () => {
+        const { getDomain, writeDomain } = utils(catalogDir);
+
+        await writeDomain({
+          id: 'users',
+          name: 'Users Domain',
+          version: '1.0.0',
+          markdown: 'This is my original markdown, please do not overwrite me',
+          owners: ['John Doe', 'Jane Doe'],
+          attachments: [{ title: 'Random', url: 'https://random.com' }],
+          badges: [{ content: 'Random', textColor: 'blue', backgroundColor: 'blue' }],
+        });
+
+        await plugin(config, {
+          services: [
+            {
+              path: join(graphQLExamples, 'simple.graphql'),
+              id: 'user-service',
+              version: '1.0.0',
+              summary: 'This is a sample server User service.',
+              name: 'User Service',
+            },
+          ],
+          domain: { id: 'users', name: 'Users Domain', version: '1.0.0' },
+        });
+
+        const domain = await getDomain('users', '1.0.0');
+        expect(domain).toEqual(
+          expect.objectContaining({
+            id: 'users',
+            name: 'Users Domain',
+            version: '1.0.0',
+            markdown: 'This is my original markdown, please do not overwrite me',
+            owners: ['John Doe', 'Jane Doe'],
+            attachments: [{ title: 'Random', url: 'https://random.com' }],
+            badges: [{ content: 'Random', textColor: 'blue', backgroundColor: 'blue' }],
+          })
+        );
+      });
+
       it('if a domain is defined in the GraphQL file but the versions do not match, the existing domain is versioned and a new one is created', async () => {
         const { writeDomain, getDomain, getResourcePath } = utils(catalogDir);
 
@@ -181,6 +222,26 @@ describe('GraphQL EventCatalog Plugin', () => {
 
         const domain = await getDomain('users', '1.0.0');
         expect(domain.owners).toEqual(['John Doe', 'Jane Doe']);
+      });
+
+      it('if a domain is defined, the service is added into the domain folder', async () => {
+        const { getResourcePath } = utils(catalogDir);
+
+        await plugin(config, {
+          services: [
+            {
+              path: join(graphQLExamples, 'petstore.graphql'),
+              id: 'petstore-service',
+              version: '1.1.0',
+              summary: 'This is a sample server Petstore server.',
+              name: 'Petstore Service',
+            },
+          ],
+          domain: { id: 'users', name: 'Users Domain', version: '1.0.0' },
+        });
+
+        const path = await getResourcePath(catalogDir, 'petstore-service', '1.1.0');
+        expect(path?.relativePath).toEqual('/domains/users/services/petstore-service/index.mdx');
       });
     });
 
@@ -695,6 +756,23 @@ describe('GraphQL EventCatalog Plugin', () => {
           const latestQuery = await getEvent('userCreated', '1.0.0');
           expect(latestQuery.version).toEqual('1.0.0');
         });
+      });
+
+      it('if a service is defined, the messages are added into the service folder', async () => {
+        const { getResourcePath } = utils(catalogDir);
+
+        await plugin(config, {
+          services: [
+            {
+              path: join(graphQLExamples, 'simple.graphql'),
+              id: 'user-service',
+              version: '1.0.0',
+            },
+          ],
+        });
+
+        const path = await getResourcePath(catalogDir, 'getUser', '1.0.0');
+        expect(path?.relativePath).toEqual('/services/user-service/queries/getUser/index.mdx');
       });
     });
 
