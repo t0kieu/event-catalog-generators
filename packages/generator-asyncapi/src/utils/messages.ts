@@ -156,7 +156,7 @@ export const getSchemaFileName = (message: MessageInterface) => {
 };
 
 export const getMessageName = (message: MessageInterface) => {
-  return message.hasTitle() && message.title() ? (message.title() as string) : message.id();
+  return message.hasName() && message.name() ? (message.name() as string) : message.id();
 };
 
 export const getChannelsForMessage = (
