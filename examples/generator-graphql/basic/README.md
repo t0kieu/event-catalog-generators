@@ -24,7 +24,7 @@ This example contains
 - Visually see GraphQL files in your catalog.
 - And much more...
 
-To dive into how this plugin can help you, you can read the [GraphQL Plugin Docs](https://www.eventcatalog.dev/integrations/graphql)
+To dive into how this plugin can help you, you can read the [GraphQL Plugin Docs](https://www.eventcatalog.dev/integrations/graphql).
 
 
 

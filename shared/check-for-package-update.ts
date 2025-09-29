@@ -20,33 +20,39 @@ export async function checkForPackageUpdate(packageName: string) {
 
   if (!installedVersion || installedVersion === 'latest') return;
 
-  const pkg = { name: packageName, version: installedVersion };
-  const updateNotifierModule = await import('update-notifier');
-  const notifier = updateNotifierModule.default({ pkg, updateCheckInterval: 0, shouldNotifyInNpmScript: true });
+  try {
+    const pkg = { name: packageName, version: installedVersion };
+    const updateNotifierModule = await import('update-notifier');
+    const notifier = updateNotifierModule.default({ pkg, updateCheckInterval: 0, shouldNotifyInNpmScript: true });
 
-  const info = await notifier.fetchInfo();
+    const info = await notifier.fetchInfo();
 
-  if (info?.type !== 'latest') {
-    const message = `Package ${packageName} update available ${info.current} → ${info.latest}
+    if (info?.type !== 'latest') {
+      const message = `Package ${packageName} update available ${info.current} → ${info.latest}
 Run npm i ${packageName} to update`;
 
-    console.log(
-      boxen(message, {
-        padding: 1,
-        margin: 1,
-        align: 'center',
-        borderColor: 'yellow',
-        borderStyle: {
-          topLeft: ' ',
-          topRight: ' ',
-          bottomLeft: ' ',
-          bottomRight: ' ',
-          right: ' ',
-          top: '-',
-          bottom: '-',
-          left: ' ',
-        },
-      })
-    );
+      console.log(
+        boxen(message, {
+          padding: 1,
+          margin: 1,
+          align: 'center',
+          borderColor: 'yellow',
+          borderStyle: {
+            topLeft: ' ',
+            topRight: ' ',
+            bottomLeft: ' ',
+            bottomRight: ' ',
+            right: ' ',
+            top: '-',
+            bottom: '-',
+            left: ' ',
+          },
+        })
+      );
+    }
+  } catch (error) {
+    // Silently ignore update check failures (common in bundled environments)
+    // This prevents the ERR_INVALID_ARG_TYPE error when update-notifier's
+    // dependencies can't properly resolve file paths in bundled code
   }
 }
