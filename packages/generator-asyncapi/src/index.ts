@@ -362,7 +362,7 @@ export default async (config: any, options: Props) => {
         await writeChannel(
           {
             id: channelId,
-            name: channelAsJSON?.title || channel.id(),
+            name: channelAsJSON?.title || channel.address() || channel.id(),
             markdown: channelMarkdown,
             version: channelVersion,
             ...(Object.keys(paramsForCatalog).length > 0 && { parameters: paramsForCatalog }),
@@ -396,7 +396,7 @@ export default async (config: any, options: Props) => {
         const isReceived = operation.action() === 'receive' || operation.action() === 'subscribe';
         const isSent = operation.action() === 'send' || operation.action() === 'publish';
 
-        let messageId = options.messages?.id?.lowerCase ? message.id().toLowerCase() : message.id();
+        let messageId = message.id();
         const messageName = messageId;
 
         if (eventType !== 'event' && eventType !== 'command' && eventType !== 'query') {
