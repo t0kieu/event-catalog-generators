@@ -1175,7 +1175,7 @@ describe('AsyncAPI EventCatalog Plugin', () => {
           expect(event.id).toEqual('hello-usersignedup');
         });
 
-        it.only('if `messages.id.prefixWithServiceId` is set to true then the id of the message is prefixed with the service id', async () => {
+        it('if `messages.id.prefixWithServiceId` is set to true then the id of the message is prefixed with the service id', async () => {
           const { getEvent } = utils(catalogDir);
 
           await plugin(config, {
