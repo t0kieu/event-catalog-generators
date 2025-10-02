@@ -1,5 +1,11 @@
 # @eventcatalog/sdk
 
+## 4.5.3
+
+### Patch Changes
+
+- fdffef6: feat(plugin): asyncpi and openapi now support name and summary override
+
 ## 4.5.2
 
 ### Patch Changes
