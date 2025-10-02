@@ -746,6 +746,23 @@ describe('AsyncAPI EventCatalog Plugin', () => {
           expect(service.name).toEqual('Awesome account service');
         });
 
+        it('[summary] if the `summary` value is given in the service config options, then the service summary is set to the config value', async () => {
+          const { getService } = utils(catalogDir);
+
+          await plugin(config, {
+            services: [
+              {
+                path: join(asyncAPIExamplesDir, 'simple.asyncapi.yml'),
+                id: 'account-service',
+                summary: 'Awesome account service summary',
+              },
+            ],
+          });
+
+          const service = await getService('account-service', '1.0.0');
+          expect(service.summary).toEqual('Awesome account service summary');
+        });
+
         it('[id] if the `id` not provided in the service config options, The generator throw an explicit error', async () => {
           await expect(
             plugin(config, {

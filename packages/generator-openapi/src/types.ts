@@ -11,6 +11,8 @@ export type Domain = {
 
 export type Service = {
   id: string;
+  name?: string;
+  summary?: string;
   path: string | string[];
   owners?: string[];
   setMessageOwnersToServiceOwners?: boolean;
