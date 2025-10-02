@@ -175,6 +175,7 @@ export default async (_: any, options: Props) => {
         owners: service.setMessageOwnersToServiceOwners ? service.owners : [],
         serviceHasMultipleSpecFiles: Array.isArray(serviceSpec.path),
         isDraft: isServiceMarkedAsDraft,
+        serviceId: service.id,
       });
 
       let owners = service.owners || [];
@@ -258,7 +259,13 @@ const processMessagesForOpenAPISpec = async (
   pathToSpec: string,
   document: OpenAPI.Document,
   servicePath: string,
-  options: Props & { owners: string[]; pathForMessages?: string; serviceHasMultipleSpecFiles: boolean; isDraft?: boolean }
+  options: Props & {
+    owners: string[];
+    pathForMessages?: string;
+    serviceHasMultipleSpecFiles: boolean;
+    isDraft?: boolean;
+    serviceId?: string;
+  }
 ) => {
   const operations = await getOperationsByType(pathToSpec, options.httpMethodsToMessages);
   const sidebarBadgeType = options.sidebarBadgeType || 'HTTP_METHOD';
@@ -276,7 +283,8 @@ const processMessagesForOpenAPISpec = async (
       document,
       operation,
       options.messages?.generateMarkdown,
-      options.messages?.id
+      options.messages?.id,
+      options.serviceId
     );
     let messageMarkdown = message.markdown;
     const messageType = operation.type;

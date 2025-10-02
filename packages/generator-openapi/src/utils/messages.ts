@@ -165,7 +165,8 @@ export const buildMessage = async (
   document: OpenAPI.Document,
   operation: Operation,
   generateMarkdown?: ({}: { operation: Operation; markdown: string }) => string,
-  messageIdConfig?: MessageIdConfig
+  messageIdConfig?: MessageIdConfig,
+  serviceId?: string
 ) => {
   const requestBodiesAndResponses = await getSchemasByOperationId(pathToFile, operation.operationId);
   const extensions = operation.extensions || {};
@@ -196,7 +197,7 @@ export const buildMessage = async (
 
   if (messageIdConfig?.prefixWithServiceId) {
     const separator = messageIdConfig.separator || '-';
-    uniqueIdentifier = [apiName, uniqueIdentifier].join(separator);
+    uniqueIdentifier = [serviceId, uniqueIdentifier].join(separator);
   }
 
   return {
