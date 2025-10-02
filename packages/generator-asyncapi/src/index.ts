@@ -43,6 +43,7 @@ const optionsSchema = z.object({
       path: z.string({ required_error: 'The service path is required. please provide the path to specification file' }),
       draft: z.boolean().optional(),
       name: z.string().optional(),
+      summary: z.string().optional(),
       owners: z.array(z.string()).optional(),
       generateMarkdown: z
         .function()
@@ -527,7 +528,7 @@ export default async (config: any, options: Props) => {
         id: serviceId,
         name: serviceName,
         version: version,
-        summary: getServiceSummary(document),
+        summary: service.summary || getServiceSummary(document),
         badges: badges || documentTags.map((tag) => ({ content: tag.name(), textColor: 'blue', backgroundColor: 'blue' })),
         markdown: serviceMarkdown,
         sends,

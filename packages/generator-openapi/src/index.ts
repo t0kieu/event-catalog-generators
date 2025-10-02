@@ -4,7 +4,7 @@ import chalk from 'chalk';
 import SwaggerParser from '@apidevtools/swagger-parser';
 
 import { defaultMarkdown as generateMarkdownForDomain } from './utils/domains';
-import { buildService } from './utils/services';
+import { buildService, getSummary } from './utils/services';
 import { buildMessage } from './utils/messages';
 import { getOperationsByType } from './utils/openapi';
 import { Domain, Service, Message } from './types';
@@ -210,6 +210,8 @@ export default async (_: any, options: Props) => {
       await writeService(
         {
           ...service,
+          name: serviceSpec.name || service.name,
+          summary: serviceSpec.summary || service.summary,
           badges: serviceBadges || service.badges,
           markdown: serviceMarkdown,
           specifications: serviceSpecifications,

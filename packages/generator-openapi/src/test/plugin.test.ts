@@ -801,6 +801,30 @@ describe('OpenAPI EventCatalog Plugin', () => {
             expect(event.draft).toEqual(true);
           });
         });
+        describe('config option: name', () => {
+          it('if a `name` value is given in the service config options, then the generator uses that name as the service name', async () => {
+            const { getService } = utils(catalogDir);
+
+            await plugin(config, {
+              services: [{ path: join(openAPIExamples, 'petstore.yml'), id: 'swagger-petstore', name: 'My Custom Name' }],
+            });
+
+            const service = await getService('swagger-petstore', '1.0.0');
+            expect(service.name).toEqual('My Custom Name');
+          });
+        });
+        describe('config option: summary', () => {
+          it('if a `summary` value is given in the service config options, then the generator uses that summary as the service summary', async () => {
+            const { getService } = utils(catalogDir);
+
+            await plugin(config, {
+              services: [{ path: join(openAPIExamples, 'petstore.yml'), id: 'swagger-petstore', summary: 'My Custom Summary' }],
+            });
+
+            const service = await getService('swagger-petstore', '1.0.0');
+            expect(service.summary).toEqual('My Custom Summary');
+          });
+        });
       });
     });
 
