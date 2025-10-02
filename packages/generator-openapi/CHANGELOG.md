@@ -1,5 +1,11 @@
 # @eventcatalog/generator-openapi
 
+## 7.4.3
+
+### Patch Changes
+
+- fdffef6: feat(plugin): asyncpi and openapi now support name and summary override
+
 ## 7.4.2
 
 ### Patch Changes
