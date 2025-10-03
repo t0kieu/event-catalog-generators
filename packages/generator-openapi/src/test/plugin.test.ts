@@ -1248,12 +1248,12 @@ describe('OpenAPI EventCatalog Plugin', () => {
 
           await plugin(config, {
             messages: { id: { prefixWithServiceId: true } },
-            services: [{ path: join(openAPIExamples, 'petstore.yml'), id: 'swagger-petstore' }],
+            services: [{ path: join(openAPIExamples, 'petstore.yml'), id: 'petstore' }],
           });
 
-          const command = await getCommand('swagger-petstore-createPets');
+          const command = await getCommand('petstore-createPets');
 
-          expect(command.id).toEqual('swagger-petstore-createPets');
+          expect(command.id).toEqual('petstore-createPets');
         });
 
         it('if a `messages.id.separator` value is given then the that separator is used to join the prefix and the message id', async () => {
