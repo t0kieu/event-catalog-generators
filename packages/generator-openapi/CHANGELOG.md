@@ -1,5 +1,11 @@
 # @eventcatalog/generator-openapi
 
+## 7.4.4
+
+### Patch Changes
+
+- 4023ac0: fix(plugin): openapi now prefixes with the correct service id
+
 ## 7.4.3
 
 ### Patch Changes
