@@ -1,5 +1,11 @@
 # @eventcatalog/generator-openapi
 
+## 7.4.5
+
+### Patch Changes
+
+- e87abdf: fix(openapi): folder names for messages are now correct
+
 ## 7.4.4
 
 ### Patch Changes
