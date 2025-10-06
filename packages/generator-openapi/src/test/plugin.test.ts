@@ -1254,6 +1254,9 @@ describe('OpenAPI EventCatalog Plugin', () => {
           const command = await getCommand('petstore-createPets');
 
           expect(command.id).toEqual('petstore-createPets');
+
+          // Make sure folder name is also prefixed with the service id
+          expect(existsSync(join(catalogDir, 'services', 'petstore', 'commands', 'createPets'))).toBe(true);
         });
 
         it('if a `messages.id.separator` value is given then the that separator is used to join the prefix and the message id', async () => {
