@@ -1,5 +1,11 @@
 # @eventcatalog/generator-openapi
 
+## 7.5.0
+
+### Minor Changes
+
+- bb096f0: feat(plugins): added support for writesTo and readsFrom to attach data stores to them
+
 ## 7.4.5
 
 ### Patch Changes

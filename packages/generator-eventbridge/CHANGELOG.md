@@ -1,5 +1,11 @@
 # @eventcatalog/generator-eventbridge
 
+## 3.2.2
+
+### Patch Changes
+
+- bb096f0: feat(plugins): added support for writesTo and readsFrom to attach data stores to them
+
 ## 3.2.1
 
 ### Patch Changes

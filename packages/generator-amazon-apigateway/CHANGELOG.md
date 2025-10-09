@@ -1,5 +1,11 @@
 # @eventcatalog/generator-amazon-apigateway
 
+## 1.2.1
+
+### Patch Changes
+
+- bb096f0: feat(plugins): added support for writesTo and readsFrom to attach data stores to them
+
 ## 1.2.0
 
 ### Minor Changes

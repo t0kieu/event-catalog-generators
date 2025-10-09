@@ -1,5 +1,11 @@
 # @eventcatalog/sdk
 
+## 4.5.4
+
+### Patch Changes
+
+- bb096f0: feat(plugins): added support for writesTo and readsFrom to attach data stores to them
+
 ## 4.5.3
 
 ### Patch Changes
