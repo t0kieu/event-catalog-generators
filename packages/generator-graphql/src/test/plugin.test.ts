@@ -376,6 +376,45 @@ describe('GraphQL EventCatalog Plugin', () => {
         const schema = await fs.readFile(join(catalogDir, 'services', 'swagger-petstore', 'petstore.graphql'));
         expect(schema).toBeDefined();
       });
+
+      describe('service options', () => {
+        it('if the `writesTo` option is provided, the service writesTo is set to the config value', async () => {
+          const { getService } = utils(catalogDir);
+          await plugin(config, {
+            services: [
+              {
+                path: join(graphQLExamples, 'petstore.graphql'),
+                id: 'swagger-petstore',
+                version: '1.0.0',
+                summary: 'This is a sample server Petstore server.',
+                name: 'Petstore Service',
+                writesTo: [{ id: 'Users Service', version: '1.0.0' }],
+              },
+            ],
+          });
+
+          const service = await getService('swagger-petstore');
+          expect(service.writesTo).toEqual([{ id: 'Users Service', version: '1.0.0' }]);
+        });
+
+        it('if the `readsFrom` option is provided, the service readsFrom is set to the config value', async () => {
+          const { getService } = utils(catalogDir);
+          await plugin(config, {
+            services: [
+              {
+                path: join(graphQLExamples, 'petstore.graphql'),
+                id: 'swagger-petstore',
+                version: '1.0.0',
+                summary: 'This is a sample server Petstore server.',
+                name: 'Petstore Service',
+                readsFrom: [{ id: 'Users Service', version: '1.0.0' }],
+              },
+            ],
+          });
+          const service = await getService('swagger-petstore');
+          expect(service.readsFrom).toEqual([{ id: 'Users Service', version: '1.0.0' }]);
+        });
+      });
     });
 
     describe('messages', () => {
