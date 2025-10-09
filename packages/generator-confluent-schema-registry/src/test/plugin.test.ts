@@ -663,6 +663,38 @@ message analytics_event_view_value {
         });
       });
     });
+
+    describe('service options', () => {
+      it('if the `writesTo` option is provided, the service writesTo is set to the config value', async () => {
+        const { getService } = utils(catalogDir);
+        await plugin(config, {
+          schemaRegistryUrl: 'http://localhost:8081',
+          services: [{ id: 'Orders Service', version: '1.0.0', writesTo: [{ id: 'Users Service', version: '1.0.0' }] }],
+        });
+        const service = await getService('Orders Service');
+        expect(service.writesTo).toEqual([{ id: 'Users Service', version: '1.0.0' }]);
+      });
+
+      it('if the `readsFrom` option is provided, the service readsFrom is set to the config value', async () => {
+        const { getService } = utils(catalogDir);
+        await plugin(config, {
+          schemaRegistryUrl: 'http://localhost:8081',
+          services: [{ id: 'Orders Service', version: '1.0.0', readsFrom: [{ id: 'Users Service', version: '1.0.0' }] }],
+        });
+        const service = await getService('Orders Service');
+        expect(service.readsFrom).toEqual([{ id: 'Users Service', version: '1.0.0' }]);
+      });
+
+      it('if the `summary` option is provided, the service summary is set to the config value', async () => {
+        const { getService } = utils(catalogDir);
+        await plugin(config, {
+          schemaRegistryUrl: 'http://localhost:8081',
+          services: [{ id: 'Orders Service', version: '1.0.0', summary: 'This is a summary' }],
+        });
+        const service = await getService('Orders Service');
+        expect(service.summary).toEqual('This is a summary');
+      });
+    });
   });
 
   describe('events', () => {

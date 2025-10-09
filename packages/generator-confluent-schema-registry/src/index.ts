@@ -176,11 +176,14 @@ export default async (config: EventCatalogConfig, options: GeneratorProps) => {
           ? { receives: receives.map((topic) => ({ id: topic.eventId, version: topic.version.toString() })) }
           : {}),
 
+        ...(service.writesTo && { writesTo: service.writesTo }),
+        ...(service.readsFrom && { readsFrom: service.readsFrom }),
+
         // If the service does not already exist we need to add fields for new documented topics
         ...(!serviceInCatalog
           ? {
               markdown: getMarkdownForService({ schemaRegistryUrl: SCHEMA_REGISTRY_URL }),
-              summary: `${service.id} Service`,
+              summary: service.summary || `${service.id} Service`,
             }
           : {}),
       };
