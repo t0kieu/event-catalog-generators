@@ -290,15 +290,18 @@ export default async (config: EventCatalogConfig, options: GeneratorProps) => {
       {
         id: service.id,
         markdown: serviceMarkdown,
-        name: service.id,
+        name: service.name || service.id,
         version: service.version,
         sends,
         receives,
         specifications: serviceSpecifications,
         owners: owners,
+        ...(service.summary && { summary: service.summary }),
         ...(styles && { styles }),
         ...(serviceBadges && { badges: serviceBadges }),
         ...(serviceAttachments && { attachments: serviceAttachments }),
+        ...(service.writesTo && { writesTo: service.writesTo }),
+        ...(service.readsFrom && { readsFrom: service.readsFrom }),
       },
       { path: servicePath, override: true, format }
     );

@@ -40,6 +40,10 @@ export type Service = {
   sends?: Filter[];
   receives?: Filter[];
   version: string;
+  writesTo?: { id: string; version?: string }[];
+  readsFrom?: { id: string; version?: string }[];
+  name?: string;
+  summary?: string;
 };
 
 export type EventMap = 'detail-type' | 'schema-name';
