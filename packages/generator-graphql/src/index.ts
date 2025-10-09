@@ -26,6 +26,8 @@ const optionsSchema = z.object({
       id: z.string({ required_error: 'The service id is required. please provide the service id' }),
       path: z.string({ required_error: 'The service path is required. please provide the path to GraphQL schema file' }),
       summary: z.string().optional(),
+      writesTo: z.array(z.object({ id: z.string(), version: z.string().optional() })).optional(),
+      readsFrom: z.array(z.object({ id: z.string(), version: z.string().optional() })).optional(),
       version: z.string(),
       draft: z.boolean().optional(),
       name: z.string().optional(),
@@ -320,6 +322,8 @@ export default async (_: any, options: Options) => {
           ...(service.owners && { owners: service.owners }),
           ...(receives.length > 0 ? { receives } : {}),
           ...(sends.length > 0 ? { sends } : {}),
+          ...(service.writesTo && { writesTo: service.writesTo }),
+          ...(service.readsFrom && { readsFrom: service.readsFrom }),
           schemaPath,
           specifications: [
             {

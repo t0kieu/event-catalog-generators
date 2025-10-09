@@ -32,7 +32,7 @@ describe('OpenAPI EventCatalog Plugin', () => {
   });
 
   afterEach(async () => {
-    await fs.rm(join(catalogDir), { recursive: true });
+    // await fs.rm(join(catalogDir), { recursive: true });
   });
 
   describe('service generation', () => {
@@ -825,6 +825,26 @@ describe('OpenAPI EventCatalog Plugin', () => {
             expect(service.summary).toEqual('My Custom Summary');
           });
         });
+        describe('config option: writesTo', () => {
+          it('if a `writesTo` or `readsFrom` value is given in the service config options, then the service is created with that writesTo or readsFrom value', async () => {
+            const { getService } = utils(catalogDir);
+
+            await plugin(config, {
+              services: [
+                {
+                  path: join(openAPIExamples, 'petstore.yml'),
+                  id: 'swagger-petstore',
+                  writesTo: [{ id: 'orders-db', version: '1.0.0' }],
+                  readsFrom: [{ id: 'users-db', version: '1.0.0' }],
+                },
+              ],
+            });
+
+            const service = await getService('swagger-petstore', '1.0.0');
+            expect(service.writesTo).toEqual([{ id: 'orders-db', version: '1.0.0' }]);
+            expect(service.readsFrom).toEqual([{ id: 'users-db', version: '1.0.0' }]);
+          });
+        });
       });
     });
 
@@ -1603,7 +1623,10 @@ describe('OpenAPI EventCatalog Plugin', () => {
         expect(
           existsSync(join(catalogDir, 'services', 'swagger-petstore-2', 'versioned', '1.0.0', 'petstore-v1-no-extensions.yml'))
         ).toBe(true);
-        expect(existsSync(join(catalogDir, 'services', 'swagger-petstore-2', 'versioned', '1.0.0', 'queries'))).toBe(true);
+
+        expect(
+          existsSync(join(catalogDir, 'services', 'swagger-petstore-2', 'queries', 'createPets', 'versioned', '1.0.0'))
+        ).toBe(true);
         expect(existsSync(join(catalogDir, 'services', 'swagger-petstore-2', 'versioned', '1.0.0', 'index.mdx'))).toBe(true);
 
         // Expect 2.0.0 to be the latest version with expected files
@@ -1663,19 +1686,9 @@ describe('OpenAPI EventCatalog Plugin', () => {
           ],
         });
 
-        expect(
-          existsSync(join(catalogDir, 'services', 'swagger-petstore-2', 'versioned', '1.0.0', 'queries', 'showPetById'))
-        ).toBe(true);
-        expect(existsSync(join(catalogDir, 'services', 'swagger-petstore-2', 'queries', 'showPetById'))).toBe(false);
-
         // Get all the folder names in the queries folder for v2
         const queries = await fs.readdir(join(catalogDir, 'services', 'swagger-petstore-2', 'queries'));
-        expect(queries).toEqual(['createPets', 'deletePet', 'listPets', 'petAdopted', 'petVaccinated', 'updatePet']);
-
-        const versionedQueries = await fs.readdir(
-          join(catalogDir, 'services', 'swagger-petstore-2', 'versioned', '1.0.0', 'queries')
-        );
-        expect(versionedQueries).toEqual([
+        expect(queries).toEqual([
           'createPets',
           'deletePet',
           'listPets',
@@ -1684,6 +1697,14 @@ describe('OpenAPI EventCatalog Plugin', () => {
           'showPetById',
           'updatePet',
         ]);
+
+        const expectedVersionedQueries = ['createPets', 'deletePet', 'listPets', 'updatePet', 'petAdopted', 'petVaccinated'];
+
+        for (const query of expectedVersionedQueries) {
+          expect(existsSync(join(catalogDir, 'services', 'swagger-petstore-2', 'queries', query, 'versioned', '1.0.0'))).toBe(
+            true
+          );
+        }
       });
     });
   });

@@ -807,6 +807,52 @@ describe('EventBridge EventCatalog Plugin', () => {
         expect(openAPISchema).toBeDefined();
       });
     });
+
+    describe('service options', () => {
+      it('if the `writesTo` option is provided, the service writesTo is set to the config value', async () => {
+        const { getService } = utils(catalogDir);
+        await plugin(config, {
+          region: 'us-east-1',
+          registryName: 'discovered-schemas',
+          services: [{ id: 'Orders Service', version: '1.0.0', writesTo: [{ id: 'Users Service', version: '1.0.0' }] }],
+        });
+        const service = await getService('Orders Service');
+        expect(service.writesTo).toEqual([{ id: 'Users Service', version: '1.0.0' }]);
+      });
+
+      it('if the `readsFrom` option is provided, the service readsFrom is set to the config value', async () => {
+        const { getService } = utils(catalogDir);
+        await plugin(config, {
+          region: 'us-east-1',
+          registryName: 'discovered-schemas',
+          services: [{ id: 'Orders Service', version: '1.0.0', readsFrom: [{ id: 'Users Service', version: '1.0.0' }] }],
+        });
+        const service = await getService('Orders Service');
+        expect(service.readsFrom).toEqual([{ id: 'Users Service', version: '1.0.0' }]);
+      });
+
+      it('if the `name` option is provided, the service name is set to the config value', async () => {
+        const { getService } = utils(catalogDir);
+        await plugin(config, {
+          region: 'us-east-1',
+          registryName: 'discovered-schemas',
+          services: [{ id: 'Orders Service', version: '1.0.0', name: 'Orders Service' }],
+        });
+        const service = await getService('Orders Service');
+        expect(service.name).toEqual('Orders Service');
+      });
+
+      it('if the `summary` option is provided, the service summary is set to the config value', async () => {
+        const { getService } = utils(catalogDir);
+        await plugin(config, {
+          region: 'us-east-1',
+          registryName: 'discovered-schemas',
+          services: [{ id: 'Orders Service', version: '1.0.0', summary: 'Orders Service' }],
+        });
+        const service = await getService('Orders Service');
+        expect(service.summary).toEqual('Orders Service');
+      });
+    });
   });
 
   describe('channels', () => {
