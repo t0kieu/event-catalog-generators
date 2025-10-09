@@ -223,6 +223,8 @@ export default async (_: any, options: Props) => {
           ...(styles ? { styles } : {}),
           ...(isServiceMarkedAsDraft ? { draft: true } : {}),
           ...(serviceAttachments ? { attachments: serviceAttachments } : {}),
+          ...(service.writesTo.length > 0 ? { writesTo: service.writesTo } : {}),
+          ...(service.readsFrom.length > 0 ? { readsFrom: service.readsFrom } : {}),
         },
         { path: join(servicePath), override: true }
       );
@@ -314,8 +316,13 @@ const processMessagesForOpenAPISpec = async (
       if (preserveExistingMessages) {
         messageMarkdown = catalogedMessage.markdown;
       }
+
+      console.log('catalogedMessage version', catalogedMessage.version);
+      console.log('version', version);
+
       // if the version matches, we can override the message but keep markdown as it  was
-      if (catalogedMessage.version !== version && !options.serviceHasMultipleSpecFiles) {
+      if (catalogedMessage.version !== version) {
+        console.log('versioning message', message.id);
         // if the version does not match, we need to version the message
         await versionMessage(message.id);
         console.log(chalk.cyan(` - Versioned previous message: ${message.id} (v${catalogedMessage.version})`));

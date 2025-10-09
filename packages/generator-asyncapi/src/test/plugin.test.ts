@@ -26,7 +26,6 @@ describe('AsyncAPI EventCatalog Plugin', () => {
     afterEach(async () => {
       if (existsSync(catalogDir)) await fs.rm(join(catalogDir), { recursive: true });
     });
-
     describe('domains', () => {
       it('if a domain is defined in the AsyncAPI file but the versions do not match, the existing domain is version and a new one is created', async () => {
         const { writeDomain, getDomain } = utils(catalogDir);
@@ -833,6 +832,35 @@ describe('AsyncAPI EventCatalog Plugin', () => {
               services: [{ path: 'path/to/spec', id: 'sevice_id' }],
             } as any)
           ).rejects.toThrow('The domain version is required. please provide a domain version');
+        });
+
+        it('[services::writesTo] if the `services::writesTo` is given in the service config options, then the service writesTo is set to the config value', async () => {
+          const { getService } = utils(catalogDir);
+          await plugin(config, {
+            services: [
+              {
+                path: join(asyncAPIExamplesDir, 'simple.asyncapi.yml'),
+                id: 'account-service',
+                writesTo: [{ id: 'orders-service', version: '1.0.0' }],
+              },
+            ],
+          });
+          const service = await getService('account-service', '1.0.0');
+          expect(service.writesTo).toEqual([{ id: 'orders-service', version: '1.0.0' }]);
+        });
+        it('[services::readsFrom] if the `services::readsFrom` is given in the service config options, then the service readsFrom is set to the config value', async () => {
+          const { getService } = utils(catalogDir);
+          await plugin(config, {
+            services: [
+              {
+                path: join(asyncAPIExamplesDir, 'simple.asyncapi.yml'),
+                id: 'account-service',
+                readsFrom: [{ id: 'orders-service', version: '1.0.0' }],
+              },
+            ],
+          });
+          const service = await getService('account-service', '1.0.0');
+          expect(service.readsFrom).toEqual([{ id: 'orders-service', version: '1.0.0' }]);
         });
       });
 

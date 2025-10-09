@@ -17,6 +17,18 @@ export type Service = {
   owners?: string[];
   setMessageOwnersToServiceOwners?: boolean;
   draft?: boolean;
+  writesTo?: [
+    {
+      id: string;
+      version?: string;
+    },
+  ];
+  readsFrom?: [
+    {
+      id: string;
+      version?: string;
+    },
+  ];
   generateMarkdown?: ({}: { service: Service; document: OpenAPI.Document; markdown: string }) => string;
 };
 

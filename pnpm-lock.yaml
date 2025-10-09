@@ -131,8 +131,8 @@ importers:
         specifier: ^3.4.0
         version: 3.4.0
       '@eventcatalog/sdk':
-        specifier: ^2.7.5
-        version: 2.7.5
+        specifier: ^2.8.3
+        version: 2.8.3
       chalk:
         specifier: ^4
         version: 4.1.2
@@ -429,8 +429,8 @@ importers:
         specifier: ^2.27.7
         version: 2.29.5
       '@eventcatalog/sdk':
-        specifier: ^2.7.5
-        version: 2.7.5
+        specifier: ^2.8.3
+        version: 2.8.3
       chalk:
         specifier: ^4
         version: 4.1.2
@@ -1006,6 +1006,9 @@ packages:
 
   '@eventcatalog/sdk@2.8.0':
     resolution: { integrity: sha512-CMQ6Ekd6z74tmIKPNKkNcK3ie4SrtH7/Uc0CVDY+HcLuZFr6K6UrLFtEpTuek+HQRHdPjoTa/udiQ+qwBcqciA== }
+
+  '@eventcatalog/sdk@2.8.3':
+    resolution: { integrity: sha512-l3ODifysnJQ8tS6m2vMEO1RmwtpH0Rz1XjTf8ZGgA2yYcXb8szaSu+GtvCHNj6Gsp5+Z2zEQqjJsfEPYHBSRhA== }
 
   '@huggingface/jinja@0.4.1':
     resolution: { integrity: sha512-3WXbMFaPkk03LRCM0z0sylmn8ddDm4ubjU7X+Hg4M2GOuMklwoGAFXp9V2keq7vltoB/c7McE5aHUVVddAewsw== }
@@ -4521,6 +4524,16 @@ snapshots:
       slugify: 1.6.6
 
   '@eventcatalog/sdk@2.8.0':
+    dependencies:
+      '@changesets/cli': 2.29.5
+      fs-extra: 11.3.0
+      glob: 11.0.3
+      gray-matter: 4.0.3
+      proper-lockfile: 4.1.2
+      semver: 7.6.3
+      slugify: 1.6.6
+
+  '@eventcatalog/sdk@2.8.3':
     dependencies:
       '@changesets/cli': 2.29.5
       fs-extra: 11.3.0

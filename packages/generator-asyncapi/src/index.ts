@@ -44,6 +44,8 @@ const optionsSchema = z.object({
       draft: z.boolean().optional(),
       name: z.string().optional(),
       summary: z.string().optional(),
+      writesTo: z.array(z.object({ id: z.string(), version: z.string().optional() })).optional(),
+      readsFrom: z.array(z.object({ id: z.string(), version: z.string().optional() })).optional(),
       owners: z.array(z.string()).optional(),
       generateMarkdown: z
         .function()
@@ -543,6 +545,8 @@ export default async (config: any, options: Props) => {
         ...(styles && { styles }),
         ...(isServiceMarkedAsDraft && { draft: true }),
         ...(attachments && { attachments }),
+        ...(service.writesTo && { writesTo: service.writesTo }),
+        ...(service.readsFrom && { readsFrom: service.readsFrom }),
       },
       {
         path: servicePath,
