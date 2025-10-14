@@ -280,7 +280,7 @@ const processMessagesForOpenAPISpec = async (
 
   // Go through all messages
   for (const operation of operations) {
-    const { requestBodiesAndResponses, sidebar, messageFolderName, ...message } = await buildMessage(
+    const { requestBodiesAndResponses, sidebar, messageName, ...message } = await buildMessage(
       pathToSpec,
       document,
       operation,
@@ -329,7 +329,7 @@ const processMessagesForOpenAPISpec = async (
       }
     }
 
-    let messagePath = join(servicePath, folder, messageFolderName);
+    let messagePath = join(servicePath, folder, messageName);
 
     if (options.writeFilesToRoot) {
       messagePath = message.id;

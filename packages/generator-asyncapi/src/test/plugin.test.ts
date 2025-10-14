@@ -1216,6 +1216,20 @@ describe('AsyncAPI EventCatalog Plugin', () => {
           expect(event.id).toEqual('accounts-usersignedup');
         });
 
+        it('if `messages.id.prefixWithServiceId` only the id  is prefixed with the service id and nothing else (e.g name)', async () => {
+          const { getEvent } = utils(catalogDir);
+
+          await plugin(config, {
+            messages: { id: { prefixWithServiceId: true } },
+            services: [{ path: join(asyncAPIExamplesDir, 'simple.asyncapi.yml'), id: 'accounts' }],
+          });
+
+          const event = await getEvent('accounts-usersignedup', '1.0.0');
+
+          expect(event.id).toEqual('accounts-usersignedup');
+          expect(event.name).toEqual('UserSignedUp');
+        });
+
         it('if a `messages.id.separator` value is given then the that separator is used to join the prefix and the message id', async () => {
           const { getEvent } = utils(catalogDir);
 

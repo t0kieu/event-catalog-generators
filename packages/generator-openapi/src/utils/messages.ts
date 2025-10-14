@@ -196,7 +196,7 @@ export const buildMessage = async (
   }
 
   // Put this before the prefixWithServiceId check so that the folder name is the same as the id
-  const messageFolderName = extensions['x-eventcatalog-message-id'] || uniqueIdentifier;
+  const messageName = extensions['x-eventcatalog-message-id'] || uniqueIdentifier;
 
   if (messageIdConfig?.prefixWithServiceId) {
     const separator = messageIdConfig.separator || '-';
@@ -206,7 +206,7 @@ export const buildMessage = async (
   return {
     id: extensions['x-eventcatalog-message-id'] || uniqueIdentifier,
     version: extensions['x-eventcatalog-message-version'] || document.info.version,
-    name: extensions['x-eventcatalog-message-name'] || uniqueIdentifier,
+    name: extensions['x-eventcatalog-message-name'] || messageName,
     summary: getSummary(operation),
     markdown: generateMarkdown
       ? generateMarkdown({ operation, markdown: generatedMarkdownForMessage })
@@ -217,7 +217,7 @@ export const buildMessage = async (
     sidebar: {
       badge: httpVerb,
     },
-    messageFolderName,
+    messageName,
     ...(extensions['x-eventcatalog-draft'] ? { draft: true } : {}),
     ...(operation.deprecated ? { deprecated: operation.deprecated } : {}),
   };
