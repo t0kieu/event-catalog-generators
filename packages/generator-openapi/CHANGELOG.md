@@ -1,5 +1,11 @@
 # @eventcatalog/generator-openapi
 
+## 7.5.1
+
+### Patch Changes
+
+- edb8da3: fix(plugin): openapi plugin no longer prefixes the name value
+
 ## 7.5.0
 
 ### Minor Changes
