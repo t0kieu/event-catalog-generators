@@ -32,7 +32,7 @@ describe('OpenAPI EventCatalog Plugin', () => {
   });
 
   afterEach(async () => {
-    // await fs.rm(join(catalogDir), { recursive: true });
+    await fs.rm(join(catalogDir), { recursive: true });
   });
 
   describe('service generation', () => {
@@ -1277,6 +1277,20 @@ describe('OpenAPI EventCatalog Plugin', () => {
 
           // Make sure folder name is also prefixed with the service id
           expect(existsSync(join(catalogDir, 'services', 'petstore', 'commands', 'createPets'))).toBe(true);
+        });
+
+        it('if `messages.id.prefixWithServiceId` only the id  is prefixed with the service id and nothing else (e.g name)', async () => {
+          const { getCommand } = utils(catalogDir);
+
+          await plugin(config, {
+            messages: { id: { prefixWithServiceId: true } },
+            services: [{ path: join(openAPIExamples, 'petstore.yml'), id: 'petstore' }],
+          });
+
+          const command = await getCommand('petstore-createPets');
+
+          expect(command.id).toEqual('petstore-createPets');
+          expect(command.name).toEqual('createPets');
         });
 
         it('if a `messages.id.separator` value is given then the that separator is used to join the prefix and the message id', async () => {
