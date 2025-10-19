@@ -184,7 +184,7 @@ describe('AsyncAPI EventCatalog Plugin', () => {
             const service = await getService('account-service', '1.0.0');
             expect(service.draft).toEqual(true);
 
-            const event = await getEvent('usersignedup');
+            const event = await getEvent('UserSignedUp');
             expect(event.draft).toEqual(true);
           });
         });
@@ -368,8 +368,8 @@ describe('AsyncAPI EventCatalog Plugin', () => {
 
           expect(service.sends).toHaveLength(2);
           expect(service.sends).toEqual([
-            { id: 'usersignedup', version: '1.0.0' },
-            { id: 'usersignedout', version: '1.0.0' },
+            { id: 'UserSignedUp', version: '1.0.0' },
+            { id: 'UserSignedOut', version: '1.0.0' },
           ]);
         });
 
@@ -381,7 +381,7 @@ describe('AsyncAPI EventCatalog Plugin', () => {
             version: '1.0.0',
             name: 'Account Service',
             markdown: '',
-            sends: [{ id: 'userloggedin', version: '1.0.0' }],
+            sends: [{ id: 'UserLoggedIn', version: '1.0.0' }],
           });
 
           await plugin(config, { services: [{ path: join(asyncAPIExamplesDir, 'simple.asyncapi.yml'), id: 'account-service' }] });
@@ -390,9 +390,9 @@ describe('AsyncAPI EventCatalog Plugin', () => {
 
           expect(service.sends).toHaveLength(3);
           expect(service.sends).toEqual([
-            { id: 'userloggedin', version: '1.0.0' },
-            { id: 'usersignedup', version: '1.0.0' },
-            { id: 'usersignedout', version: '1.0.0' },
+            { id: 'UserLoggedIn', version: '1.0.0' },
+            { id: 'UserSignedUp', version: '1.0.0' },
+            { id: 'UserSignedOut', version: '1.0.0' },
           ]);
         });
 
@@ -405,8 +405,8 @@ describe('AsyncAPI EventCatalog Plugin', () => {
             name: 'Account Service',
             markdown: '',
             sends: [
-              { id: 'usersignedup', version: '1.0.0' },
-              { id: 'usersignedout', version: '1.0.0' },
+              { id: 'UserSignedUp', version: '1.0.0' },
+              { id: 'UserSignedOut', version: '1.0.0' },
             ],
           });
 
@@ -416,8 +416,8 @@ describe('AsyncAPI EventCatalog Plugin', () => {
 
           expect(service.sends).toHaveLength(2);
           expect(service.sends).toEqual([
-            { id: 'usersignedup', version: '1.0.0' },
-            { id: 'usersignedout', version: '1.0.0' },
+            { id: 'UserSignedUp', version: '1.0.0' },
+            { id: 'UserSignedOut', version: '1.0.0' },
           ]);
         });
 
@@ -431,7 +431,7 @@ describe('AsyncAPI EventCatalog Plugin', () => {
           const service = await getService('account-service', '1.0.0');
 
           expect(service.sends).toHaveLength(1);
-          expect(service.sends).toEqual([{ id: 'somecoolpublishedmessage', version: '1.0.0' }]);
+          expect(service.sends).toEqual([{ id: 'SomeCoolpublishedMessage', version: '1.0.0' }]);
         });
       });
 
@@ -445,16 +445,16 @@ describe('AsyncAPI EventCatalog Plugin', () => {
 
           expect(service.receives).toHaveLength(4);
           expect(service.receives).toEqual([
-            { id: 'signupuser', version: '2.0.0' },
+            { id: 'SignUpUser', version: '2.0.0' },
             {
-              id: 'getuserbyemail',
+              id: 'GetUserByEmail',
               version: '1.0.0',
             },
             {
-              id: 'checkemailavailability',
+              id: 'CheckEmailAvailability',
               version: '1.0.0',
             },
-            { id: 'usersubscribed', version: '1.0.0' },
+            { id: 'UserSubscribed', version: '1.0.0' },
           ]);
         });
 
@@ -468,7 +468,7 @@ describe('AsyncAPI EventCatalog Plugin', () => {
           const service = await getService('account-service', '1.0.0');
 
           expect(service.receives).toHaveLength(1);
-          expect(service.receives).toEqual([{ id: 'somecoolreceivedmessage', version: '1.0.0' }]);
+          expect(service.receives).toEqual([{ id: 'SomeCoolReceivedMessage', version: '1.0.0' }]);
         });
 
         it('if the service is already defined and is receiving messages these are persisted', async () => {
@@ -479,7 +479,7 @@ describe('AsyncAPI EventCatalog Plugin', () => {
             version: '1.0.0',
             name: 'Account Service',
             markdown: '',
-            receives: [{ id: 'userloggedin', version: '1.0.0' }],
+            receives: [{ id: 'UserLoggedIn', version: '1.0.0' }],
           });
 
           await plugin(config, { services: [{ path: join(asyncAPIExamplesDir, 'simple.asyncapi.yml'), id: 'account-service' }] });
@@ -488,11 +488,11 @@ describe('AsyncAPI EventCatalog Plugin', () => {
 
           expect(service.receives).toHaveLength(5);
           expect(service.receives).toEqual([
-            { id: 'userloggedin', version: '1.0.0' },
-            { id: 'signupuser', version: '2.0.0' },
-            { id: 'getuserbyemail', version: '1.0.0' },
-            { id: 'checkemailavailability', version: '1.0.0' },
-            { id: 'usersubscribed', version: '1.0.0' },
+            { id: 'UserLoggedIn', version: '1.0.0' },
+            { id: 'SignUpUser', version: '2.0.0' },
+            { id: 'GetUserByEmail', version: '1.0.0' },
+            { id: 'CheckEmailAvailability', version: '1.0.0' },
+            { id: 'UserSubscribed', version: '1.0.0' },
           ]);
         });
       });
@@ -694,7 +694,7 @@ describe('AsyncAPI EventCatalog Plugin', () => {
         const service = await getService('account-service', '1.0.0');
         expect(service.draft).toEqual(true);
 
-        const event = await getEvent('usersignedup');
+        const event = await getEvent('UserSignedUp');
         expect(event.draft).toEqual(true);
       });
 
@@ -708,7 +708,7 @@ describe('AsyncAPI EventCatalog Plugin', () => {
         const service = await getService('account-service', '1.0.0');
         expect(service.draft).toEqual(undefined);
 
-        const event = await getEvent('usersignedup');
+        const event = await getEvent('UserSignedUp');
         expect(event.draft).toEqual(undefined);
       });
     });
@@ -916,11 +916,11 @@ describe('AsyncAPI EventCatalog Plugin', () => {
 
         await plugin(config, { services: [{ path: join(asyncAPIExamplesDir, 'simple.asyncapi.yml'), id: 'account-service' }] });
 
-        const event = await getEvent('usersignedout');
+        const event = await getEvent('UserSignedOut');
 
         expect(event).toEqual(
           expect.objectContaining({
-            id: 'usersignedout',
+            id: 'UserSignedOut',
             name: 'UserSignedOut',
             version: '1.0.0',
             summary: 'User signed out the application',
@@ -940,11 +940,11 @@ describe('AsyncAPI EventCatalog Plugin', () => {
 
         await plugin(config, { services: [{ path: join(asyncAPIExamplesDir, 'simple.asyncapi.yml'), id: 'account-service' }] });
 
-        const event = await getEvent('usersignedup');
+        const event = await getEvent('UserSignedUp');
 
         expect(event).toEqual(
           expect.objectContaining({
-            id: 'usersignedup',
+            id: 'UserSignedUp',
             name: 'UserSignedUp',
             version: '1.0.0',
             summary: 'User signed up the application',
@@ -964,11 +964,11 @@ describe('AsyncAPI EventCatalog Plugin', () => {
 
         await plugin(config, { services: [{ path: join(asyncAPIExamplesDir, 'simple.asyncapi.yml'), id: 'account-service' }] });
 
-        const event = await getCommand('signupuser');
+        const event = await getCommand('SignUpUser');
 
         expect(event).toEqual(
           expect.objectContaining({
-            id: 'signupuser',
+            id: 'SignUpUser',
             name: 'SignUpUser',
             version: '2.0.0',
             summary: 'Sign up a user',
@@ -988,11 +988,11 @@ describe('AsyncAPI EventCatalog Plugin', () => {
 
         await plugin(config, { services: [{ path: join(asyncAPIExamplesDir, 'simple.asyncapi.yml'), id: 'account-service' }] });
 
-        const query = await getQuery('checkemailavailability');
+        const query = await getQuery('CheckEmailAvailability');
 
         expect(query).toEqual(
           expect.objectContaining({
-            id: 'checkemailavailability',
+            id: 'CheckEmailAvailability',
             version: '1.0.0',
             name: 'CheckEmailAvailability',
             summary: 'Check if an email is available for registration',
@@ -1013,7 +1013,7 @@ describe('AsyncAPI EventCatalog Plugin', () => {
 
         await plugin(config, { services: [{ path: join(asyncAPIExamplesDir, 'draft-messages.yml'), id: 'account-service' }] });
 
-        const event = await getEvent('usersignedup');
+        const event = await getEvent('UserSignedUp');
 
         expect(event.draft).toEqual(true);
       });
@@ -1022,7 +1022,7 @@ describe('AsyncAPI EventCatalog Plugin', () => {
         const { writeEvent, getEvent } = utils(catalogDir);
 
         await writeEvent({
-          id: 'usersignedup',
+          id: 'UserSignedUp',
           version: '0.0.1',
           name: 'UserSignedUp',
           markdown: '',
@@ -1030,8 +1030,8 @@ describe('AsyncAPI EventCatalog Plugin', () => {
 
         await plugin(config, { services: [{ path: join(asyncAPIExamplesDir, 'simple.asyncapi.yml'), id: 'account-service' }] });
 
-        const versionedEvent = await getEvent('usersignedup', '0.0.1');
-        const newEvent = await getEvent('usersignedup', '1.0.0');
+        const versionedEvent = await getEvent('UserSignedUp', '0.0.1');
+        const newEvent = await getEvent('UserSignedUp', '1.0.0');
 
         expect(versionedEvent).toBeDefined();
         expect(newEvent).toBeDefined();
@@ -1041,7 +1041,7 @@ describe('AsyncAPI EventCatalog Plugin', () => {
         const { writeEvent, getEvent } = utils(catalogDir);
 
         await writeEvent({
-          id: 'usersignedup',
+          id: 'UserSignedUp',
           version: '0.0.1',
           name: 'UserSignedUp',
           markdown: 'please dont override me!',
@@ -1051,7 +1051,7 @@ describe('AsyncAPI EventCatalog Plugin', () => {
 
         await plugin(config, { services: [{ path: join(asyncAPIExamplesDir, 'simple.asyncapi.yml'), id: 'account-service' }] });
 
-        const newEvent = await getEvent('usersignedup', '1.0.0');
+        const newEvent = await getEvent('UserSignedUp', '1.0.0');
         expect(newEvent.markdown).toEqual('please dont override me!');
         expect(newEvent.badges).toEqual([{ backgroundColor: 'red', textColor: 'white', content: 'Custom Badge' }]);
         expect(newEvent.attachments).toEqual(['https://github.com/dboyne/eventcatalog/blob/main/README.md']);
@@ -1061,7 +1061,7 @@ describe('AsyncAPI EventCatalog Plugin', () => {
         const { writeEvent, getEvent } = utils(catalogDir);
 
         await writeEvent({
-          id: 'usersignedup',
+          id: 'UserSignedUp',
           version: '0.0.1',
           name: 'UserSignedUp',
           markdown: 'please dont override me!',
@@ -1069,7 +1069,7 @@ describe('AsyncAPI EventCatalog Plugin', () => {
 
         await plugin(config, { services: [{ path: join(asyncAPIExamplesDir, 'simple.asyncapi.yml'), id: 'account-service' }] });
 
-        const newEvent = await getEvent('usersignedup', '1.0.0');
+        const newEvent = await getEvent('UserSignedUp', '1.0.0');
         expect(newEvent.markdown).toEqual('please dont override me!');
       });
 
@@ -1080,17 +1080,17 @@ describe('AsyncAPI EventCatalog Plugin', () => {
         await plugin(config, { services: [{ path: join(asyncAPIExamplesDir, 'simple.asyncapi.yml'), id: 'account-service' }] });
 
         const service = await getService('account-service', '1.0.0');
-        const newEvent = await getEvent('usersubscribed', 'latest');
+        const newEvent = await getEvent('UserSubscribed', 'latest');
 
         // Event was not added to the EventCatalog
         expect(newEvent).toBeUndefined();
 
         expect(service.receives).toEqual([
-          { id: 'signupuser', version: '2.0.0' },
-          { id: 'getuserbyemail', version: '1.0.0' },
-          { id: 'checkemailavailability', version: '1.0.0' },
+          { id: 'SignUpUser', version: '2.0.0' },
+          { id: 'GetUserByEmail', version: '1.0.0' },
+          { id: 'CheckEmailAvailability', version: '1.0.0' },
           // The event we expect
-          { id: 'usersubscribed', version: '1.0.0' },
+          { id: 'UserSubscribed', version: '1.0.0' },
         ]);
       });
 
@@ -1101,7 +1101,7 @@ describe('AsyncAPI EventCatalog Plugin', () => {
         await plugin(config, { services: [{ path: join(asyncAPIExamplesDir, 'simple.asyncapi.yml'), id: 'account-service' }] });
 
         const service = await getService('account-service', '1.0.0');
-        const event = await getEvent('signupuser', 'latest');
+        const event = await getEvent('SignUpUser', 'latest');
 
         // Event was not added to the EventCatalog
         expect(event).toBeDefined();
@@ -1114,7 +1114,7 @@ describe('AsyncAPI EventCatalog Plugin', () => {
 
         await plugin(config, { services: [{ path: join(asyncAPIExamplesDir, 'simple.asyncapi.yml'), id: 'account-service' }] });
 
-        const event = await getEvent('signupuser', 'latest');
+        const event = await getEvent('SignUpUser', 'latest');
 
         // custom version is used
         expect(event.version).toEqual('2.0.0');
@@ -1126,7 +1126,7 @@ describe('AsyncAPI EventCatalog Plugin', () => {
 
         await plugin(config, { services: [{ path: join(asyncAPIExamplesDir, 'simple.asyncapi.yml'), id: 'account-service' }] });
 
-        const event = await getEvent('signupuser', 'latest');
+        const event = await getEvent('SignUpUser', 'latest');
 
         expect(event.deprecated).toEqual({
           date: '2025-04-09',
@@ -1145,7 +1145,7 @@ describe('AsyncAPI EventCatalog Plugin', () => {
         });
 
         const service = await getService('account-service', '1.0.0');
-        const event = await getEvent('usersignedup', '1.0.0');
+        const event = await getEvent('UserSignedUp', '1.0.0');
 
         expect(event.owners).toEqual(['John Doe', 'Jane Doe']);
         expect(service.owners).toEqual(['John Doe', 'Jane Doe']);
@@ -1170,7 +1170,7 @@ describe('AsyncAPI EventCatalog Plugin', () => {
             },
           });
 
-          const event = await getEvent('usersignedup', '1.0.0');
+          const event = await getEvent('UserSignedUp', '1.0.0');
 
           expect(event.markdown).toContain('# My custom markdown');
 
@@ -1183,7 +1183,7 @@ describe('AsyncAPI EventCatalog Plugin', () => {
 
           await plugin(config, { services: [{ path: join(asyncAPIExamplesDir, 'simple.asyncapi.yml'), id: 'account-service' }] });
 
-          const event = await getEvent('usersignedup', '1.0.0');
+          const event = await getEvent('UserSignedUp', '1.0.0');
 
           expect(event.markdown).toContain('## Schema');
         });
@@ -1198,9 +1198,23 @@ describe('AsyncAPI EventCatalog Plugin', () => {
             services: [{ path: join(asyncAPIExamplesDir, 'simple.asyncapi.yml'), id: 'account-service' }],
           });
 
-          const event = await getEvent('hello-usersignedup', '1.0.0');
+          const event = await getEvent('hello-UserSignedUp', '1.0.0');
 
-          expect(event.id).toEqual('hello-usersignedup');
+          expect(event.id).toEqual('hello-UserSignedUp');
+        });
+
+        it('if a `messages.id.lowerCase` is set to true then the id of all messages is lowercased and the folder name is also lowercased', async () => {
+          const { getEvent } = utils(catalogDir);
+
+          await plugin(config, {
+            messages: { id: { lowerCase: true } },
+            services: [{ path: join(asyncAPIExamplesDir, 'simple.asyncapi.yml'), id: 'account-service' }],
+          });
+
+          const event = await getEvent('usersignedup', '1.0.0');
+
+          expect(event.id).toEqual('usersignedup');
+          expect(existsSync(join(catalogDir, 'services', 'account-service', 'events', 'usersignedup'))).toBe(true);
         });
 
         it('if `messages.id.prefixWithServiceId` is set to true then the id of the message is prefixed with the service id', async () => {
@@ -1211,9 +1225,9 @@ describe('AsyncAPI EventCatalog Plugin', () => {
             services: [{ path: join(asyncAPIExamplesDir, 'simple.asyncapi.yml'), id: 'accounts' }],
           });
 
-          const event = await getEvent('accounts-usersignedup', '1.0.0');
+          const event = await getEvent('accounts-UserSignedUp', '1.0.0');
 
-          expect(event.id).toEqual('accounts-usersignedup');
+          expect(event.id).toEqual('accounts-UserSignedUp');
         });
 
         it('if `messages.id.prefixWithServiceId` only the id  is prefixed with the service id and nothing else (e.g name)', async () => {
@@ -1224,9 +1238,9 @@ describe('AsyncAPI EventCatalog Plugin', () => {
             services: [{ path: join(asyncAPIExamplesDir, 'simple.asyncapi.yml'), id: 'accounts' }],
           });
 
-          const event = await getEvent('accounts-usersignedup', '1.0.0');
+          const event = await getEvent('accounts-UserSignedUp', '1.0.0');
 
-          expect(event.id).toEqual('accounts-usersignedup');
+          expect(event.id).toEqual('accounts-UserSignedUp');
           expect(event.name).toEqual('UserSignedUp');
         });
 
@@ -1238,9 +1252,9 @@ describe('AsyncAPI EventCatalog Plugin', () => {
             services: [{ path: join(asyncAPIExamplesDir, 'simple.asyncapi.yml'), id: 'account-service' }],
           });
 
-          const event = await getEvent('hello_usersignedup', '1.0.0');
+          const event = await getEvent('hello_UserSignedUp', '1.0.0');
 
-          expect(event.id).toEqual('hello_usersignedup');
+          expect(event.id).toEqual('hello_UserSignedUp');
         });
       });
 
@@ -1259,7 +1273,7 @@ describe('AsyncAPI EventCatalog Plugin', () => {
           const { getEvent } = utils(catalogDir);
 
           await plugin(config, { services: [{ path: join(asyncAPIExamplesDir, 'simple.asyncapi.yml'), id: 'account-service' }] });
-          const event = await getEvent('usersignedup', '1.0.0');
+          const event = await getEvent('UserSignedUp', '1.0.0');
 
           expect(event.schemaPath).toEqual('schema.json');
         });
@@ -1339,7 +1353,7 @@ describe('AsyncAPI EventCatalog Plugin', () => {
             parseChannels: true,
           });
 
-          const event = await getEvent('lightmeasured', '1.0.0');
+          const event = await getEvent('lightMeasured', '1.0.0');
 
           expect(event).toBeDefined();
 
@@ -1360,7 +1374,7 @@ describe('AsyncAPI EventCatalog Plugin', () => {
           });
 
           const channel = await getChannel('lightsDim');
-          const event = await getEvent('dimlight');
+          const event = await getEvent('dimLight');
 
           expect(channel.version).toEqual('2.0.0');
           expect(event.channels).toEqual([
@@ -1449,7 +1463,7 @@ describe('AsyncAPI EventCatalog Plugin', () => {
         await plugin(config, { services: [{ path: join(asyncAPIExamplesDir, 'ref-example.asyncapi.yml'), id: 'test-service' }] });
 
         const service = await getService('test-service', '1.1.0');
-        const event = await getEvent('usersignup', '1.1.0');
+        const event = await getEvent('UserSignup', '1.1.0');
 
         expect(service).toBeDefined();
         expect(event).toBeDefined();
@@ -1468,7 +1482,7 @@ describe('AsyncAPI EventCatalog Plugin', () => {
         });
 
         const service = await getService('test-service', '1.0.0');
-        const event = await getEvent('lightmeasuredmessageavro', '1.0.0');
+        const event = await getEvent('lightMeasuredMessageAvro', '1.0.0');
 
         expect(service).toBeDefined();
         expect(event).toBeDefined();
@@ -1564,7 +1578,7 @@ describe('AsyncAPI EventCatalog Plugin', () => {
         });
 
         const service = await getService('user-signup-api', '1.0.0');
-        const event = await getEvent('usersignedup', '1.0.0');
+        const event = await getEvent('userSignedUp', '1.0.0');
 
         expect(service).toBeDefined();
         expect(event).toBeDefined();
@@ -1603,7 +1617,7 @@ describe('AsyncAPI EventCatalog Plugin', () => {
         await plugin(config, { services: [{ path: join(asyncAPIExamplesDir, 'example-as-json.json'), id: 'user-service' }] });
 
         const service = await getService('user-service', '1.0.0');
-        const event = await getEvent('userupdated', '1.0.0');
+        const event = await getEvent('UserUpdated', '1.0.0');
 
         expect(service).toBeDefined();
         expect(event).toBeDefined();
@@ -1742,10 +1756,10 @@ describe('AsyncAPI EventCatalog Plugin', () => {
         services: [{ path: join(asyncAPIExamplesDir, 'asyncapi-without-payload.yml'), id: 'my-service' }],
       });
 
-      const event = await getEvent('messageprojectdeleted', '1.0.0');
+      const event = await getEvent('messageProjectDeleted', '1.0.0');
       expect(event).toEqual(
         expect.objectContaining({
-          id: 'messageprojectdeleted',
+          id: 'messageProjectDeleted',
           version: '1.0.0',
           name: 'Message.ProjectDeleted',
           summary: 'Message summary',
@@ -1795,10 +1809,10 @@ describe('AsyncAPI EventCatalog Plugin', () => {
         services: [{ path: join(asyncAPIExamplesDir, 'async-file-with-$-values.json'), id: 'my-service' }],
       });
 
-      const event = await getEvent('de.maxdobler.springwolfexample.eventpublisher$examplestartedevent', '1.0.0');
+      const event = await getEvent('de.maxdobler.springwolfexample.EventPublisher$ExampleStartedEvent', '1.0.0');
       expect(event).toEqual(
         expect.objectContaining({
-          id: 'de.maxdobler.springwolfexample.eventpublisher$examplestartedevent',
+          id: 'de.maxdobler.springwolfexample.EventPublisher$ExampleStartedEvent',
           version: '1.0.0',
           name: 'ExampleStartedEvent',
         })

@@ -70,6 +70,7 @@ const optionsSchema = z.object({
     .object({
       id: z
         .object({
+          lowerCase: z.boolean().optional(),
           prefix: z.string().optional(),
           separator: z.string().optional(),
           prefixWithServiceId: z.boolean().optional(),
@@ -378,7 +379,7 @@ export default async (config: any, options: Props) => {
         const isReceived = operation.action() === 'receive' || operation.action() === 'subscribe';
         const isSent = operation.action() === 'send' || operation.action() === 'publish';
 
-        let messageId = message.id().toLowerCase();
+        let messageId = options.messages?.id?.lowerCase ? message.id().toLowerCase() : message.id();
 
         if (eventType !== 'event' && eventType !== 'command' && eventType !== 'query') {
           throw new Error('Invalid message type');
@@ -411,14 +412,14 @@ export default async (config: any, options: Props) => {
 
         console.log(chalk.blue(`Processing message: ${getMessageName(message)} (v${messageVersion})`));
 
-        let messagePath = join(servicePath, folder, message.id());
+        let messagePath = join(servicePath, folder, messageId);
         if (options.writeFilesToRoot) {
-          messagePath = message.id();
+          messagePath = messageId;
         }
 
         if (serviceOwnsMessageContract) {
           // Check if the message already exists in the catalog
-          const catalogedMessage = await getMessage(message.id().toLowerCase(), 'latest');
+          const catalogedMessage = await getMessage(messageId, 'latest');
 
           if (catalogedMessage) {
             // persist markdown, badges and attachments if it exists
