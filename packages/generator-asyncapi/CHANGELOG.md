@@ -1,5 +1,11 @@
 # @eventcatalog/sdk
 
+## 5.0.0
+
+### Major Changes
+
+- b602f3d: fix(plugin): message ids and folder names are now the same
+
 ## 4.5.4
 
 ### Patch Changes
