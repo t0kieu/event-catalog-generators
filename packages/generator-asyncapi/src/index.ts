@@ -380,6 +380,7 @@ export default async (config: any, options: Props) => {
         const isSent = operation.action() === 'send' || operation.action() === 'publish';
 
         let messageId = options.messages?.id?.lowerCase ? message.id().toLowerCase() : message.id();
+        const messageName = messageId;
 
         if (eventType !== 'event' && eventType !== 'command' && eventType !== 'query') {
           throw new Error('Invalid message type');
@@ -412,7 +413,7 @@ export default async (config: any, options: Props) => {
 
         console.log(chalk.blue(`Processing message: ${getMessageName(message)} (v${messageVersion})`));
 
-        let messagePath = join(servicePath, folder, messageId);
+        let messagePath = join(servicePath, folder, messageName);
         if (options.writeFilesToRoot) {
           messagePath = messageId;
         }

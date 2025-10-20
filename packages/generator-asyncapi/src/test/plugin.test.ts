@@ -1190,7 +1190,7 @@ describe('AsyncAPI EventCatalog Plugin', () => {
       });
 
       describe('config option: id', () => {
-        it('if a `messages.id.prefix` value is given then the id of the message is prefixed with that value', async () => {
+        it('if a `messages.id.prefix` value is given then the id of the message is prefixed with that value, but the folder name is not prefixed', async () => {
           const { getEvent } = utils(catalogDir);
 
           await plugin(config, {
@@ -1201,6 +1201,7 @@ describe('AsyncAPI EventCatalog Plugin', () => {
           const event = await getEvent('hello-UserSignedUp', '1.0.0');
 
           expect(event.id).toEqual('hello-UserSignedUp');
+          expect(existsSync(join(catalogDir, 'services', 'account-service', 'events', 'UserSignedUp'))).toBe(true);
         });
 
         it('if a `messages.id.lowerCase` is set to true then the id of all messages is lowercased and the folder name is also lowercased', async () => {
@@ -1217,7 +1218,7 @@ describe('AsyncAPI EventCatalog Plugin', () => {
           expect(existsSync(join(catalogDir, 'services', 'account-service', 'events', 'usersignedup'))).toBe(true);
         });
 
-        it('if `messages.id.prefixWithServiceId` is set to true then the id of the message is prefixed with the service id', async () => {
+        it('if `messages.id.prefixWithServiceId` is set to true then the id of the message is prefixed with the service id, but the folder name is not prefixed', async () => {
           const { getEvent } = utils(catalogDir);
 
           await plugin(config, {
@@ -1228,6 +1229,7 @@ describe('AsyncAPI EventCatalog Plugin', () => {
           const event = await getEvent('accounts-UserSignedUp', '1.0.0');
 
           expect(event.id).toEqual('accounts-UserSignedUp');
+          expect(existsSync(join(catalogDir, 'services', 'accounts', 'events', 'UserSignedUp'))).toBe(true);
         });
 
         it('if `messages.id.prefixWithServiceId` only the id  is prefixed with the service id and nothing else (e.g name)', async () => {
