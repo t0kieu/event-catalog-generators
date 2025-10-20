@@ -336,12 +336,14 @@ const processEvents = async (events: Event[], options: GeneratorProps, servicePa
     let messageAttachments = null;
     const catalogedEvent = await getEvent(event.id, event.version);
     let eventChannel = [] as any;
+    let messageSummary = null;
 
     if (catalogedEvent) {
       // Persist markdown between versions
       messageMarkdown = catalogedEvent.markdown;
       messageBadges = catalogedEvent.badges || messageBadges;
       messageAttachments = catalogedEvent.attachments;
+      messageSummary = catalogedEvent.summary;
       // if the version matches, we can override the message but keep markdown as it  was
       if (catalogedEvent.version === event.version) {
         await rmEventById(event.id, event.version);
@@ -409,6 +411,7 @@ const processEvents = async (events: Event[], options: GeneratorProps, servicePa
         schemaPath,
         markdown: messageMarkdown,
         badges: messageBadges,
+        ...(messageSummary && { summary: messageSummary }),
         ...(messageAttachments && { attachments: messageAttachments }),
         ...(eventChannel.length > 0 && { channels: eventChannel }),
       },
