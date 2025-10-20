@@ -1,5 +1,11 @@
 # @eventcatalog/generator-eventbridge
 
+## 3.2.3
+
+### Patch Changes
+
+- 1da231e: fix(plugin): eventbridge plugin now persists the summary on generation
+
 ## 3.2.2
 
 ### Patch Changes
