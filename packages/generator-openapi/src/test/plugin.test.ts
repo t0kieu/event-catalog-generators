@@ -1258,8 +1258,6 @@ describe('OpenAPI EventCatalog Plugin', () => {
 
           const command = await getCommand('hello-createPets');
 
-          console.log('HELLO WORLD', command);
-
           expect(command.id).toEqual('hello-createPets');
         });
 
