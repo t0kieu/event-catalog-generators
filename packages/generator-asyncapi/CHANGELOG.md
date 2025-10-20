@@ -1,5 +1,11 @@
 # @eventcatalog/sdk
 
+## 5.0.1
+
+### Patch Changes
+
+- 23ce21f: fix(plugin): asyncapi no longer prefixs folder names
+
 ## 5.0.0
 
 ### Major Changes
