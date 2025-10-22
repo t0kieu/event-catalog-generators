@@ -60,15 +60,7 @@ export default {
         domain: { id: 'user-domain', name: 'User Domain', version: '0.0.1' },
         debug: true
       },
-    ],
-    // This has to be the last generator, as it will index all the files and turn them into embeddings for your LLM
-    [
-      "@eventcatalog/generator-ai", {
-        debug: true,
-        splitMarkdownFiles: false,
-        includeUsersAndTeams: false
-      }
-    ],
+    ]
   ],
   output: 'server',
   chat: {

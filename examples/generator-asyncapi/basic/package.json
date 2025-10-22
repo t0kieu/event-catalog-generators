@@ -12,7 +12,6 @@
   },
   "dependencies": {
     "@eventcatalog/core": "latest",
-    "@eventcatalog/generator-ai": "latest",
     "@eventcatalog/generator-asyncapi": "latest"
   }
 }

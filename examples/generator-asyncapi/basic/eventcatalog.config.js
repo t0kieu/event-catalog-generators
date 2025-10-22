@@ -61,13 +61,6 @@ export default {
         debug: true
       },
     ],
-    [
-      "@eventcatalog/generator-ai", {
-        debug: true,
-        splitMarkdownFiles: false,
-        includeUsersAndTeams: false
-      }
-    ],
   ],
   output: 'server',
   chat: {

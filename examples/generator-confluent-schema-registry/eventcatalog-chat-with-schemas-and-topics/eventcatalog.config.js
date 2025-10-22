@@ -79,21 +79,5 @@ export default {
         ],
       },
     ],
-    [
-      // has to be the last generator to generate information for EventCatalog Chat
-      "@eventcatalog/generator-ai", {
-        debug: true,
-        splitMarkdownFiles: false,
-        includeUsersAndTeams: false,
-        embedding: {
-          // Set the provider to openai
-          provider: 'openai',
-          // Set the model to the OpenAI embeddings model
-          // supports: text-embedding-3-large, text-embedding-3-small, text-embedding-ada-002
-          model: 'text-embedding-3-large',
-        },
-      }
-    ],
-
   ],
 };

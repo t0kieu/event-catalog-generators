@@ -11,8 +11,8 @@ importers:
   .:
     dependencies:
       '@eventcatalog/license':
-        specifier: ^0.0.5
-        version: 0.0.5
+        specifier: ^0.0.7
+        version: 0.0.7
       boxen:
         specifier: ^8.0.1
         version: 8.0.1
@@ -1093,8 +1093,8 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@eventcatalog/license@0.0.5':
-    resolution: { integrity: sha512-6Wa9jSAaMEX+bw4KGHZYTAJ7lL4lY7cHJ6RSOgRby6DAO2YuQmsKsTe40BAx4t+Ehb2OcJYi7o6VqxD6ngq34Q== }
+  '@eventcatalog/license@0.0.7':
+    resolution: { integrity: sha512-izSIn3Dfc6LTcPiA89EqZ4/l5WCitLxt0XVu2yilyaibMOioxW7ABRFZY8/Azocd6ULKseVA2lCcoeT35/GRcg== }
     engines: { node: '>=16.0.0' }
 
   '@eventcatalog/sdk@2.6.3':
@@ -1961,6 +1961,10 @@ packages:
     engines: { node: '>=0.4.0' }
     hasBin: true
 
+  agent-base@7.1.4:
+    resolution: { integrity: sha512-MnA+YT8fwfJPgBx3m60MNqakm30XOkyIoH1y6huTQvC0PwZG7ki8NacLBcrPbNoo8vEZy7Jpuk7+jMO+CUovTQ== }
+    engines: { node: '>= 14' }
+
   agentkeepalive@4.6.0:
     resolution: { integrity: sha512-kja8j7PjmncONqaTsB8fQ+wE2mSU2DJ9D4XKoJ5PFWIdRMa6SLSN1ff4mOr4jCbfRSsxR4keIiySJU0N9T5hIQ== }
     engines: { node: '>= 8.0.0' }
@@ -2585,6 +2589,10 @@ packages:
   hasown@2.0.2:
     resolution: { integrity: sha512-0hJU9SCPvmMzIBdZFqNPXWa6dqh7WdH0cII9y+CyS8rG3nL48Bclra9HmKhVVUHyPWNH5Y7xDwAB7bfgSjkUMQ== }
     engines: { node: '>= 0.4' }
+
+  https-proxy-agent@7.0.6:
+    resolution: { integrity: sha512-vK9P5/iUfdl95AI+JVyUuIcVtd4ofvtrOr3HNtM2yxC9bnMbEdp3x01OhQNnjb8IJYi38VlTE3mBXwcfvywuSw== }
+    engines: { node: '>= 14' }
 
   human-id@4.1.1:
     resolution: { integrity: sha512-3gKm/gCSUipeLsRYZbbdA1BD83lBoWUkZ7G9VFrhWPAU76KwYo5KR8V28bpoPm/ygy0x5/GCbpRQdY7VLYCoIg== }
@@ -5033,11 +5041,14 @@ snapshots:
   '@esbuild/win32-x64@0.25.5':
     optional: true
 
-  '@eventcatalog/license@0.0.5':
+  '@eventcatalog/license@0.0.7':
     dependencies:
       boxen: 8.0.1
       chalk: 5.6.2
+      https-proxy-agent: 7.0.6
       jose: 5.10.0
+    transitivePeerDependencies:
+      - supports-color
 
   '@eventcatalog/sdk@2.6.3':
     dependencies:
@@ -6140,6 +6151,8 @@ snapshots:
 
   acorn@8.15.0: {}
 
+  agent-base@7.1.4: {}
+
   agentkeepalive@4.6.0:
     dependencies:
       humanize-ms: 1.2.1
@@ -6867,6 +6880,13 @@ snapshots:
   hasown@2.0.2:
     dependencies:
       function-bind: 1.1.2
+
+  https-proxy-agent@7.0.6:
+    dependencies:
+      agent-base: 7.1.4
+      debug: 4.4.1
+    transitivePeerDependencies:
+      - supports-color
 
   human-id@4.1.1: {}
 

@@ -12,7 +12,6 @@
   },
   "dependencies": {
     "@eventcatalog/core": "^2.35.6",
-    "@eventcatalog/generator-ai": "^1.0.0",
     "@eventcatalog/generator-openapi": "latest"
   }
 }

@@ -61,13 +61,6 @@ export default {
         domain: { id: "payment", name: "Payment", version: "0.0.1" },
       },
     ],
-    [
-      "@eventcatalog/generator-ai", {
-        debug: true,
-        splitMarkdownFiles: false,
-        includeUsersAndTeams: false
-      }
-    ],
   ],
   output: 'server',
   chat: {
