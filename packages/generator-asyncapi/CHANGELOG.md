@@ -1,5 +1,11 @@
 # @eventcatalog/sdk
 
+## 5.0.2
+
+### Patch Changes
+
+- 0b938a8: fix(plugins): plugins now use https proxy lib
+
 ## 5.0.1
 
 ### Patch Changes
