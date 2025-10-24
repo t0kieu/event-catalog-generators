@@ -257,7 +257,7 @@ describe('AsyncAPI EventCatalog Plugin', () => {
         );
       });
 
-      it('when the AsyncAPI service is already defined in EventCatalog and the versions match, the markdown is persisted and not overwritten', async () => {
+      it('when the AsyncAPI service is already defined in EventCatalog and the versions match, the markdown, writesTo, readsFrom, badges and attachments are persisted and not overwritten', async () => {
         // Create a service with the same name and version as the AsyncAPI file for testing
         const { writeService, getService } = utils(catalogDir);
 
@@ -266,6 +266,8 @@ describe('AsyncAPI EventCatalog Plugin', () => {
           version: '1.0.0',
           name: 'Random Name',
           markdown: 'Here is my original markdown, please do not override this!',
+          writesTo: [{ id: 'usersignedup', version: '1.0.0' }],
+          readsFrom: [{ id: 'usersignedup', version: '1.0.0' }],
         });
 
         await plugin(config, { services: [{ path: join(asyncAPIExamplesDir, 'simple.asyncapi.yml'), id: 'account-service' }] });
@@ -290,6 +292,8 @@ describe('AsyncAPI EventCatalog Plugin', () => {
                 backgroundColor: 'blue',
               },
             ],
+            writesTo: [{ id: 'usersignedup', version: '1.0.0' }],
+            readsFrom: [{ id: 'usersignedup', version: '1.0.0' }],
           })
         );
       });
