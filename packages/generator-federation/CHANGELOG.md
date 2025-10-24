@@ -1,5 +1,11 @@
 # @eventcatalog/generator-federation
 
+## 2.2.1
+
+### Patch Changes
+
+- 6e36874: fix(plugins): plugin now supports https proxy
+
 ## 2.2.0
 
 ### Minor Changes

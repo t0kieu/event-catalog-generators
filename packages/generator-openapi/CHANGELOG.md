@@ -1,5 +1,11 @@
 # @eventcatalog/generator-openapi
 
+## 7.5.2
+
+### Patch Changes
+
+- 6e36874: fix(plugins): plugin now supports https proxy
+
 ## 7.5.1
 
 ### Patch Changes

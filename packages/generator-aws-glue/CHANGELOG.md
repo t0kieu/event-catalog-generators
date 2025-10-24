@@ -1,5 +1,11 @@
 # @eventcatalog/generator-aws-glue
 
+## 0.1.1
+
+### Patch Changes
+
+- 6e36874: fix(plugins): plugin now supports https proxy
+
 ## 0.1.0
 
 ### Minor Changes
