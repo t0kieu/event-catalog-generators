@@ -277,7 +277,7 @@ describe('GraphQL EventCatalog Plugin', () => {
         );
       });
 
-      it('when the GraphQL service is already defined in EventCatalog and the versions match, the markdown, badges and attachments are persisted and not overwritten', async () => {
+      it('when the GraphQL service is already defined in EventCatalog and the versions match, the markdown, writesTo, readsFrom, badges and attachments are persisted and not overwritten', async () => {
         // Create a service with the same name and version as the OpenAPI file for testing
         const { writeService, getService } = utils(catalogDir);
 
@@ -288,6 +288,8 @@ describe('GraphQL EventCatalog Plugin', () => {
           markdown: 'Here is my original markdown, please do not override this!',
           badges: [{ content: 'Random', textColor: 'blue', backgroundColor: 'blue' }],
           attachments: [{ title: 'Random', url: 'https://random.com' }],
+          writesTo: [{ id: 'usersignedup', version: '1.0.0' }],
+          readsFrom: [{ id: 'usersignedup', version: '1.0.0' }],
         });
 
         await plugin(config, {
@@ -315,6 +317,8 @@ describe('GraphQL EventCatalog Plugin', () => {
             markdown: 'Here is my original markdown, please do not override this!',
             badges: [{ content: 'Random', textColor: 'blue', backgroundColor: 'blue' }],
             attachments: [{ title: 'Random', url: 'https://random.com' }],
+            writesTo: [{ id: 'usersignedup', version: '1.0.0' }],
+            readsFrom: [{ id: 'usersignedup', version: '1.0.0' }],
           })
         );
       });

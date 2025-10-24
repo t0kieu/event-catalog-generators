@@ -211,6 +211,8 @@ export default async (_: any, options: Options) => {
       const schema = buildSchema(schemaContent);
       let schemaPath = path.basename(service.path as string) || 'schema.graphql';
       let serviceMarkdown = generateMarkdownForService({ service, schema, schemaPath });
+      let serviceWritesTo = service.writesTo || ([] as any);
+      let serviceReadsFrom = service.readsFrom || ([] as any);
       let serviceBadges = [] as any;
       let serviceAttachments = [] as any;
 
@@ -228,7 +230,8 @@ export default async (_: any, options: Options) => {
         serviceMarkdown = latestServiceInCatalog.markdown;
         serviceBadges = latestServiceInCatalog.badges || [];
         serviceAttachments = latestServiceInCatalog.attachments || [];
-
+        serviceWritesTo = latestServiceInCatalog.writesTo || ([] as any);
+        serviceReadsFrom = latestServiceInCatalog.readsFrom || ([] as any);
         if (latestServiceInCatalog.version !== service.version) {
           await versionService(service.id);
           console.log(
@@ -322,8 +325,8 @@ export default async (_: any, options: Options) => {
           ...(service.owners && { owners: service.owners }),
           ...(receives.length > 0 ? { receives } : {}),
           ...(sends.length > 0 ? { sends } : {}),
-          ...(service.writesTo && { writesTo: service.writesTo }),
-          ...(service.readsFrom && { readsFrom: service.readsFrom }),
+          ...(serviceWritesTo.length > 0 ? { writesTo: serviceWritesTo } : {}),
+          ...(serviceReadsFrom.length > 0 ? { readsFrom: serviceReadsFrom } : {}),
           schemaPath,
           specifications: [
             {

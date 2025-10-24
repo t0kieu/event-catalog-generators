@@ -99,6 +99,8 @@ export default async (_: any, options: Props) => {
       let serviceSpecifications = service.specifications;
       let serviceBadges = null;
       let serviceAttachments = null;
+      let serviceWritesTo = service.writesTo || ([] as any);
+      let serviceReadsFrom = service.readsFrom || ([] as any);
       const isDomainMarkedAsDraft = options.domain?.draft || null;
 
       const isServiceMarkedAsDraft =
@@ -195,6 +197,8 @@ export default async (_: any, options: Props) => {
         styles = latestServiceInCatalog.styles || null;
         serviceBadges = latestServiceInCatalog.badges || null;
         serviceAttachments = latestServiceInCatalog.attachments || null;
+        serviceWritesTo = latestServiceInCatalog.writesTo || ([] as any);
+        serviceReadsFrom = latestServiceInCatalog.readsFrom || ([] as any);
         // persist any specifications that are already in the catalog
         serviceSpecifications = {
           ...serviceSpecifications,
@@ -223,8 +227,8 @@ export default async (_: any, options: Props) => {
           ...(styles ? { styles } : {}),
           ...(isServiceMarkedAsDraft ? { draft: true } : {}),
           ...(serviceAttachments ? { attachments: serviceAttachments } : {}),
-          ...(service.writesTo.length > 0 ? { writesTo: service.writesTo } : {}),
-          ...(service.readsFrom.length > 0 ? { readsFrom: service.readsFrom } : {}),
+          ...(serviceWritesTo.length > 0 ? { writesTo: serviceWritesTo } : {}),
+          ...(serviceReadsFrom.length > 0 ? { readsFrom: serviceReadsFrom } : {}),
         },
         { path: join(servicePath), override: true }
       );

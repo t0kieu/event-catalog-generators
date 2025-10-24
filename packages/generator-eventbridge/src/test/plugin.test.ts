@@ -261,7 +261,7 @@ describe('EventBridge EventCatalog Plugin', () => {
       expect(service.name).toEqual('Orders Service');
     });
 
-    it('when the service is already defined in EventCatalog and the versions match, only metadata is updated and markdown, badges and attachments are persisted', async () => {
+    it('when the service is already defined in EventCatalog and the versions match, only metadata is updated and markdown, writesTo, readsFrom, badges and attachments are persisted', async () => {
       const { writeService, getService } = utils(catalogDir);
 
       await writeService({
@@ -271,6 +271,8 @@ describe('EventBridge EventCatalog Plugin', () => {
         markdown: 'old markdown',
         badges: [{ backgroundColor: 'red', textColor: 'white', content: 'Custom Badge' }],
         attachments: ['https://github.com/dboyne/eventcatalog/blob/main/README.md'],
+        writesTo: [{ id: 'usersignedup', version: '1.0.0' }],
+        readsFrom: [{ id: 'usersignedup', version: '1.0.0' }],
       });
 
       await plugin(config, {
@@ -289,6 +291,8 @@ describe('EventBridge EventCatalog Plugin', () => {
           markdown: 'old markdown',
           badges: [{ backgroundColor: 'red', textColor: 'white', content: 'Custom Badge' }],
           attachments: ['https://github.com/dboyne/eventcatalog/blob/main/README.md'],
+          writesTo: [{ id: 'usersignedup', version: '1.0.0' }],
+          readsFrom: [{ id: 'usersignedup', version: '1.0.0' }],
         })
       );
     });

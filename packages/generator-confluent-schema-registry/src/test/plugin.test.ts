@@ -362,7 +362,7 @@ message analytics_event_view_value {
         );
       });
 
-      it('when the service already exists in the catalog, the service information is persisted (e.g markdown, badges, summary) but the sends and receives are updated', async () => {
+      it('when the service already exists in the catalog, the service information is persisted (e.g markdown, writesTo, readsFrom, badges, summary) but the sends and receives are updated', async () => {
         const { writeService, getService } = utils(catalogDir);
 
         await writeService({
@@ -372,6 +372,8 @@ message analytics_event_view_value {
           markdown: 'This markdown is persisted',
           badges: [{ backgroundColor: 'red', textColor: 'white', content: 'Custom Badge' }],
           summary: 'This is custom summary',
+          writesTo: [{ id: 'usersignedup', version: '1.0.0' }],
+          readsFrom: [{ id: 'usersignedup', version: '1.0.0' }],
           sends: [{ id: 'this-topic-is-removed', version: '1' }],
           receives: [{ id: 'this-topic-is-removed', version: '1' }],
           owners: ['John Doe', 'Jane Doe'],
@@ -404,6 +406,8 @@ message analytics_event_view_value {
               { id: 'customer-deleted', version: '1' },
             ],
             receives: [{ id: 'customer-deleted', version: '1' }],
+            writesTo: [{ id: 'usersignedup', version: '1.0.0' }],
+            readsFrom: [{ id: 'usersignedup', version: '1.0.0' }],
             owners: ['John Doe', 'Jane Doe'],
           })
         );

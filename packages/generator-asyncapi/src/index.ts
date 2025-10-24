@@ -247,6 +247,8 @@ export default async (config: any, options: Props) => {
 
     let serviceSpecifications = {};
     let serviceSpecificationsFiles = [];
+    let serviceWritesTo = service.writesTo || ([] as any);
+    let serviceReadsFrom = service.readsFrom || ([] as any);
 
     const generatedMarkdownForService = generateMarkdownForService(document);
     let serviceMarkdown = service.generateMarkdown
@@ -522,6 +524,8 @@ export default async (config: any, options: Props) => {
         sends = latestServiceInCatalog.sends ? [...latestServiceInCatalog.sends, ...sends] : sends;
         receives = latestServiceInCatalog.receives ? [...latestServiceInCatalog.receives, ...receives] : receives;
         serviceSpecificationsFiles = await getSpecificationFilesForService(serviceId, version);
+        serviceWritesTo = latestServiceInCatalog.writesTo || ([] as any);
+        serviceReadsFrom = latestServiceInCatalog.readsFrom || ([] as any);
       }
     }
 
@@ -547,8 +551,8 @@ export default async (config: any, options: Props) => {
         ...(styles && { styles }),
         ...(isServiceMarkedAsDraft && { draft: true }),
         ...(attachments && { attachments }),
-        ...(service.writesTo && { writesTo: service.writesTo }),
-        ...(service.readsFrom && { readsFrom: service.readsFrom }),
+        ...(serviceWritesTo.length > 0 ? { writesTo: serviceWritesTo } : {}),
+        ...(serviceReadsFrom.length > 0 ? { readsFrom: serviceReadsFrom } : {}),
       },
       {
         path: servicePath,

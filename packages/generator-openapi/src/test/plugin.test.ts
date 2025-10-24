@@ -272,7 +272,7 @@ describe('OpenAPI EventCatalog Plugin', () => {
         );
       });
 
-      it('when the OpenAPI service is already defined in EventCatalog and the versions match, the markdown, badges and attachments are persisted and not overwritten', async () => {
+      it('when the OpenAPI service is already defined in EventCatalog and the versions match, the markdown, writesTo, readsFrom, badges and attachments are persisted and not overwritten', async () => {
         // Create a service with the same name and version as the OpenAPI file for testing
         const { writeService, getService } = utils(catalogDir);
 
@@ -284,6 +284,8 @@ describe('OpenAPI EventCatalog Plugin', () => {
             markdown: 'Here is my original markdown, please do not override this!',
             badges: [{ backgroundColor: 'red', textColor: 'white', content: 'Custom Badge' }],
             attachments: ['https://github.com/dboyne/eventcatalog/blob/main/README.md'],
+            writesTo: [{ id: 'usersignedup', version: '1.0.0' }],
+            readsFrom: [{ id: 'usersignedup', version: '1.0.0' }],
           },
           { path: 'Swagger Petstore' }
         );
@@ -300,6 +302,8 @@ describe('OpenAPI EventCatalog Plugin', () => {
             markdown: 'Here is my original markdown, please do not override this!',
             badges: [{ backgroundColor: 'red', textColor: 'white', content: 'Custom Badge' }],
             attachments: ['https://github.com/dboyne/eventcatalog/blob/main/README.md'],
+            writesTo: [{ id: 'usersignedup', version: '1.0.0' }],
+            readsFrom: [{ id: 'usersignedup', version: '1.0.0' }],
           })
         );
       });
