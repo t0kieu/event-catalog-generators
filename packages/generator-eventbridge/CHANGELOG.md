@@ -1,5 +1,11 @@
 # @eventcatalog/generator-eventbridge
 
+## 3.2.5
+
+### Patch Changes
+
+- 56a8964: fix(plugin): readsFrom and writesTo are now persisted between generat…
+
 ## 3.2.4
 
 ### Patch Changes
