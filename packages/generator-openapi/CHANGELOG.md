@@ -1,5 +1,11 @@
 # @eventcatalog/generator-openapi
 
+## 7.5.3
+
+### Patch Changes
+
+- 56a8964: fix(plugin): readsFrom and writesTo are now persisted between generat…
+
 ## 7.5.2
 
 ### Patch Changes

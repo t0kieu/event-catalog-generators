@@ -1,5 +1,11 @@
 # @eventcatalog/generator-graphql
 
+## 0.0.6
+
+### Patch Changes
+
+- 56a8964: fix(plugin): readsFrom and writesTo are now persisted between generat…
+
 ## 0.0.5
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @eventcatalog/sdk
 
+## 5.0.3
+
+### Patch Changes
+
+- 56a8964: fix(plugin): readsFrom and writesTo are now persisted between generat…
+
 ## 5.0.2
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @eventcatalog/generator-confluent-schema-registry
 
+## 0.2.3
+
+### Patch Changes
+
+- 56a8964: fix(plugin): readsFrom and writesTo are now persisted between generat…
+
 ## 0.2.2
 
 ### Patch Changes
