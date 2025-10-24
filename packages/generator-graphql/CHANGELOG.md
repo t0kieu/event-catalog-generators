@@ -1,5 +1,11 @@
 # @eventcatalog/generator-graphql
 
+## 0.0.5
+
+### Patch Changes
+
+- 6e36874: fix(plugins): plugin now supports https proxy
+
 ## 0.0.4
 
 ### Patch Changes

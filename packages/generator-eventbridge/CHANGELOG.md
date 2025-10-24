@@ -1,5 +1,11 @@
 # @eventcatalog/generator-eventbridge
 
+## 3.2.4
+
+### Patch Changes
+
+- 6e36874: fix(plugins): plugin now supports https proxy
+
 ## 3.2.3
 
 ### Patch Changes

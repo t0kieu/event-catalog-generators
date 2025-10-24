@@ -1,5 +1,11 @@
 # @eventcatalog/generator-confluent-schema-registry
 
+## 0.2.2
+
+### Patch Changes
+
+- 6e36874: fix(plugins): plugin now supports https proxy
+
 ## 0.2.1
 
 ### Patch Changes
