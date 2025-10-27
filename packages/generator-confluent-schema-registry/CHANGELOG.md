@@ -1,5 +1,11 @@
 # @eventcatalog/generator-confluent-schema-registry
 
+## 0.2.4
+
+### Patch Changes
+
+- 11dd0e9: chore(plugin): fixed chalk version for plugin
+
 ## 0.2.3
 
 ### Patch Changes

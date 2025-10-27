@@ -1,5 +1,11 @@
 # @eventcatalog/generator-graphql
 
+## 0.0.7
+
+### Patch Changes
+
+- 11dd0e9: chore(plugin): fixed chalk version for plugin
+
 ## 0.0.6
 
 ### Patch Changes

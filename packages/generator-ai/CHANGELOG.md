@@ -1,5 +1,11 @@
 # @eventcatalog/generator-ai
 
+## 1.2.1
+
+### Patch Changes
+
+- 11dd0e9: chore(plugin): fixed chalk version for plugin
+
 ## 1.2.0
 
 ### Minor Changes

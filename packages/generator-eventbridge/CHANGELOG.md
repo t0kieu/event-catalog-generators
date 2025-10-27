@@ -1,5 +1,11 @@
 # @eventcatalog/generator-eventbridge
 
+## 3.2.6
+
+### Patch Changes
+
+- 11dd0e9: chore(plugin): fixed chalk version for plugin
+
 ## 3.2.5
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @eventcatalog/generator-amazon-apigateway
 
+## 1.2.3
+
+### Patch Changes
+
+- 11dd0e9: chore(plugin): fixed chalk version for plugin
+
 ## 1.2.2
 
 ### Patch Changes
