@@ -1,5 +1,11 @@
 # @eventcatalog/generator-aws-glue
 
+## 0.1.2
+
+### Patch Changes
+
+- 11dd0e9: chore(plugin): fixed chalk version for plugin
+
 ## 0.1.1
 
 ### Patch Changes

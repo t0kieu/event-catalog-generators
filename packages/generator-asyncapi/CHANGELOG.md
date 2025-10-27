@@ -1,5 +1,11 @@
 # @eventcatalog/sdk
 
+## 5.0.4
+
+### Patch Changes
+
+- 11dd0e9: chore(plugin): fixed chalk version for plugin
+
 ## 5.0.3
 
 ### Patch Changes

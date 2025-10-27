@@ -1,5 +1,11 @@
 # @eventcatalog/generator-github
 
+## 0.2.2
+
+### Patch Changes
+
+- 11dd0e9: chore(plugin): fixed chalk version for plugin
+
 ## 0.2.1
 
 ### Patch Changes
