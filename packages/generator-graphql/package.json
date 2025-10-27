@@ -33,7 +33,7 @@
   "types": "./dist/index.d.ts",
   "dependencies": {
     "@eventcatalog/sdk": "^2.8.3",
-    "chalk": "^5.6.2",
+    "chalk": "4.1.2",
     "graphql": "^16.11.0",
     "zod": "^3.23.8"
   }
