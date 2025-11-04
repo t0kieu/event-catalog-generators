@@ -1,5 +1,11 @@
 # @eventcatalog/generator-openapi
 
+## 7.5.5
+
+### Patch Changes
+
+- 0f79f83: feat(plugin): added new azure schema registry plugin
+
 ## 7.5.4
 
 ### Patch Changes
