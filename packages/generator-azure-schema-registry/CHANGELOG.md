@@ -1,5 +1,11 @@
 # @eventcatalog/generator-azure-schema-registry
 
+## 0.0.3
+
+### Patch Changes
+
+- c2a1e6d: feat(plugin): added new azure schema registry plugin
+
 ## 0.0.2
 
 ### Patch Changes
