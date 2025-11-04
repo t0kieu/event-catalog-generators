@@ -29,28 +29,6 @@ const getAuthToken = (): string => {
 };
 
 /**
- * Get all schemas from Azure Schema Registry using the REST API
- */
-export const getAllSchemasFromRegistry = async (registryUrl: string): Promise<AzureSchemaRegistrySchema[]> => {
-  const allSchemas: AzureSchemaRegistrySchema[] = [];
-
-  // Note: The Azure Schema Registry API doesn't have a direct method to list all schemas
-  // This is a limitation of the Azure Schema Registry API
-  // In a real implementation, you would need to:
-  // 1. Maintain a list of schema groups and names separately
-  // 2. Query each schema explicitly
-  // 3. Or use Azure Resource Management API to discover schemas
-
-  // For now, this returns an empty array and should be implemented based on your specific needs
-  // You'll need to either:
-  // - Pass schema groups/names in the configuration
-  // - Use Azure Resource Management API to list schemas
-  // - Maintain an external inventory
-
-  return allSchemas;
-};
-
-/**
  * Get all versions for a specific schema
  */
 const getSchemaVersions = async (registryUrl: string, schemaGroup: string, schemaName: string): Promise<number[]> => {
@@ -120,27 +98,6 @@ export const getSchemaByVersion = async (
     schemaType,
     content: schemaContent,
   };
-};
-
-/**
- * Get a specific schema by name and version from a schema group
- * Returns the latest version by default
- */
-export const getSchemaByName = async (
-  registryUrl: string,
-  schemaGroup: string,
-  schemaName: string
-): Promise<AzureSchemaRegistrySchema> => {
-  // First, get all versions for this schema
-  const versions = await getSchemaVersions(registryUrl, schemaGroup, schemaName);
-
-  if (versions.length === 0) {
-    throw new Error(`No versions found for schema ${schemaName} in group ${schemaGroup}`);
-  }
-
-  // Get the latest version
-  const latestVersion = Math.max(...versions);
-  return getSchemaByVersion(registryUrl, schemaGroup, schemaName, latestVersion);
 };
 
 /**
