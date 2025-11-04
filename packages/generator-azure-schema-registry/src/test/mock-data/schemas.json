@@ -1,0 +1,74 @@
+[
+  {
+    "id": "azure-schema-1",
+    "groupName": "com.example.orders",
+    "name": "order-created",
+    "version": 1,
+    "schemaType": "Avro",
+    "content": "{\"type\":\"record\",\"name\":\"order_created_v1\",\"fields\":[{\"name\":\"id\",\"type\":\"string\"}]}"
+  },
+  {
+    "id": "azure-schema-1-latest",
+    "groupName": "com.example.orders",
+    "name": "order-created",
+    "version": 2,
+    "schemaType": "Avro",
+    "content": "{\"type\":\"record\",\"name\":\"order_created_v2\",\"fields\":[{\"name\":\"id\",\"type\":\"string\"},{\"name\":\"total\",\"type\":\"double\"}]}"
+  },
+  {
+    "id": "azure-schema-6",
+    "groupName": "com.example.shipping",
+    "name": "shipment-dispatched",
+    "version": 1,
+    "schemaType": "Avro",
+    "content": "{\"type\":\"record\",\"name\":\"shipment_dispatched_v1\",\"fields\":[{\"name\":\"id\",\"type\":\"string\"}]}"
+  },
+  {
+    "id": "azure-schema-6-v2",
+    "groupName": "com.example.shipping",
+    "name": "shipment-dispatched",
+    "version": 2,
+    "schemaType": "Avro",
+    "content": "{\"type\":\"record\",\"name\":\"shipment_dispatched_v2\",\"fields\":[{\"name\":\"id\",\"type\":\"string\"},{\"name\":\"address\",\"type\":\"string\"}]}"
+  },
+  {
+    "id": "azure-schema-6-v3",
+    "groupName": "com.example.shipping",
+    "name": "shipment-dispatched",
+    "version": 3,
+    "schemaType": "Avro",
+    "content": "{\"type\":\"record\",\"name\":\"shipment_dispatched_v3\",\"fields\":[{\"name\":\"id\",\"type\":\"string\"},{\"name\":\"address\",\"type\":\"string\"},{\"name\":\"carrier\",\"type\":\"string\"}]}"
+  },
+  {
+    "id": "azure-schema-6-latest",
+    "groupName": "com.example.shipping",
+    "name": "shipment-dispatched",
+    "version": 4,
+    "schemaType": "Avro",
+    "content": "{\"type\":\"record\",\"name\":\"shipment_dispatched_v4\",\"fields\":[{\"name\":\"id\",\"type\":\"string\"},{\"name\":\"address\",\"type\":\"string\"},{\"name\":\"carrier\",\"type\":\"string\"},{\"name\":\"trackingNumber\",\"type\":\"string\"}]}"
+  },
+  {
+    "id": "azure-schema-3",
+    "groupName": "com.example.inventory",
+    "name": "inventory-updated",
+    "version": 1,
+    "schemaType": "Avro",
+    "content": "{\"type\":\"record\",\"name\":\"inventory_updated_v1\",\"fields\":[{\"name\":\"id\",\"type\":\"string\"},{\"name\":\"quantity\",\"type\":\"int\"}]}"
+  },
+  {
+    "id": "azure-schema-4",
+    "groupName": "com.example.payments",
+    "name": "payment-received",
+    "version": 1,
+    "schemaType": "Json",
+    "content": "{\"$schema\":\"http://json-schema.org/draft-07/schema#\",\"title\":\"payment_received_v1\",\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"string\"},\"amount\":{\"type\":\"number\"}},\"required\":[\"id\",\"amount\"]}"
+  },
+  {
+    "id": "azure-schema-5",
+    "groupName": "com.example.users",
+    "name": "user-registered",
+    "version": 1,
+    "schemaType": "Json",
+    "content": "{\"$schema\":\"http://json-schema.org/draft-07/schema#\",\"title\":\"user_registered_v1\",\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"string\"},\"email\":{\"type\":\"string\"}},\"required\":[\"id\",\"email\"]}"
+  }
+]

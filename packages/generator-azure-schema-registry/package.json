@@ -1,0 +1,40 @@
+{
+  "name": "@eventcatalog/generator-azure-schema-registry",
+  "version": "0.0.1",
+  "description": "Azure Schema Registry generator for EventCatalog",
+  "scripts": {
+    "build": "tsup",
+    "test": "vitest",
+    "format": "prettier --write .",
+    "changeset": "changeset",
+    "format:diff": "prettier --list-different .",
+    "release": "changeset publish"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "Dual License",
+  "devDependencies": {
+    "@types/node": "^20.16.1",
+    "prettier": "^3.3.3",
+    "tsup": "^8.1.0",
+    "typescript": "^5.5.3",
+    "vitest": "^2.0.2"
+  },
+  "files": [
+    "dist",
+    "package.json"
+  ],
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "dependencies": {
+    "@changesets/cli": "^2.27.8",
+    "@eventcatalog/sdk": "^2.9.0",
+    "axios": "^1.7.7",
+    "chalk": "4.1.2",
+    "update-notifier": "^7.3.1"
+  }
+}
