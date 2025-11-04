@@ -321,9 +321,6 @@ const processMessagesForOpenAPISpec = async (
         messageMarkdown = catalogedMessage.markdown;
       }
 
-      console.log('catalogedMessage version', catalogedMessage.version);
-      console.log('version', version);
-
       // if the version matches, we can override the message but keep markdown as it  was
       if (catalogedMessage.version !== version) {
         console.log('versioning message', message.id);
