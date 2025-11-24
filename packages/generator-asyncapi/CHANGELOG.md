@@ -1,5 +1,11 @@
 # @eventcatalog/sdk
 
+## 5.1.1
+
+### Patch Changes
+
+- edad6da: feat(plugin): added ability to specify version of service through con…
+
 ## 5.1.0
 
 ### Minor Changes

@@ -1,5 +1,11 @@
 # @eventcatalog/generator-openapi
 
+## 7.6.1
+
+### Patch Changes
+
+- edad6da: feat(plugin): added ability to specify version of service through con…
+
 ## 7.6.0
 
 ### Minor Changes
