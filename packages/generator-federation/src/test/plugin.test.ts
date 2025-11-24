@@ -39,7 +39,7 @@ describe('generator-federation', () => {
       });
 
       const services = await fs.readdir(path.join(catalogDir, 'services'));
-      expect(services).toHaveLength(4);
+      expect(services).toHaveLength(5);
     },
     { timeout: 20000 }
   );
@@ -61,7 +61,7 @@ describe('generator-federation', () => {
       });
 
       const services = await fs.readdir(path.join(catalogDir, 'services'));
-      expect(services).toHaveLength(7);
+      expect(services).toHaveLength(8);
     },
     { timeout: 20000 }
   );
@@ -163,7 +163,7 @@ describe('generator-federation', () => {
         });
 
         const services = await fs.readdir(path.join(catalogDir, 'services'));
-        expect(services).toHaveLength(4);
+        expect(services).toHaveLength(5);
       },
       { timeout: 20000 }
     );
@@ -195,7 +195,7 @@ describe('generator-federation', () => {
         });
 
         const services = await fs.readdir(path.join(catalogDir, 'services'));
-        expect(services).toHaveLength(7);
+        expect(services).toHaveLength(8);
       },
       { timeout: 20000 }
     );
