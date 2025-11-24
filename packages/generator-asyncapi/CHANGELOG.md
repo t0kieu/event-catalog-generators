@@ -1,5 +1,11 @@
 # @eventcatalog/sdk
 
+## 5.1.2
+
+### Patch Changes
+
+- ac23a29: fix(plugin): fix versions of asyncapi plugin
+
 ## 5.1.1
 
 ### Patch Changes
