@@ -166,7 +166,8 @@ export const buildMessage = async (
   operation: Operation,
   generateMarkdown?: ({}: { operation: Operation; markdown: string }) => string,
   messageIdConfig?: MessageIdConfig,
-  serviceId?: string
+  serviceId?: string,
+  serviceVersion?: string
 ) => {
   const requestBodiesAndResponses = await getSchemasByOperationId(pathToFile, operation.operationId);
   const extensions = operation.extensions || {};
@@ -197,6 +198,7 @@ export const buildMessage = async (
 
   // Put this before the prefixWithServiceId check so that the folder name is the same as the id
   const messageName = extensions['x-eventcatalog-message-id'] || uniqueIdentifier;
+  const messageVersion = extensions['x-eventcatalog-message-version'] || serviceVersion || document.info.version;
 
   if (messageIdConfig?.prefixWithServiceId) {
     const separator = messageIdConfig.separator || '-';
@@ -205,7 +207,7 @@ export const buildMessage = async (
 
   return {
     id: extensions['x-eventcatalog-message-id'] || uniqueIdentifier,
-    version: extensions['x-eventcatalog-message-version'] || document.info.version,
+    version: messageVersion,
     name: extensions['x-eventcatalog-message-name'] || messageName,
     summary: getSummary(operation),
     markdown: generateMarkdown

@@ -1144,6 +1144,17 @@ describe('AsyncAPI EventCatalog Plugin', () => {
         expect(service.version).toEqual('1.0.0');
       });
 
+      it('when the `x-eventcatalog-message-version` is not defined on a message but the service version is defined through configuration, the message version is set to the service version', async () => {
+        const { getQuery } = utils(catalogDir);
+
+        await plugin(config, {
+          services: [{ path: join(asyncAPIExamplesDir, 'simple.asyncapi.yml'), id: 'account-service', version: '15.0.0' }],
+        });
+
+        const event = await getQuery('GetUserByEmail', '15.0.0');
+        expect(event.version).toEqual('15.0.0');
+      });
+
       it('when the `x-eventcatalog-message-version` is defined on a message the schema is stored against that version', async () => {
         const { getEvent } = utils(catalogDir);
 
