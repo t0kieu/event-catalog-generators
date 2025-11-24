@@ -39,7 +39,7 @@ export const buildService = (
   const generatedMarkdownForService = defaultMarkdown(document, schemaPath);
   return {
     id: serviceId,
-    version: document.info.version,
+    version: serviceOptions.version || document.info.version,
     name: document.info.title,
     summary: getSummary(document),
     schemaPath,
