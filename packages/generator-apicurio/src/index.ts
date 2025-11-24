@@ -59,6 +59,7 @@ async function runSpecificationGenerator(
       id: serviceId,
       name: serviceName,
       path: specFilePath,
+      version: serviceVersion,
       ...serviceOptions, // Allow overriding service options
     };
 
