@@ -11,6 +11,7 @@ export type Domain = {
 
 export type Service = {
   id: string;
+  version?: string;
   name?: string;
   summary?: string;
   path: string | string[];

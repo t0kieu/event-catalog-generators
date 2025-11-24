@@ -71,6 +71,7 @@ export default async (_: any, options: Props) => {
         return {
           document,
           path: specFile,
+          version: serviceSpec.version || document.info.version,
         };
       } catch (error) {
         console.error(chalk.red(`Failed to parse OpenAPI file: ${specFile}`));
@@ -83,17 +84,22 @@ export default async (_: any, options: Props) => {
     const validSpecFiles = validSpecs.filter((v) => v !== null);
 
     const orderedSpecs = validSpecFiles.sort((a, b) => {
-      const versionA = a?.document.info.version ?? '';
-      const versionB = b?.document.info.version ?? '';
+      const versionA = a?.version ?? '';
+      const versionB = b?.version ?? '';
       return versionA.localeCompare(versionB);
     });
 
     for (const specification of orderedSpecs) {
       const document = specification.document;
-      const version = document.info.version;
+      const version = specification.version;
       const specPath = specification.path;
 
-      const service = buildService({ ...serviceSpec, path: specPath }, document, serviceSpec.generateMarkdown);
+      const service = buildService(
+        { ...serviceSpec, path: specPath, version: specification.version },
+        document,
+        serviceSpec.generateMarkdown
+      );
+
       let serviceMarkdown = service.markdown;
       let serviceSpecificationsFiles = [];
       let serviceSpecifications = service.specifications;

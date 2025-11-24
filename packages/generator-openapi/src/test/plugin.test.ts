@@ -744,6 +744,20 @@ describe('OpenAPI EventCatalog Plugin', () => {
             expect(service).toBeDefined();
           });
         });
+
+        describe('config option: version', () => {
+          it('when the version is given to the service through the configuration, the service version is used over the OpenAPI version', async () => {
+            const { getService } = utils(catalogDir);
+
+            await plugin(config, {
+              services: [{ path: join(openAPIExamples, 'petstore.yml'), id: 'swagger-petstore', version: '5.0.0' }],
+            });
+
+            const service = await getService('swagger-petstore', '5.0.0');
+            expect(service.version).toEqual('5.0.0');
+          });
+        });
+
         describe('config option: template', () => {
           it('if a `template` value is given in the service config options, then the generator uses that template to generate the service markdown', async () => {
             const { getService } = utils(catalogDir);

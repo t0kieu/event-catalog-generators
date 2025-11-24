@@ -362,6 +362,37 @@ describe('AsyncAPI EventCatalog Plugin', () => {
         expect(newService).toBeDefined();
       });
 
+      it('when the version is given to the service through the configuration, the service version is used over the AsyncAPI version', async () => {
+        const { getService } = utils(catalogDir);
+
+        await plugin(config, {
+          services: [{ path: join(asyncAPIExamplesDir, 'simple.asyncapi.yml'), id: 'account-service', version: '5.0.0' }],
+        });
+
+        const service = await getService('account-service');
+
+        expect(service).toEqual(
+          expect.objectContaining({
+            id: 'account-service',
+            name: 'Account Service',
+            version: '5.0.0',
+            summary: 'This service is in charge of processing user signups',
+            badges: [
+              {
+                content: 'Events',
+                textColor: 'blue',
+                backgroundColor: 'blue',
+              },
+              {
+                content: 'Authentication',
+                textColor: 'blue',
+                backgroundColor: 'blue',
+              },
+            ],
+          })
+        );
+      });
+
       describe('sends', () => {
         it('any message with the operation `send` is added to the service. The service publishes this message.', async () => {
           const { getService } = utils(catalogDir);
