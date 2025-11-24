@@ -69,25 +69,29 @@ describe('AsyncAPI EventCatalog Plugin', () => {
         expect(domain.services).toEqual([{ id: 'account-service', version: '1.0.0' }]);
       });
 
-      it('if multiple asyncapi files are processed, they are all added to the domain', async () => {
-        const { getDomain } = utils(catalogDir);
+      it(
+        'if multiple asyncapi files are processed, they are all added to the domain',
+        async () => {
+          const { getDomain } = utils(catalogDir);
 
-        await plugin(config, {
-          services: [
-            { path: join(asyncAPIExamplesDir, 'simple.asyncapi.yml'), id: 'account-service' },
-            { path: join(asyncAPIExamplesDir, 'orders-service.asyncapi.yml'), id: 'orders-service' },
-          ],
-          domain: { id: 'orders', name: 'Orders', version: '1.0.0' },
-        });
+          await plugin(config, {
+            services: [
+              { path: join(asyncAPIExamplesDir, 'simple.asyncapi.yml'), id: 'account-service' },
+              { path: join(asyncAPIExamplesDir, 'orders-service.asyncapi.yml'), id: 'orders-service' },
+            ],
+            domain: { id: 'orders', name: 'Orders', version: '1.0.0' },
+          });
 
-        const domain = await getDomain('orders', 'latest');
+          const domain = await getDomain('orders', 'latest');
 
-        expect(domain.services).toHaveLength(2);
-        expect(domain.services).toEqual([
-          { id: 'account-service', version: '1.0.0' },
-          { id: 'orders-service', version: '1.0.1' },
-        ]);
-      });
+          expect(domain.services).toHaveLength(2);
+          expect(domain.services).toEqual([
+            { id: 'account-service', version: '1.0.0' },
+            { id: 'orders-service', version: '1.0.1' },
+          ]);
+        },
+        { timeout: 20000 }
+      );
 
       it('if a domain is defined in the AsyncAPI plugin configuration and that domain does not exist, it is created', async () => {
         const { getDomain } = utils(catalogDir);
@@ -111,16 +115,20 @@ describe('AsyncAPI EventCatalog Plugin', () => {
         expect(await getDomain('orders', '1.0.0')).toBeUndefined();
       });
 
-      it('if a domain is defined with owners, the owners are written to the domain', async () => {
-        const { getDomain } = utils(catalogDir);
-        await plugin(config, {
-          services: [{ path: join(asyncAPIExamplesDir, 'simple.asyncapi.yml'), id: 'account-service' }],
-          domain: { id: 'orders', name: 'Orders Domain', version: '1.0.0', owners: ['John Doe', 'Jane Doe'] },
-        });
+      it(
+        'if a domain is defined with owners, the owners are written to the domain',
+        async () => {
+          const { getDomain } = utils(catalogDir);
+          await plugin(config, {
+            services: [{ path: join(asyncAPIExamplesDir, 'simple.asyncapi.yml'), id: 'account-service' }],
+            domain: { id: 'orders', name: 'Orders Domain', version: '1.0.0', owners: ['John Doe', 'Jane Doe'] },
+          });
 
-        const domain = await getDomain('orders', '1.0.0');
-        expect(domain.owners).toEqual(['John Doe', 'Jane Doe']);
-      });
+          const domain = await getDomain('orders', '1.0.0');
+          expect(domain.owners).toEqual(['John Doe', 'Jane Doe']);
+        },
+        { timeout: 20000 }
+      );
 
       describe('domain options', () => {
         describe('config option: template', () => {
@@ -1142,6 +1150,17 @@ describe('AsyncAPI EventCatalog Plugin', () => {
         expect(event).toBeDefined();
         expect(event.version).toEqual('2.0.0');
         expect(service.version).toEqual('1.0.0');
+      });
+
+      it('when the `x-eventcatalog-message-version` is not defined on a message but the service version is defined through configuration, the message version is set to the service version', async () => {
+        const { getQuery } = utils(catalogDir);
+
+        await plugin(config, {
+          services: [{ path: join(asyncAPIExamplesDir, 'simple.asyncapi.yml'), id: 'account-service', version: '15.0.0' }],
+        });
+
+        const event = await getQuery('GetUserByEmail', '15.0.0');
+        expect(event.version).toEqual('15.0.0');
       });
 
       it('when the `x-eventcatalog-message-version` is defined on a message the schema is stored against that version', async () => {

@@ -162,6 +162,13 @@ export default async (_: any, options: Props) => {
 
       // Check if service is already defined... if the versions do not match then create service.
       const latestServiceInCatalog = await getService(service.id, 'latest');
+      let latestVersionSpecificationFiles = [];
+
+      try {
+        latestVersionSpecificationFiles = await getSpecificationFilesForService(service.id, 'latest');
+      } catch (error) {
+        // No latest specifications found, skipping...
+      }
 
       const versionTheService = latestServiceInCatalog && isVersionGreaterThan(version, latestServiceInCatalog.version);
       console.log(chalk.blue(`Processing service: ${document.info.title} (v${version})`));
@@ -184,6 +191,7 @@ export default async (_: any, options: Props) => {
         serviceHasMultipleSpecFiles: Array.isArray(serviceSpec.path),
         isDraft: isServiceMarkedAsDraft,
         serviceId: service.id,
+        serviceVersion: service.version,
       });
 
       let owners = service.owners || [];
@@ -196,7 +204,7 @@ export default async (_: any, options: Props) => {
 
       if (latestServiceInCatalog) {
         serviceMarkdown = latestServiceInCatalog.markdown;
-        serviceSpecificationsFiles = await getSpecificationFilesForService(service.id, 'latest');
+        serviceSpecificationsFiles = latestVersionSpecificationFiles;
         sends = latestServiceInCatalog.sends || ([] as any);
         owners = latestServiceInCatalog.owners || ([] as any);
         repository = latestServiceInCatalog.repository || null;
@@ -277,11 +285,12 @@ const processMessagesForOpenAPISpec = async (
     serviceHasMultipleSpecFiles: boolean;
     isDraft?: boolean;
     serviceId?: string;
+    serviceVersion?: string;
   }
 ) => {
   const operations = await getOperationsByType(pathToSpec, options.httpMethodsToMessages);
   const sidebarBadgeType = options.sidebarBadgeType || 'HTTP_METHOD';
-  const version = document.info.version;
+  const version = options.serviceVersion || document.info.version;
   const preserveExistingMessages = options.preserveExistingMessages ?? true;
   const isDraft = options.isDraft ?? null;
 
@@ -296,7 +305,8 @@ const processMessagesForOpenAPISpec = async (
       operation,
       options.messages?.generateMarkdown,
       options.messages?.id,
-      options.serviceId
+      options.serviceId,
+      version
     );
     let messageMarkdown = message.markdown;
     const messageType = operation.type;
@@ -328,7 +338,7 @@ const processMessagesForOpenAPISpec = async (
       }
 
       // if the version matches, we can override the message but keep markdown as it  was
-      if (catalogedMessage.version !== version) {
+      if (catalogedMessage.version !== message.version) {
         console.log('versioning message', message.id);
         // if the version does not match, we need to version the message
         await versionMessage(message.id);

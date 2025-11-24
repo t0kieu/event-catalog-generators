@@ -1029,6 +1029,19 @@ describe('OpenAPI EventCatalog Plugin', () => {
           const event = await getQuery('list-pets');
           expect(event.version).toEqual('5.0.0');
         });
+
+        it('when messages does not have the `x-eventcatalog-message-version` but the service id is provided in the configuration that value is used for the message version', async () => {
+          const { getQuery } = utils(catalogDir);
+
+          await plugin(config, {
+            services: [
+              { path: join(openAPIExamples, 'petstore-with-special-characters.yml'), id: 'swagger-petstore', version: '10.0.0' },
+            ],
+          });
+
+          const event = await getQuery('showPetById');
+          expect(event.version).toEqual('10.0.0');
+        });
       });
 
       it('when the message already exists in EventCatalog but the versions do not match, the existing message is versioned', async () => {
