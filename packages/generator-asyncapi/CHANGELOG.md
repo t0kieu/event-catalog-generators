@@ -1,5 +1,11 @@
 # @eventcatalog/sdk
 
+## 5.1.0
+
+### Minor Changes
+
+- 77a7fbb: feat(plugin): added ability to specify version of service through configuration for asyncapi and openapi
+
 ## 5.0.4
 
 ### Patch Changes
