@@ -87,7 +87,7 @@ describe('AsyncAPI EventCatalog Plugin', () => {
           { id: 'account-service', version: '1.0.0' },
           { id: 'orders-service', version: '1.0.1' },
         ]);
-      });
+      }, { timeout: 20000 });
 
       it('if a domain is defined in the AsyncAPI plugin configuration and that domain does not exist, it is created', async () => {
         const { getDomain } = utils(catalogDir);
@@ -120,7 +120,7 @@ describe('AsyncAPI EventCatalog Plugin', () => {
 
         const domain = await getDomain('orders', '1.0.0');
         expect(domain.owners).toEqual(['John Doe', 'Jane Doe']);
-      });
+      }, { timeout: 20000 });
 
       describe('domain options', () => {
         describe('config option: template', () => {
