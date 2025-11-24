@@ -240,20 +240,24 @@ describe('generator-ai', () => {
       );
     });
 
-    it('when no embedding provider is provided, the embeddings are generated using the huggingface model', async () => {
-      await plugin(eventCatalogConfig, {});
+    it(
+      'when no embedding provider is provided, the embeddings are generated using the huggingface model',
+      async () => {
+        await plugin(eventCatalogConfig, {});
 
-      // Verify documents.json and embeddings.json are created
-      const documents = await fs.readFile(path.join(catalogDir, 'public/ai/documents.json'), 'utf8');
-      const documentsJson = JSON.parse(documents);
-      expect(documentsJson).toHaveLength(39);
+        // Verify documents.json and embeddings.json are created
+        const documents = await fs.readFile(path.join(catalogDir, 'public/ai/documents.json'), 'utf8');
+        const documentsJson = JSON.parse(documents);
+        expect(documentsJson).toHaveLength(39);
 
-      const embeddings = await fs.readFile(path.join(catalogDir, 'public/ai/embeddings.json'), 'utf8');
-      const embeddingsJson = JSON.parse(embeddings);
-      expect(embeddingsJson).toHaveLength(39);
+        const embeddings = await fs.readFile(path.join(catalogDir, 'public/ai/embeddings.json'), 'utf8');
+        const embeddingsJson = JSON.parse(embeddings);
+        expect(embeddingsJson).toHaveLength(39);
 
-      // Make sure openai was not called
-      expect(mockEmbeddingsCreate).toHaveBeenCalledTimes(0);
-    }, { timeout: 20000 });
+        // Make sure openai was not called
+        expect(mockEmbeddingsCreate).toHaveBeenCalledTimes(0);
+      },
+      { timeout: 20000 }
+    );
   });
 });
