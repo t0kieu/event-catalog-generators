@@ -923,5 +923,117 @@ describe('Apicurio Registry EventCatalog Plugin', () => {
       expect(specContent).toContain('openapi: 3.0.0');
       expect(specContent).toContain('Orders API');
     });
+
+    it('when generator is configured, the spec file is still written correctly', async () => {
+      const { getService } = utils(catalogDir);
+
+      // The generator will fail to import since it's not installed, but the spec file should still be written
+      await plugin(config, {
+        registryUrl: 'http://localhost:8080',
+        services: [
+          {
+            id: 'orders-service',
+            name: 'Orders Service',
+            version: '1.0.0',
+            sends: [{ events: ['order-placed'] }],
+            specifications: [
+              {
+                type: 'openapi',
+                artifactId: 'orders-service-openapi',
+                generator: ['@eventcatalog/generator-openapi', { debug: true }],
+              },
+            ],
+          },
+        ],
+      });
+
+      // Service and spec should still be created even if generator fails to load
+      const service = await getService('orders-service', '1.0.0');
+      expect(service).toBeDefined();
+      expect(service.specifications).toBeDefined();
+      expect(service.specifications.openapiPath).toEqual('orders-service-openapi.openapi.yml');
+
+      // Verify the spec file was created
+      const specFileExists = existsSync(
+        join(catalogDir, 'services', 'orders-service', 'orders-service-openapi.openapi.yml')
+      );
+      expect(specFileExists).toBeTruthy();
+    });
+
+    it('generator config with asyncapi type creates correct spec file', async () => {
+      const { getService } = utils(catalogDir);
+
+      await plugin(config, {
+        registryUrl: 'http://localhost:8080',
+        services: [
+          {
+            id: 'orders-service',
+            name: 'Orders Service',
+            version: '1.0.0',
+            sends: [{ events: ['order-placed'] }],
+            specifications: [
+              {
+                type: 'asyncapi',
+                artifactId: 'orders-service-asyncapi',
+                generator: ['@eventcatalog/generator-asyncapi', { parseSchemas: true }],
+              },
+            ],
+          },
+        ],
+      });
+
+      const service = await getService('orders-service', '1.0.0');
+      expect(service).toBeDefined();
+      expect(service.specifications.asyncapiPath).toEqual('orders-service-asyncapi.asyncapi.yml');
+
+      // Verify the spec file was created with correct content
+      const specFilePath = join(catalogDir, 'services', 'orders-service', 'orders-service-asyncapi.asyncapi.yml');
+      const specContent = await fs.readFile(specFilePath, 'utf-8');
+      expect(specContent).toContain('asyncapi:');
+      expect(specContent).toContain('Orders Events');
+    });
+
+    it('multiple specifications with different generators are processed correctly', async () => {
+      const { getService } = utils(catalogDir);
+
+      await plugin(config, {
+        registryUrl: 'http://localhost:8080',
+        services: [
+          {
+            id: 'orders-service',
+            name: 'Orders Service',
+            version: '1.0.0',
+            sends: [{ events: ['order-placed'] }],
+            specifications: [
+              {
+                type: 'openapi',
+                artifactId: 'orders-service-openapi',
+                generator: ['@eventcatalog/generator-openapi', {}],
+              },
+              {
+                type: 'asyncapi',
+                artifactId: 'orders-service-asyncapi',
+                generator: ['@eventcatalog/generator-asyncapi', {}],
+              },
+            ],
+          },
+        ],
+      });
+
+      const service = await getService('orders-service', '1.0.0');
+      expect(service).toBeDefined();
+      expect(service.specifications.openapiPath).toEqual('orders-service-openapi.openapi.yml');
+      expect(service.specifications.asyncapiPath).toEqual('orders-service-asyncapi.asyncapi.yml');
+
+      // Verify both spec files exist
+      const openapiFileExists = existsSync(
+        join(catalogDir, 'services', 'orders-service', 'orders-service-openapi.openapi.yml')
+      );
+      const asyncapiFileExists = existsSync(
+        join(catalogDir, 'services', 'orders-service', 'orders-service-asyncapi.asyncapi.yml')
+      );
+      expect(openapiFileExists).toBeTruthy();
+      expect(asyncapiFileExists).toBeTruthy();
+    });
   });
 });

@@ -5,10 +5,87 @@ import checkLicense from '../../../shared/checkLicense';
 import { filterSchemas } from './utils/filters';
 import pkgJSON from '../package.json';
 import path, { join } from 'path';
-import { EventCatalogConfig, GeneratorProps, Schema } from './types';
+import { createRequire } from 'module';
+import fs from 'fs';
+import { EventCatalogConfig, GeneratorProps, Schema, ServiceSpecification } from './types';
 import { getSchemasFromRegistry, getLatestVersionFromArtifact, extractExactArtifactIds, getSchemasByArtifactIds, getSpecificationArtifact } from './lib/apicurio';
 import { writeMessageToEventCatalog } from './utils/messages';
 import { getMarkdownForService, getMarkdownForDomain } from './utils/markdown';
+
+/**
+ * Dynamically imports and runs a generator on a specification file.
+ * The generator is expected to be installed as a peer dependency.
+ */
+async function runSpecificationGenerator(
+  specConfig: ServiceSpecification,
+  specFilePath: string,
+  serviceId: string,
+  serviceName: string,
+  serviceVersion: string,
+  projectDir: string,
+  domain?: { id: string; name: string; version: string }
+): Promise<void> {
+  if (!specConfig.generator) return;
+
+  const [generatorPackage, generatorOptions = {}] = specConfig.generator;
+
+  try {
+    // Create a require function that resolves from the user's project directory
+    // This allows finding packages installed in the user's project, not just in this plugin
+    const projectRequire = createRequire(path.join(projectDir, 'package.json'));
+
+    // Resolve and import the generator from the user's project
+    const generatorPath = projectRequire.resolve(generatorPackage);
+    const generatorModule = await import(generatorPath);
+
+    // Handle CJS/ESM interop - the function could be at different levels
+    let generator = generatorModule.default || generatorModule;
+    // Handle nested default (CJS module imported via ESM)
+    if (typeof generator !== 'function' && generator?.default) {
+      generator = generator.default;
+    }
+
+    if (typeof generator !== 'function') {
+      console.warn(chalk.yellow(`  - Generator ${generatorPackage} is not a valid function, skipping`));
+      return;
+    }
+
+    // Extract service-specific options if provided
+    const { service: serviceOptions, ...restOptions } = generatorOptions as Record<string, any>;
+
+    // Build the service config for the generator
+    // Both OpenAPI and AsyncAPI generators expect a services array with path to the spec file
+    const generatorServiceConfig = {
+      id: serviceId,
+      name: serviceName,
+      path: specFilePath,
+      ...serviceOptions, // Allow overriding service options
+    };
+
+    // Build the full generator options
+    const fullGeneratorOptions = {
+      ...restOptions,
+      services: [generatorServiceConfig],
+      // If domain is configured, pass it to the generator
+      ...(domain ? { domain } : {}),
+    };
+
+    console.log(chalk.cyan(`  - Running ${generatorPackage} generator for ${specConfig.artifactId}...`));
+
+    // Run the generator
+    await generator({}, fullGeneratorOptions);
+
+    console.log(chalk.cyan(`  - Completed ${generatorPackage} generator for ${specConfig.artifactId}`));
+  } catch (error: any) {
+    if (error.code === 'ERR_MODULE_NOT_FOUND' || error.code === 'MODULE_NOT_FOUND') {
+      console.error(
+        chalk.red(`  - Generator ${generatorPackage} not found. Please install it: npm install ${generatorPackage}`)
+      );
+    } else {
+      console.error(chalk.red(`  - Error running generator ${generatorPackage}: ${error.message}`));
+    }
+  }
+}
 
 /////////////////////////////////////////////////
 
@@ -187,6 +264,8 @@ export default async (config: EventCatalogConfig, options: GeneratorProps) => {
       // Process specifications from config
       const specFilesToAdd: { content: string; fileName: string }[] = [...existingSpecFiles];
       const newSpecifications: Record<string, string> = { ...existingSpecifications };
+      // Track specs that have generators configured (include content for writing)
+      const specsWithGenerators: { specConfig: ServiceSpecification; fileName: string; content: string }[] = [];
 
       if (service.specifications && service.specifications.length > 0) {
         for (const specConfig of service.specifications) {
@@ -208,6 +287,11 @@ export default async (config: EventCatalogConfig, options: GeneratorProps) => {
             newSpecifications[specKey] = fileName;
 
             console.log(chalk.cyan(`  - Added ${specConfig.type} specification: ${specConfig.artifactId} (v${specArtifact.version})`));
+
+            // Track specs with generators to run after files are written
+            if (specConfig.generator) {
+              specsWithGenerators.push({ specConfig, fileName, content: specArtifact.content });
+            }
           }
         }
       }
@@ -220,9 +304,33 @@ export default async (config: EventCatalogConfig, options: GeneratorProps) => {
 
       await writeService(serviceWithSpecs, { path: servicePath, override: serviceInCatalog?.version === service.version });
 
-      // Add specification files to the service
+      // Add specification files to the service (don't pass version so file goes to service root)
       for (const specFile of specFilesToAdd) {
-        await addFileToService(service.id, { content: specFile.content, fileName: specFile.fileName }, service.version);
+        await addFileToService(service.id, { content: specFile.content, fileName: specFile.fileName });
+      }
+
+      // Run generators for specifications that have them configured
+      for (const { specConfig, fileName, content } of specsWithGenerators) {
+        // Build the absolute path to the spec file
+        const specFilePath = path.join(eventCatalogDirectory, 'services', service.id, fileName);
+
+        // Ensure the directory exists and write the spec file directly
+        // This ensures the file is available for the generator at the expected path
+        const specDir = path.dirname(specFilePath);
+        if (!fs.existsSync(specDir)) {
+          fs.mkdirSync(specDir, { recursive: true });
+        }
+        fs.writeFileSync(specFilePath, content, 'utf-8');
+
+        await runSpecificationGenerator(
+          specConfig,
+          specFilePath,
+          service.id,
+          service.name || service.id,
+          service.version,
+          eventCatalogDirectory,
+          options.domain
+        );
       }
 
       const messages = [...sends, ...receives];

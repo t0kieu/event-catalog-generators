@@ -81,10 +81,22 @@ export type Filter = {
 
 export type SpecificationType = 'openapi' | 'asyncapi';
 
+/**
+ * Generator configuration tuple: [generatorPackage, options]
+ * Example: ['@eventcatalog/generator-openapi', { debug: true }]
+ */
+export type GeneratorConfig = [string, Record<string, any>?];
+
 export type ServiceSpecification = {
   type: SpecificationType;
   artifactId: string;
   version?: string; // If not provided, uses latest
+  /**
+   * Optional generator to run on the specification to create message documentation.
+   * When specified, the generator will be dynamically imported and executed with the spec file.
+   * Example: ['@eventcatalog/generator-openapi', { debug: true }]
+   */
+  generator?: GeneratorConfig;
 };
 
 export type Service = {
