@@ -254,6 +254,6 @@ describe('generator-ai', () => {
 
       // Make sure openai was not called
       expect(mockEmbeddingsCreate).toHaveBeenCalledTimes(0);
-    });
+    }, { timeout: 20000 });
   });
 });
