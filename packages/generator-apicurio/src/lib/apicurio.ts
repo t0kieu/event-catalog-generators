@@ -242,9 +242,8 @@ export const getSpecificationArtifact = async (
         console.warn(`Specification artifact '${artifactId}' version '${effectiveVersion}' not found in registry`);
         return null;
       }
-      const content = typeof artifactData.content === 'string'
-        ? artifactData.content
-        : JSON.stringify(artifactData.content, null, 2);
+      const content =
+        typeof artifactData.content === 'string' ? artifactData.content : JSON.stringify(artifactData.content, null, 2);
       return {
         content,
         version,
@@ -257,9 +256,8 @@ export const getSpecificationArtifact = async (
         console.warn(`Specification artifact '${artifactId}' not found in registry`);
         return null;
       }
-      const content = typeof artifactData.content === 'string'
-        ? artifactData.content
-        : JSON.stringify(artifactData.content, null, 2);
+      const content =
+        typeof artifactData.content === 'string' ? artifactData.content : JSON.stringify(artifactData.content, null, 2);
       return {
         content,
         version: artifactData.latestVersion,

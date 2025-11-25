@@ -8,7 +8,12 @@ import path, { join } from 'path';
 import { createRequire } from 'module';
 import fs from 'fs';
 import { EventCatalogConfig, GeneratorProps, Schema, ServiceSpecification } from './types';
-import { getSchemasFromRegistry, getLatestVersionFromArtifact, extractExactArtifactIds, getSchemasByArtifactIds, getSpecificationArtifact } from './lib/apicurio';
+import {
+  getSchemasFromRegistry,
+  extractExactArtifactIds,
+  getSchemasByArtifactIds,
+  getSpecificationArtifact,
+} from './lib/apicurio';
 import { writeMessageToEventCatalog } from './utils/messages';
 import { getMarkdownForService, getMarkdownForDomain } from './utils/markdown';
 
@@ -79,9 +84,7 @@ async function runSpecificationGenerator(
     console.log(chalk.cyan(`  - Completed ${generatorPackage} generator for ${specConfig.artifactId}`));
   } catch (error: any) {
     if (error.code === 'ERR_MODULE_NOT_FOUND' || error.code === 'MODULE_NOT_FOUND') {
-      console.error(
-        chalk.red(`  - Generator ${generatorPackage} not found. Please install it: npm install ${generatorPackage}`)
-      );
+      console.error(chalk.red(`  - Generator ${generatorPackage} not found. Please install it: npm install ${generatorPackage}`));
     } else {
       console.error(chalk.red(`  - Error running generator ${generatorPackage}: ${error.message}`));
     }
@@ -123,7 +126,7 @@ export default async (config: EventCatalogConfig, options: GeneratorProps) => {
 
   // Check for license and package update
   const LICENSE_KEY: string = process.env.EVENTCATALOG_LICENSE_KEY_APICURIO || options.licenseKey || '';
-  // await checkLicense(pkgJSON.name, LICENSE_KEY);
+  await checkLicense(pkgJSON.name, LICENSE_KEY);
   await checkForPackageUpdate(pkgJSON.name);
 
   // Document all the services
@@ -138,7 +141,11 @@ export default async (config: EventCatalogConfig, options: GeneratorProps) => {
 
     if (exactArtifactIds && exactArtifactIds.length > 0) {
       // Efficient path: only fetch the specific artifacts we need
-      console.log(chalk.green(`Fetching ${exactArtifactIds.length} specific artifacts from registry: ${REGISTRY_URL}${INCLUDE_ALL_VERSIONS ? ' (including all versions)' : ''}...`));
+      console.log(
+        chalk.green(
+          `Fetching ${exactArtifactIds.length} specific artifacts from registry: ${REGISTRY_URL}${INCLUDE_ALL_VERSIONS ? ' (including all versions)' : ''}...`
+        )
+      );
       console.log(chalk.cyan(`  Artifacts: ${exactArtifactIds.join(', ')}`));
       schemas = await getSchemasByArtifactIds(REGISTRY_URL, exactArtifactIds, INCLUDE_ALL_VERSIONS);
     } else if (exactArtifactIds === null) {
@@ -201,8 +208,12 @@ export default async (config: EventCatalogConfig, options: GeneratorProps) => {
   if (documentMessagesWithService) {
     for (const service of services) {
       // Try and find the given messages to match against the service
-      const sends = filterSchemas(groupedSchemas, service.sends || [], INCLUDE_ALL_VERSIONS).filter((message) => message !== undefined);
-      const receives = filterSchemas(groupedSchemas, service.receives || [], INCLUDE_ALL_VERSIONS).filter((message) => message !== undefined);
+      const sends = filterSchemas(groupedSchemas, service.sends || [], INCLUDE_ALL_VERSIONS).filter(
+        (message) => message !== undefined
+      );
+      const receives = filterSchemas(groupedSchemas, service.receives || [], INCLUDE_ALL_VERSIONS).filter(
+        (message) => message !== undefined
+      );
 
       const serviceInCatalog = await getService(service.id);
       const { sends: previousSends, receives: previousReceives, ...previousServiceInformation } = serviceInCatalog || {};
@@ -215,7 +226,7 @@ export default async (config: EventCatalogConfig, options: GeneratorProps) => {
 
       // Path to service
       const pathToService = join('../', 'services', service.id);
-      
+
       // If the service has a summary, we should use it
       const summary = service.summary || serviceInCatalog?.summary || `${service.id} Service`;
 
@@ -232,7 +243,9 @@ export default async (config: EventCatalogConfig, options: GeneratorProps) => {
         name: service.name || service.id,
         version: service.version,
         summary,
-        ...(latestSends.length > 0 ? { sends: latestSends.map((message) => ({ id: message.messageId, version: message.version.toString() })) } : {}),
+        ...(latestSends.length > 0
+          ? { sends: latestSends.map((message) => ({ id: message.messageId, version: message.version.toString() })) }
+          : {}),
         ...(latestReceives.length > 0
           ? { receives: latestReceives.map((message) => ({ id: message.messageId, version: message.version.toString() })) }
           : {}),
@@ -252,7 +265,11 @@ export default async (config: EventCatalogConfig, options: GeneratorProps) => {
 
       // Get existing specifications from the service in catalog (it's an object like { openapiPath: 'file.yaml' })
       let existingSpecifications: Record<string, string> = {};
-      if (serviceInCatalog?.specifications && typeof serviceInCatalog.specifications === 'object' && !Array.isArray(serviceInCatalog.specifications)) {
+      if (
+        serviceInCatalog?.specifications &&
+        typeof serviceInCatalog.specifications === 'object' &&
+        !Array.isArray(serviceInCatalog.specifications)
+      ) {
         existingSpecifications = serviceInCatalog.specifications as Record<string, string>;
       }
 
@@ -287,7 +304,9 @@ export default async (config: EventCatalogConfig, options: GeneratorProps) => {
             const specKey = specConfig.type === 'asyncapi' ? 'asyncapiPath' : 'openapiPath';
             newSpecifications[specKey] = fileName;
 
-            console.log(chalk.cyan(`  - Added ${specConfig.type} specification: ${specConfig.artifactId} (v${specArtifact.version})`));
+            console.log(
+              chalk.cyan(`  - Added ${specConfig.type} specification: ${specConfig.artifactId} (v${specArtifact.version})`)
+            );
 
             // Track specs with generators to run after files are written
             if (specConfig.generator) {
@@ -313,7 +332,10 @@ export default async (config: EventCatalogConfig, options: GeneratorProps) => {
       // Run generators for specifications that have them configured
       for (const { specConfig, fileName, content } of specsWithGenerators) {
         // Build the absolute path to the spec file
-        const specFilePath = path.join(eventCatalogDirectory, 'services', service.id, fileName);
+        // Use domain path if domain is configured, otherwise use root services path
+        const specFilePath = options.domain
+          ? path.join(eventCatalogDirectory, 'domains', options.domain.id, 'services', service.id, fileName)
+          : path.join(eventCatalogDirectory, 'services', service.id, fileName);
 
         // Ensure the directory exists and write the spec file directly
         // This ensures the file is available for the generator at the expected path

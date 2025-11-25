@@ -6,9 +6,7 @@ export const getMarkdownForSchema = (schema: Schema) => {
 
   // Use SchemaViewer for JSON and Avro schemas, Schema component for others
   const useSchemaViewer = schema.schemaType === SchemaType.JSON || schema.schemaType === SchemaType.AVRO;
-  const schemaComponent = useSchemaViewer
-    ? `<SchemaViewer file="${schemaFileName}" />`
-    : `<Schema file="${schemaFileName}" />`;
+  const schemaComponent = useSchemaViewer ? `<SchemaViewer file="${schemaFileName}" />` : `<Schema file="${schemaFileName}" />`;
 
   return `
 ## Architecture diagram

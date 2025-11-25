@@ -7,10 +7,7 @@ type GroupedSchemas = {
 /**
  * Checks if a message name matches a given filter criterion.
  */
-const matchesFilterCriterion = (
-  messageName: string,
-  criterion: Filter['events'] | Filter['commands']
-): boolean => {
+const matchesFilterCriterion = (messageName: string, criterion: Filter['events'] | Filter['commands']): boolean => {
   if (!criterion) return false;
 
   // Exact match (string)

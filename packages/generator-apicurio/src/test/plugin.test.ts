@@ -377,7 +377,7 @@ describe('Apicurio Registry EventCatalog Plugin', () => {
       });
 
       const service = await getService('orders-service', '1.0.0');
-      
+
       // Should match 'order-placed' and 'order-cancelled'
       expect(service.sends).toHaveLength(2);
       expect(service.sends).toEqual(
@@ -408,11 +408,7 @@ describe('Apicurio Registry EventCatalog Plugin', () => {
 
       // Should match only 'order-placed'
       expect(service.sends).toHaveLength(1);
-      expect(service.sends).toEqual(
-        expect.arrayContaining([
-          expect.objectContaining({ id: 'order-placed' }),
-        ])
-      );
+      expect(service.sends).toEqual(expect.arrayContaining([expect.objectContaining({ id: 'order-placed' })]));
     });
 
     it('supports explicit exact matching via object for events', async () => {
@@ -435,11 +431,7 @@ describe('Apicurio Registry EventCatalog Plugin', () => {
 
       // Should match only 'order-placed'
       expect(service.sends).toHaveLength(1);
-      expect(service.sends).toEqual(
-        expect.arrayContaining([
-          expect.objectContaining({ id: 'order-placed' }),
-        ])
-      );
+      expect(service.sends).toEqual(expect.arrayContaining([expect.objectContaining({ id: 'order-placed' })]));
     });
 
     it('supports multiple conditions (prefix OR suffix)', async () => {
@@ -463,11 +455,7 @@ describe('Apicurio Registry EventCatalog Plugin', () => {
 
       // Should match 'order-cancelled'
       expect(service.sends).toHaveLength(1);
-      expect(service.sends).toEqual(
-        expect.arrayContaining([
-          expect.objectContaining({ id: 'order-cancelled' }),
-        ])
-      );
+      expect(service.sends).toEqual(expect.arrayContaining([expect.objectContaining({ id: 'order-cancelled' })]));
     });
 
     it('supports queries as a message type', async () => {
@@ -491,9 +479,7 @@ describe('Apicurio Registry EventCatalog Plugin', () => {
       // Should have query in receives
       expect(service.receives).toHaveLength(1);
       expect(service.receives).toEqual(
-        expect.arrayContaining([
-          expect.objectContaining({ id: 'get-order-status', version: '1' }),
-        ])
+        expect.arrayContaining([expect.objectContaining({ id: 'get-order-status', version: '1' })])
       );
 
       // Query should be written to the catalog
@@ -555,7 +541,7 @@ describe('Apicurio Registry EventCatalog Plugin', () => {
       expect(service.markdown).toEqual('This markdown is persisted');
       expect(service.summary).toEqual('This is custom summary');
       expect(service.owners).toEqual(['John Doe']);
-      
+
       // Should still have the new messages
       expect(service.sends).toHaveLength(1);
       expect(service.sends?.[0].id).toEqual('order-placed');
@@ -750,9 +736,7 @@ describe('Apicurio Registry EventCatalog Plugin', () => {
             name: 'Orders Service',
             version: '1.0.0',
             sends: [{ events: ['order-placed'] }],
-            specifications: [
-              { type: 'openapi', artifactId: 'orders-service-openapi' },
-            ],
+            specifications: [{ type: 'openapi', artifactId: 'orders-service-openapi' }],
           },
         ],
       });
@@ -763,9 +747,7 @@ describe('Apicurio Registry EventCatalog Plugin', () => {
       expect(service.specifications.openapiPath).toEqual('orders-service-openapi.openapi.yml');
 
       // Verify the spec file was created
-      const specFileExists = existsSync(
-        join(catalogDir, 'services', 'orders-service', 'orders-service-openapi.openapi.yml')
-      );
+      const specFileExists = existsSync(join(catalogDir, 'services', 'orders-service', 'orders-service-openapi.openapi.yml'));
       expect(specFileExists).toBeTruthy();
     });
 
@@ -780,9 +762,7 @@ describe('Apicurio Registry EventCatalog Plugin', () => {
             name: 'Orders Service',
             version: '1.0.0',
             sends: [{ events: ['order-placed'] }],
-            specifications: [
-              { type: 'openapi', artifactId: 'orders-service-openapi', version: '1.0.0' },
-            ],
+            specifications: [{ type: 'openapi', artifactId: 'orders-service-openapi', version: '1.0.0' }],
           },
         ],
       });
@@ -804,9 +784,7 @@ describe('Apicurio Registry EventCatalog Plugin', () => {
             name: 'Orders Service',
             version: '1.0.0',
             sends: [{ events: ['order-placed'] }],
-            specifications: [
-              { type: 'openapi', artifactId: 'orders-service-openapi', version: 'latest' },
-            ],
+            specifications: [{ type: 'openapi', artifactId: 'orders-service-openapi', version: 'latest' }],
           },
         ],
       });
@@ -817,9 +795,7 @@ describe('Apicurio Registry EventCatalog Plugin', () => {
       expect(service.specifications.openapiPath).toEqual('orders-service-openapi.openapi.yml');
 
       // Verify the spec file was created
-      const specFileExists = existsSync(
-        join(catalogDir, 'services', 'orders-service', 'orders-service-openapi.openapi.yml')
-      );
+      const specFileExists = existsSync(join(catalogDir, 'services', 'orders-service', 'orders-service-openapi.openapi.yml'));
       expect(specFileExists).toBeTruthy();
     });
 
@@ -849,9 +825,7 @@ describe('Apicurio Registry EventCatalog Plugin', () => {
       expect(service.specifications.asyncapiPath).toEqual('orders-service-asyncapi.asyncapi.yml');
 
       // Verify both spec files were created
-      const openapiFileExists = existsSync(
-        join(catalogDir, 'services', 'orders-service', 'orders-service-openapi.openapi.yml')
-      );
+      const openapiFileExists = existsSync(join(catalogDir, 'services', 'orders-service', 'orders-service-openapi.openapi.yml'));
       const asyncapiFileExists = existsSync(
         join(catalogDir, 'services', 'orders-service', 'orders-service-asyncapi.asyncapi.yml')
       );
@@ -871,10 +845,14 @@ describe('Apicurio Registry EventCatalog Plugin', () => {
         specifications: { openapiPath: 'existing-spec.openapi.yml' },
       });
 
-      await addFileToService('orders-service', {
-        content: 'openapi: 3.0.0\ninfo:\n  title: Existing\n  version: 1.0.0',
-        fileName: 'existing-spec.openapi.yml'
-      }, '1.0.0');
+      await addFileToService(
+        'orders-service',
+        {
+          content: 'openapi: 3.0.0\ninfo:\n  title: Existing\n  version: 1.0.0',
+          fileName: 'existing-spec.openapi.yml',
+        },
+        '1.0.0'
+      );
 
       // Run plugin with asyncapi specification
       await plugin(config, {
@@ -885,9 +863,7 @@ describe('Apicurio Registry EventCatalog Plugin', () => {
             name: 'Orders Service',
             version: '1.0.0',
             sends: [{ events: ['order-placed'] }],
-            specifications: [
-              { type: 'asyncapi', artifactId: 'orders-service-asyncapi' },
-            ],
+            specifications: [{ type: 'asyncapi', artifactId: 'orders-service-asyncapi' }],
           },
         ],
       });
@@ -909,9 +885,7 @@ describe('Apicurio Registry EventCatalog Plugin', () => {
             name: 'Orders Service',
             version: '1.0.0',
             sends: [{ events: ['order-placed'] }],
-            specifications: [
-              { type: 'openapi', artifactId: 'orders-service-openapi' },
-            ],
+            specifications: [{ type: 'openapi', artifactId: 'orders-service-openapi' }],
           },
         ],
       });
@@ -954,9 +928,7 @@ describe('Apicurio Registry EventCatalog Plugin', () => {
       expect(service.specifications.openapiPath).toEqual('orders-service-openapi.openapi.yml');
 
       // Verify the spec file was created
-      const specFileExists = existsSync(
-        join(catalogDir, 'services', 'orders-service', 'orders-service-openapi.openapi.yml')
-      );
+      const specFileExists = existsSync(join(catalogDir, 'services', 'orders-service', 'orders-service-openapi.openapi.yml'));
       expect(specFileExists).toBeTruthy();
     });
 
@@ -1026,9 +998,7 @@ describe('Apicurio Registry EventCatalog Plugin', () => {
       expect(service.specifications.asyncapiPath).toEqual('orders-service-asyncapi.asyncapi.yml');
 
       // Verify both spec files exist
-      const openapiFileExists = existsSync(
-        join(catalogDir, 'services', 'orders-service', 'orders-service-openapi.openapi.yml')
-      );
+      const openapiFileExists = existsSync(join(catalogDir, 'services', 'orders-service', 'orders-service-openapi.openapi.yml'));
       const asyncapiFileExists = existsSync(
         join(catalogDir, 'services', 'orders-service', 'orders-service-asyncapi.asyncapi.yml')
       );

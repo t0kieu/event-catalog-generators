@@ -134,7 +134,9 @@ export const writeMessageToEventCatalog = async ({
 
   // If the message has a summary, we should use it
   const summary = messageInCatalog?.summary || 'Message from Apicurio Registry';
-  const badges = messageInCatalog?.badges || [{ backgroundColor: 'blue', textColor: 'white', content: 'Apicurio', icon: 'apicurio' }];
+  const badges = messageInCatalog?.badges || [
+    { backgroundColor: 'blue', textColor: 'white', content: 'Apicurio', icon: 'apicurio' },
+  ];
   const markdown = messageInCatalog?.markdown || getMarkdownForSchema(message);
 
   const messageToWrite = {

@@ -13,71 +13,23 @@ export class ApicurioClient {
     const apiPath = '/apis/registry/v3';
 
     // Only append if not already present
-    this.baseUrl = normalizedUrl.includes('/apis/registry/')
-      ? normalizedUrl
-      : `${normalizedUrl}${apiPath}`;
+    this.baseUrl = normalizedUrl.includes('/apis/registry/') ? normalizedUrl : `${normalizedUrl}${apiPath}`;
+
+    // Build headers object
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+    };
+
+    // Add Authorization header if APICURIO_ACCESS_TOKEN is set
+    const accessToken = process.env.APICURIO_ACCESS_TOKEN;
+    if (accessToken) {
+      headers['Authorization'] = `Bearer ${accessToken}`;
+    }
 
     this.client = axios.create({
       baseURL: this.baseUrl,
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers,
     });
-  }
-
-  async createArtifact(
-    groupId: string,
-    artifactId: string,
-    content: any,
-    type: string,
-    version?: string
-  ): Promise<any> {
-    const headers: any = {
-      'X-Registry-ArtifactType': type,
-    };
-
-    if (version) {
-      headers['X-Registry-Version'] = version;
-    }
-
-    try {
-      const response = await this.client.post(
-        `/groups/${groupId}/artifacts`,
-        content,
-        {
-          headers: {
-            ...headers,
-            'X-Registry-ArtifactId': artifactId,
-          },
-        }
-      );
-      return response.data;
-    } catch (error: any) {
-      if (error.response?.status === 409) {
-        // Artifact already exists, create a new version
-        return this.createArtifactVersion(groupId, artifactId, content, version);
-      }
-      throw error;
-    }
-  }
-
-  async createArtifactVersion(
-    groupId: string,
-    artifactId: string,
-    content: any,
-    version?: string
-  ): Promise<any> {
-    const headers: any = {};
-    if (version) {
-      headers['X-Registry-Version'] = version;
-    }
-
-    const response = await this.client.post(
-      `/groups/${groupId}/artifacts/${artifactId}/versions`,
-      content,
-      { headers }
-    );
-    return response.data;
   }
 
   async searchArtifacts(limit: number = 100, offset: number = 0): Promise<ArtifactSearchResults> {
@@ -129,7 +81,7 @@ export class ApicurioClient {
         }
 
         // V3 uses 'artifactId', V2 uses 'id'
-        artifact = searchResults.artifacts.find(a => (a.artifactId || a.id) === artifactId);
+        artifact = searchResults.artifacts.find((a) => (a.artifactId || a.id) === artifactId);
 
         if (!artifact) {
           // Check if there are more results to fetch
@@ -149,9 +101,7 @@ export class ApicurioClient {
       const versions = await this.getArtifactVersions(groupId, resolvedArtifactId);
 
       // V3: Get latest version from versions list instead of metadata
-      const latestVersion = versions.versions?.length > 0
-        ? versions.versions[versions.versions.length - 1]?.version
-        : '1';
+      const latestVersion = versions.versions?.length > 0 ? versions.versions[versions.versions.length - 1]?.version : '1';
 
       // Get latest content
       const content = await this.getArtifactContent(groupId, resolvedArtifactId);
@@ -168,10 +118,7 @@ export class ApicurioClient {
     }
   }
 
-  async getArtifactByNameAndVersion(
-    artifactId: string,
-    version: string
-  ): Promise<ArtifactWithVersions | null> {
+  async getArtifactByNameAndVersion(artifactId: string, version: string): Promise<ArtifactWithVersions | null> {
     try {
       // Search for the artifact with pagination
       let artifact = null;
@@ -187,7 +134,7 @@ export class ApicurioClient {
         }
 
         // V3 uses 'artifactId', V2 uses 'id'
-        artifact = searchResults.artifacts.find(a => (a.artifactId || a.id) === artifactId);
+        artifact = searchResults.artifacts.find((a) => (a.artifactId || a.id) === artifactId);
 
         if (!artifact) {
           // Check if there are more results to fetch
