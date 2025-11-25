@@ -1,0 +1,53 @@
+{
+  "artifacts": [
+    {
+      "artifactId": "order-placed",
+      "name": "order-placed",
+      "description": "Order placed event",
+      "createdOn": "2024-01-01T00:00:00Z",
+      "owner": "admin",
+      "artifactType": "AVRO",
+      "state": "ENABLED",
+      "modifiedOn": "2024-01-01T00:00:00Z",
+      "modifiedBy": "admin",
+      "groupId": "default"
+    },
+    {
+      "artifactId": "order-cancelled",
+      "name": "order-cancelled",
+      "description": "Order cancelled event",
+      "createdOn": "2024-01-01T00:00:00Z",
+      "owner": "admin",
+      "artifactType": "AVRO",
+      "state": "ENABLED",
+      "modifiedOn": "2024-01-01T00:00:00Z",
+      "modifiedBy": "admin",
+      "groupId": "default"
+    },
+    {
+      "artifactId": "place-order",
+      "name": "place-order",
+      "description": "Place order command",
+      "createdOn": "2024-01-01T00:00:00Z",
+      "owner": "admin",
+      "artifactType": "JSON",
+      "state": "ENABLED",
+      "modifiedOn": "2024-01-01T00:00:00Z",
+      "modifiedBy": "admin",
+      "groupId": "default"
+    },
+    {
+      "artifactId": "cancel-order",
+      "name": "cancel-order",
+      "description": "Cancel order command",
+      "createdOn": "2024-01-01T00:00:00Z",
+      "owner": "admin",
+      "artifactType": "JSON",
+      "state": "ENABLED",
+      "modifiedOn": "2024-01-01T00:00:00Z",
+      "modifiedBy": "admin",
+      "groupId": "default"
+    }
+  ],
+  "count": 4
+}

@@ -1,0 +1,52 @@
+{
+  "name": "@eventcatalog/generator-apicurio",
+  "version": "0.0.1",
+  "description": "Apicurio Registry generator for EventCatalog",
+  "scripts": {
+    "build": "tsup",
+    "test": "vitest",
+    "format": "prettier --write .",
+    "changeset": "changeset",
+    "format:diff": "prettier --list-different .",
+    "release": "changeset publish"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "Dual License",
+  "devDependencies": {
+    "@types/node": "^20.16.1",
+    "prettier": "^3.3.3",
+    "tsup": "^8.1.0",
+    "typescript": "^5.5.3",
+    "vitest": "^2.0.2"
+  },
+  "files": [
+    "dist",
+    "package.json"
+  ],
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "dependencies": {
+    "@changesets/cli": "^2.27.8",
+    "@eventcatalog/sdk": "^2.8.3",
+    "axios": "^1.8.4",
+    "chalk": "4.1.2",
+    "update-notifier": "^7.3.1"
+  },
+  "peerDependencies": {
+    "@eventcatalog/generator-openapi": ">=7.6.1",
+    "@eventcatalog/generator-asyncapi": ">=5.1.1"
+  },
+  "peerDependenciesMeta": {
+    "@eventcatalog/generator-openapi": {
+      "optional": true
+    },
+    "@eventcatalog/generator-asyncapi": {
+      "optional": true
+    }
+  }
+}
