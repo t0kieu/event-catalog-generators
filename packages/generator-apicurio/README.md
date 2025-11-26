@@ -151,7 +151,7 @@ npm install @eventcatalog/generator-openapi @eventcatalog/generator-asyncapi
 
 ```sh
 # From eventcatalog.cloud (14 day free trial)
-EVENTCATALOG_LICENSE_KEY_APICURIO=
+EVENTCATALOG_LICENSE_KEY_APICURIO_SCHEMA_REGISTRY=
 ```
 
 5. Run the generate command
@@ -168,13 +168,13 @@ npm run dev
 
 ## Configuration Options
 
-| Option               | Type        | Required | Description                                                                    |
-| -------------------- | ----------- | -------- | ------------------------------------------------------------------------------ |
-| `registryUrl`        | `string`    | Yes      | URL of the Apicurio Registry (e.g., `http://localhost:8080/apis/registry/v2`)  |
-| `includeAllVersions` | `boolean`   | No       | Include all versions of schemas in the catalog (default: `false`, only latest) |
-| `services`           | `Service[]` | No       | List of services to add to the catalog                                         |
-| `domain`             | `Domain`    | No       | Domain to add to the catalog and attach services to                            |
-| `licenseKey`         | `string`    | No       | License key (can also be set via `EVENTCATALOG_LICENSE_KEY_APICURIO` env var)  |
+| Option               | Type        | Required | Description                                                                                   |
+| -------------------- | ----------- | -------- | --------------------------------------------------------------------------------------------- |
+| `registryUrl`        | `string`    | Yes      | URL of the Apicurio Registry (e.g., `http://localhost:8080/apis/registry/v2`)                 |
+| `includeAllVersions` | `boolean`   | No       | Include all versions of schemas in the catalog (default: `false`, only latest)                |
+| `services`           | `Service[]` | No       | List of services to add to the catalog                                                        |
+| `domain`             | `Domain`    | No       | Domain to add to the catalog and attach services to                                           |
+| `licenseKey`         | `string`    | No       | License key (can also be set via `EVENTCATALOG_LICENSE_KEY_APICURIO_SCHEMA_REGISTRY` env var) |
 
 ### Service Configuration
 

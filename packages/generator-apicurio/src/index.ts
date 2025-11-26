@@ -125,7 +125,7 @@ export default async (config: EventCatalogConfig, options: GeneratorProps) => {
   } = utils(eventCatalogDirectory);
 
   // Check for license and package update
-  const LICENSE_KEY: string = process.env.EVENTCATALOG_LICENSE_KEY_APICURIO || options.licenseKey || '';
+  const LICENSE_KEY: string = process.env.EVENTCATALOG_LICENSE_KEY_APICURIO_SCHEMA_REGISTRY || options.licenseKey || '';
   await checkLicense(pkgJSON.name, LICENSE_KEY);
   await checkForPackageUpdate(pkgJSON.name);
 
