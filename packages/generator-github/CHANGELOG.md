@@ -1,5 +1,11 @@
 # @eventcatalog/generator-github
 
+## 0.2.3
+
+### Patch Changes
+
+- 34448ab: chore(code): moving to npm OIDC
+
 ## 0.2.2
 
 ### Patch Changes

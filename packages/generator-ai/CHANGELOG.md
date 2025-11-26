@@ -1,5 +1,11 @@
 # @eventcatalog/generator-ai
 
+## 1.2.2
+
+### Patch Changes
+
+- 34448ab: chore(code): moving to npm OIDC
+
 ## 1.2.1
 
 ### Patch Changes

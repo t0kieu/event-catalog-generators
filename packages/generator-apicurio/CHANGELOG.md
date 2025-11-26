@@ -1,5 +1,14 @@
 # @eventcatalog/generator-apicurio
 
+## 0.0.3
+
+### Patch Changes
+
+- 34448ab: chore(code): moving to npm OIDC
+- Updated dependencies [34448ab]
+  - @eventcatalog/generator-asyncapi@5.1.3
+  - @eventcatalog/generator-openapi@7.6.2
+
 ## 0.0.2
 
 ### Patch Changes

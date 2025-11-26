@@ -1,5 +1,11 @@
 # @eventcatalog/generator-confluent-schema-registry
 
+## 0.2.5
+
+### Patch Changes
+
+- 34448ab: chore(code): moving to npm OIDC
+
 ## 0.2.4
 
 ### Patch Changes

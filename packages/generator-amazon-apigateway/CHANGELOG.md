@@ -1,5 +1,11 @@
 # @eventcatalog/generator-amazon-apigateway
 
+## 1.2.4
+
+### Patch Changes
+
+- 34448ab: chore(code): moving to npm OIDC
+
 ## 1.2.3
 
 ### Patch Changes
