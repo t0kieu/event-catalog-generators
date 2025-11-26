@@ -1,5 +1,11 @@
 # @eventcatalog/generator-graphql
 
+## 0.0.8
+
+### Patch Changes
+
+- 34448ab: chore(code): moving to npm OIDC
+
 ## 0.0.7
 
 ### Patch Changes

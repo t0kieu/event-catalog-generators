@@ -1,5 +1,11 @@
 # @eventcatalog/generator-eventbridge
 
+## 3.2.7
+
+### Patch Changes
+
+- 34448ab: chore(code): moving to npm OIDC
+
 ## 3.2.6
 
 ### Patch Changes

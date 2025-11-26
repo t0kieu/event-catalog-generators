@@ -1,5 +1,11 @@
 # @eventcatalog/generator-aws-glue
 
+## 0.1.3
+
+### Patch Changes
+
+- 34448ab: chore(code): moving to npm OIDC
+
 ## 0.1.2
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @eventcatalog/generator-azure-schema-registry
 
+## 0.0.4
+
+### Patch Changes
+
+- 34448ab: chore(code): moving to npm OIDC
+
 ## 0.0.3
 
 ### Patch Changes
