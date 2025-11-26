@@ -1,5 +1,11 @@
 # @eventcatalog/generator-apicurio
 
+## 0.0.5
+
+### Patch Changes
+
+- fcee0b2: chore(plugin): updated env variable for apicurio plugin
+
 ## 0.0.4
 
 ### Patch Changes
