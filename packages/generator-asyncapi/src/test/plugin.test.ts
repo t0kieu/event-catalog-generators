@@ -891,6 +891,7 @@ describe('AsyncAPI EventCatalog Plugin', () => {
           const service = await getService('account-service', '1.0.0');
           expect(service.writesTo).toEqual([{ id: 'orders-service', version: '1.0.0' }]);
         });
+
         it('[services::readsFrom] if the `services::readsFrom` is given in the service config options, then the service readsFrom is set to the config value', async () => {
           const { getService } = utils(catalogDir);
           await plugin(config, {
@@ -904,6 +905,50 @@ describe('AsyncAPI EventCatalog Plugin', () => {
           });
           const service = await getService('account-service', '1.0.0');
           expect(service.readsFrom).toEqual([{ id: 'orders-service', version: '1.0.0' }]);
+        });
+
+        it('if the service already has writesTo and readsFrom within the same version they are merged with any new values being added and unique values are kept', async () => {
+          const { getService } = utils(catalogDir);
+          await plugin(config, {
+            services: [
+              {
+                path: join(asyncAPIExamplesDir, 'simple.asyncapi.yml'),
+                id: 'account-service',
+                writesTo: [{ id: 'orders-service', version: '1.0.0' }],
+                readsFrom: [{ id: 'orders-service', version: '1.0.0' }],
+              },
+            ],
+          });
+          const service = await getService('account-service', '1.0.0');
+          expect(service.writesTo).toEqual([{ id: 'orders-service', version: '1.0.0' }]);
+          expect(service.readsFrom).toEqual([{ id: 'orders-service', version: '1.0.0' }]);
+
+          // Now we add a new writesTo and readsFrom, but the values are different
+          await plugin(config, {
+            services: [
+              {
+                path: join(asyncAPIExamplesDir, 'simple.asyncapi.yml'),
+                id: 'account-service',
+                writesTo: [
+                  { id: 'orders-service-2', version: '1.0.0' },
+                  { id: 'orders-service', version: '1.0.0' },
+                ],
+                readsFrom: [
+                  { id: 'orders-service-2', version: '1.0.0' },
+                  { id: 'orders-service', version: '1.0.0' },
+                ],
+              },
+            ],
+          });
+          const serviceUpdated = await getService('account-service', '1.0.0');
+          expect(serviceUpdated.writesTo).toEqual([
+            { id: 'orders-service', version: '1.0.0' },
+            { id: 'orders-service-2', version: '1.0.0' },
+          ]);
+          expect(serviceUpdated.readsFrom).toEqual([
+            { id: 'orders-service', version: '1.0.0' },
+            { id: 'orders-service-2', version: '1.0.0' },
+          ]);
         });
       });
 

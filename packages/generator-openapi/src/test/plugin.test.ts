@@ -863,6 +863,48 @@ describe('OpenAPI EventCatalog Plugin', () => {
             expect(service.readsFrom).toEqual([{ id: 'users-db', version: '1.0.0' }]);
           });
         });
+
+        it('if the service already has writesTo and readsFrom, the are merged with any new values being added and unique values are kept', async () => {
+          const { getService } = utils(catalogDir);
+
+          await plugin(config, {
+            services: [
+              {
+                path: join(openAPIExamples, 'petstore.yml'),
+                id: 'swagger-petstore',
+                writesTo: [{ id: 'orders-db', version: '1.0.0' }],
+                readsFrom: [{ id: 'users-db', version: '1.0.0' }],
+              },
+            ],
+          });
+
+          const service = await getService('swagger-petstore', '1.0.0');
+          expect(service.writesTo).toEqual([{ id: 'orders-db', version: '1.0.0' }]);
+          expect(service.readsFrom).toEqual([{ id: 'users-db', version: '1.0.0' }]);
+
+          // Now we add a new writesTo and readsFrom, but the values are different
+          await plugin(config, {
+            services: [
+              {
+                path: join(openAPIExamples, 'petstore.yml'),
+                id: 'swagger-petstore',
+                writesTo: [{ id: 'orders-db-2', version: '1.0.0' }],
+                readsFrom: [{ id: 'users-db-2', version: '1.0.0' }],
+              },
+            ],
+          });
+
+          const serviceUpdated = await getService('swagger-petstore', '1.0.0');
+
+          expect(serviceUpdated.writesTo).toEqual([
+            { id: 'orders-db', version: '1.0.0' },
+            { id: 'orders-db-2', version: '1.0.0' },
+          ]);
+          expect(serviceUpdated.readsFrom).toEqual([
+            { id: 'users-db', version: '1.0.0' },
+            { id: 'users-db-2', version: '1.0.0' },
+          ]);
+        });
       });
     });
 
