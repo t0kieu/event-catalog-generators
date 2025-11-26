@@ -48,5 +48,10 @@
     "@eventcatalog/generator-asyncapi": {
       "optional": true
     }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/event-catalog/generators",
+    "directory": "packages/generator-apicurio"
   }
 }
