@@ -1,5 +1,11 @@
 # @eventcatalog/generator-apicurio
 
+## 0.0.4
+
+### Patch Changes
+
+- 5f6c155: chore(plugin): added readme to apircurio plugin
+
 ## 0.0.3
 
 ### Patch Changes
