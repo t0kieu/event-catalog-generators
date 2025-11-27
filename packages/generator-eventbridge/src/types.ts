@@ -44,6 +44,7 @@ export type Service = {
   readsFrom?: { id: string; version?: string }[];
   name?: string;
   summary?: string;
+  writeToRoot?: boolean;
 };
 
 export type EventMap = 'detail-type' | 'schema-name';
@@ -59,5 +60,6 @@ export type GeneratorProps = {
   mapEventsBy?: EventMap;
   credentials?: AwsCredentialIdentity | AwsCredentialIdentityProvider;
   writeFilesToRoot?: boolean;
+  writeEventsToRoot?: boolean;
   format?: 'md' | 'mdx';
 };

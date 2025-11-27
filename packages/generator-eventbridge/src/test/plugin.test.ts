@@ -1006,6 +1006,100 @@ describe('EventBridge EventCatalog Plugin', () => {
     });
   });
 
+  describe('writeEventsToRoot', () => {
+    it('when writeEventsToRoot is true only events are written to the root, services and domains remain nested', async () => {
+      await plugin(config, {
+        region: 'us-east-1',
+        registryName: 'discovered-schemas',
+        writeEventsToRoot: true,
+        services: [{ id: 'Orders Service', version: '1.0.0', sends: [{ prefix: 'myapp' }] }],
+        domain: { id: 'Orders Domain', version: '1.0.0', name: 'Orders Domain' },
+      });
+
+      // Events should be written to the root /events folder
+      const events = await fs.readdir(path.join(catalogDir, 'events'));
+      expect(events).toEqual(['OrderPlaced', 'UserLoggedIn', 'UserSignedUp']);
+
+      const orderPlacedFiles = await fs.readdir(path.join(catalogDir, 'events', 'OrderPlaced'));
+      expect(orderPlacedFiles).toEqual([
+        'index.mdx',
+        'myapp.orders@OrderPlaced-jsondraft.json',
+        'myapp.orders@OrderPlaced-openapi.json',
+      ]);
+
+      // Domains should still be in the domains folder
+      const domains = await fs.readdir(path.join(catalogDir, 'domains'));
+      expect(domains).toEqual(['Orders Domain']);
+
+      // Services should be nested inside domains (normal behavior)
+      const domainContents = await fs.readdir(path.join(catalogDir, 'domains', 'Orders Domain'));
+      expect(domainContents).toContain('services');
+
+      const servicesInDomain = await fs.readdir(path.join(catalogDir, 'domains', 'Orders Domain', 'services'));
+      expect(servicesInDomain).toEqual(['Orders Service']);
+
+      // Verify service does NOT have nested events (events went to root)
+      const serviceContents = await fs.readdir(path.join(catalogDir, 'domains', 'Orders Domain', 'services', 'Orders Service'));
+      expect(serviceContents).not.toContain('events');
+    });
+
+    it('when writeEventsToRoot is true and no domain is provided, services remain in services folder and events go to root', async () => {
+      await plugin(config, {
+        region: 'us-east-1',
+        registryName: 'discovered-schemas',
+        writeEventsToRoot: true,
+        services: [{ id: 'Orders Service', version: '1.0.0', sends: [{ prefix: 'myapp' }] }],
+      });
+
+      // Events should be written to the root /events folder
+      const events = await fs.readdir(path.join(catalogDir, 'events'));
+      expect(events).toEqual(['OrderPlaced', 'UserLoggedIn', 'UserSignedUp']);
+
+      // Services should be in the services folder (not nested in domain)
+      const services = await fs.readdir(path.join(catalogDir, 'services'));
+      expect(services).toEqual(['Orders Service']);
+
+      // Verify service does NOT have nested events
+      const serviceContents = await fs.readdir(path.join(catalogDir, 'services', 'Orders Service'));
+      expect(serviceContents).not.toContain('events');
+    });
+  });
+
+  describe('service.writeToRoot', () => {
+    it('when a service has writeToRoot: true, that service is written to the root even when a domain is provided', async () => {
+      await plugin(config, {
+        region: 'us-east-1',
+        registryName: 'discovered-schemas',
+        services: [
+          { id: 'Orders Service', version: '1.0.0', sends: [{ prefix: 'myapp.orders' }], writeToRoot: true },
+          { id: 'Users Service', version: '1.0.0', sends: [{ prefix: 'myapp.users' }] },
+        ],
+        domain: { id: 'Orders Domain', version: '1.0.0', name: 'Orders Domain' },
+      });
+
+      // Orders Service should be in the root /services folder (writeToRoot: true)
+      const rootServices = await fs.readdir(path.join(catalogDir, 'services'));
+      expect(rootServices).toContain('Orders Service');
+
+      // Users Service should be nested inside the domain (writeToRoot not set)
+      const domainServices = await fs.readdir(path.join(catalogDir, 'domains', 'Orders Domain', 'services'));
+      expect(domainServices).toContain('Users Service');
+      expect(domainServices).not.toContain('Orders Service');
+    });
+
+    it('when a service has writeToRoot: true without a domain, it still writes to the root services folder', async () => {
+      await plugin(config, {
+        region: 'us-east-1',
+        registryName: 'discovered-schemas',
+        services: [{ id: 'Orders Service', version: '1.0.0', sends: [{ prefix: 'myapp' }], writeToRoot: true }],
+      });
+
+      // Service should be in the root /services folder
+      const services = await fs.readdir(path.join(catalogDir, 'services'));
+      expect(services).toEqual(['Orders Service']);
+    });
+  });
+
   describe('events', () => {
     it('when a message is written to EventCatalog the version number is taken from the schema VersionCount', async () => {
       const { writeEvent, getEvent } = utils(catalogDir);
