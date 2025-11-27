@@ -9,6 +9,11 @@ export type Domain = {
   draft?: boolean;
 };
 
+export type Pointer = {
+  id: string;
+  version?: string;
+};
+
 export type Service = {
   id: string;
   version?: string;
@@ -18,18 +23,8 @@ export type Service = {
   owners?: string[];
   setMessageOwnersToServiceOwners?: boolean;
   draft?: boolean;
-  writesTo?: [
-    {
-      id: string;
-      version?: string;
-    },
-  ];
-  readsFrom?: [
-    {
-      id: string;
-      version?: string;
-    },
-  ];
+  writesTo?: Pointer[];
+  readsFrom?: Pointer[];
   generateMarkdown?: ({}: { service: Service; document: OpenAPI.Document; markdown: string }) => string;
 };
 

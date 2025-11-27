@@ -124,6 +124,10 @@ type Props = z.infer<typeof optionsSchema>;
 type Domain = z.infer<typeof optionsSchema>['domain'];
 type Service = z.infer<typeof optionsSchema>['services'][0];
 
+const toUniqueArray = (array: { id: string; version: string }[]) => {
+  return array.filter((item, index, self) => index === self.findIndex((t) => t.id === item.id && t.version === item.version));
+};
+
 const validateOptions = (options: Props) => {
   try {
     optionsSchema.parse(options);
@@ -248,8 +252,10 @@ export default async (config: any, options: Props) => {
 
     let serviceSpecifications = {};
     let serviceSpecificationsFiles = [];
-    let serviceWritesTo = service.writesTo || ([] as any);
-    let serviceReadsFrom = service.readsFrom || ([] as any);
+    let configuredWritesTo = service.writesTo || ([] as any);
+    let configuredReadsFrom = service.readsFrom || ([] as any);
+    let serviceWritesTo = configuredWritesTo;
+    let serviceReadsFrom = configuredReadsFrom;
 
     const generatedMarkdownForService = generateMarkdownForService(document);
     let serviceMarkdown = service.generateMarkdown
@@ -510,6 +516,9 @@ export default async (config: any, options: Props) => {
       styles = latestServiceInCatalog.styles || null;
       badges = latestServiceInCatalog.badges || null;
       attachments = latestServiceInCatalog.attachments || null;
+      // persist writesTo and readsFrom
+      serviceWritesTo = latestServiceInCatalog.writesTo ? latestServiceInCatalog.writesTo : configuredWritesTo;
+      serviceReadsFrom = latestServiceInCatalog.readsFrom ? latestServiceInCatalog.readsFrom : configuredReadsFrom;
 
       // Found a service, and versions do not match, we need to version the one already there
       if (latestServiceInCatalog.version !== version) {
@@ -525,8 +534,12 @@ export default async (config: any, options: Props) => {
         sends = latestServiceInCatalog.sends ? [...latestServiceInCatalog.sends, ...sends] : sends;
         receives = latestServiceInCatalog.receives ? [...latestServiceInCatalog.receives, ...receives] : receives;
         serviceSpecificationsFiles = await getSpecificationFilesForService(serviceId, version);
-        serviceWritesTo = latestServiceInCatalog.writesTo || ([] as any);
-        serviceReadsFrom = latestServiceInCatalog.readsFrom || ([] as any);
+        serviceWritesTo = latestServiceInCatalog.writesTo
+          ? toUniqueArray([...latestServiceInCatalog.writesTo, ...configuredWritesTo])
+          : configuredWritesTo;
+        serviceReadsFrom = latestServiceInCatalog.readsFrom
+          ? toUniqueArray([...latestServiceInCatalog.readsFrom, ...configuredReadsFrom])
+          : configuredReadsFrom;
       }
     }
 

@@ -7,7 +7,7 @@ import { defaultMarkdown as generateMarkdownForDomain } from './utils/domains';
 import { buildService, getSummary } from './utils/services';
 import { buildMessage } from './utils/messages';
 import { getOperationsByType } from './utils/openapi';
-import { Domain, Service, Message } from './types';
+import { Domain, Service, Message, Pointer } from './types';
 import { getMessageTypeUtils } from './utils/catalog-shorthand';
 import { OpenAPI } from 'openapi-types';
 import checkLicense from '../../../shared/checkLicense';
@@ -32,6 +32,10 @@ type Props = {
   sidebarBadgeType?: 'HTTP_METHOD' | 'MESSAGE_TYPE';
   httpMethodsToMessages?: HTTP_METHOD_TO_MESSAGE_TYPE;
   preserveExistingMessages?: boolean;
+};
+
+const toUniqueArray = (array: Pointer[]) => {
+  return array.filter((item, index, self) => index === self.findIndex((t) => t.id === item.id && t.version === item.version));
 };
 
 export default async (_: any, options: Props) => {
@@ -105,8 +109,8 @@ export default async (_: any, options: Props) => {
       let serviceSpecifications = service.specifications;
       let serviceBadges = null;
       let serviceAttachments = null;
-      let serviceWritesTo = service.writesTo || ([] as any);
-      let serviceReadsFrom = service.readsFrom || ([] as any);
+      let configuredWritesTo = service.writesTo || ([] as any);
+      let configuredReadsFrom = service.readsFrom || ([] as any);
       const isDomainMarkedAsDraft = options.domain?.draft || null;
 
       const isServiceMarkedAsDraft =
@@ -197,6 +201,8 @@ export default async (_: any, options: Props) => {
       let owners = service.owners || [];
       let repository = null;
       let styles = null;
+      let serviceWritesTo = configuredWritesTo;
+      let serviceReadsFrom = configuredReadsFrom;
 
       // for now, if the user is doing multiple files into the same service,
       // we don't persist the previous specification files. TODO: fix this
@@ -222,7 +228,19 @@ export default async (_: any, options: Props) => {
         // Match found, override it
         if (latestServiceInCatalog.version === version) {
           // @ts-ignore
-          receives = latestServiceInCatalog.receives ? [...latestServiceInCatalog.receives, ...receives] : receives;
+          receives = latestServiceInCatalog.receives
+            ? // @ts-ignore
+              toUniqueArray([...latestServiceInCatalog.receives, ...receives])
+            : receives;
+
+          console.log('MEOW', 'HELLO', latestServiceInCatalog.writesTo, serviceWritesTo);
+
+          serviceWritesTo = latestServiceInCatalog.writesTo
+            ? toUniqueArray([...latestServiceInCatalog.writesTo, ...configuredWritesTo])
+            : configuredWritesTo;
+          serviceReadsFrom = latestServiceInCatalog.readsFrom
+            ? toUniqueArray([...latestServiceInCatalog.readsFrom, ...configuredReadsFrom])
+            : configuredReadsFrom;
         }
       }
 
