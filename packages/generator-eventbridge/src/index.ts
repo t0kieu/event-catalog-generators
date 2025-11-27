@@ -198,7 +198,7 @@ export default async (config: EventCatalogConfig, options: GeneratorProps) => {
     let servicePath = options.domain
       ? path.join('../', 'domains', options.domain.id, 'services', service.id)
       : path.join('../', 'services', service.id);
-    if (options.writeFilesToRoot) {
+    if (options.writeFilesToRoot || service.writeToRoot) {
       servicePath = service.id;
     }
 
@@ -403,7 +403,7 @@ const processEvents = async (events: Event[], options: GeneratorProps, servicePa
     // Where to write the event to
     let messagePath = event.id;
 
-    if (servicePath && !options.writeFilesToRoot) {
+    if (servicePath && !options.writeFilesToRoot && !options.writeEventsToRoot) {
       messagePath = join(servicePath, 'events', event.id);
     }
 
