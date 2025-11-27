@@ -1,5 +1,11 @@
 # @eventcatalog/generator-eventbridge
 
+## 3.3.0
+
+### Minor Changes
+
+- 9bcada5: feat(plugin): eventbridge plugin now supports more workflow patterns
+
 ## 3.2.7
 
 ### Patch Changes
