@@ -1,5 +1,11 @@
 # @eventcatalog/sdk
 
+## 5.1.4
+
+### Patch Changes
+
+- 740d1dd: fix(plugin): fixed overriding issue for readsFrom and writesTo for th…
+
 ## 5.1.3
 
 ### Patch Changes

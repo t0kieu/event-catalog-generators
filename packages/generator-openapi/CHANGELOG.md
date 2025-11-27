@@ -1,5 +1,11 @@
 # @eventcatalog/generator-openapi
 
+## 7.6.3
+
+### Patch Changes
+
+- 740d1dd: fix(plugin): fixed overriding issue for readsFrom and writesTo for th…
+
 ## 7.6.2
 
 ### Patch Changes
