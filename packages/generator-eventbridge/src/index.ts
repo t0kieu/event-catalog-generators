@@ -338,9 +338,11 @@ const processEvents = async (events: Event[], options: GeneratorProps, servicePa
     let messageMarkdown = generateMarkdownForMessage(event);
     let messageBadges = getBadgesForMessage(event, options.eventBusName);
     let messageAttachments = null;
-    const catalogedEvent = await getEvent(event.id, event.version);
+    const catalogedEvent = await getEvent(event.id, 'latest');
     let eventChannel = [] as any;
     let messageSummary = null;
+
+    console.log('IS THE EVENT CATALOGED?', event.id, event.version, catalogedEvent);
 
     if (catalogedEvent) {
       // Persist markdown between versions

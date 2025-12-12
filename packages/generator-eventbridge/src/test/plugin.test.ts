@@ -117,7 +117,7 @@ describe('EventBridge EventCatalog Plugin', () => {
   });
 
   afterEach(async () => {
-    await fs.rm(join(catalogDir), { recursive: true });
+    // await fs.rm(join(catalogDir), { recursive: true });
   });
 
   describe('format', () => {
