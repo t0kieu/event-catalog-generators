@@ -128,6 +128,14 @@ const toUniqueArray = (array: { id: string; version: string }[]) => {
   return array.filter((item, index, self) => index === self.findIndex((t) => t.id === item.id && t.version === item.version));
 };
 
+// Helper to merge asyncapi path into existing specifications, preserving format (array or object)
+const mergeAsyncApiIntoSpecifications = (existingSpecs: any, asyncapiFileName: string): any => {
+  if (Array.isArray(existingSpecs)) {
+    return [...existingSpecs.filter((spec: any) => spec.type !== 'asyncapi'), { type: 'asyncapi', path: asyncapiFileName }];
+  }
+  return { ...existingSpecs, asyncapiPath: asyncapiFileName };
+};
+
 const validateOptions = (options: Props) => {
   try {
     optionsSchema.parse(options);
@@ -250,8 +258,8 @@ export default async (config: any, options: Props) => {
     let badges = null;
     let attachments = null;
 
-    let serviceSpecifications = {};
-    let serviceSpecificationsFiles = [];
+    let serviceSpecifications: any = {};
+    let serviceSpecificationsFiles: Array<{ fileName: string; content: string }> = [];
     let configuredWritesTo = service.writesTo || ([] as any);
     let configuredReadsFrom = service.readsFrom || ([] as any);
     let serviceWritesTo = configuredWritesTo;
@@ -528,7 +536,6 @@ export default async (config: any, options: Props) => {
 
       // Match found, persist data
       if (latestServiceInCatalog.version === version) {
-        // we want to preserve the markdown any any spec files that are already there
         serviceMarkdown = latestServiceInCatalog.markdown;
         serviceSpecifications = latestServiceInCatalog.specifications ?? {};
         sends = latestServiceInCatalog.sends ? [...latestServiceInCatalog.sends, ...sends] : sends;
@@ -556,10 +563,7 @@ export default async (config: any, options: Props) => {
         sends,
         receives,
         schemaPath: fileName || 'asyncapi.yml',
-        specifications: {
-          ...serviceSpecifications,
-          asyncapiPath: fileName || 'asyncapi.yml',
-        },
+        specifications: mergeAsyncApiIntoSpecifications(serviceSpecifications, fileName || 'asyncapi.yml'),
         ...(owners && { owners }),
         ...(repository && { repository }),
         ...(styles && { styles }),

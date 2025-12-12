@@ -131,11 +131,11 @@ importers:
         specifier: ^2.27.8
         version: 2.29.5
       '@eventcatalog/generator-asyncapi':
-        specifier: '>=5.1.3'
-        version: 5.1.3
+        specifier: '>=5.1.5'
+        version: 5.1.5(@types/node@20.19.1)
       '@eventcatalog/generator-openapi':
-        specifier: '>=7.6.2'
-        version: 7.6.2(@types/node@20.19.1)
+        specifier: '>=7.6.4'
+        version: 7.6.4(@types/node@20.19.1)
       '@eventcatalog/sdk':
         specifier: ^2.9.6
         version: 2.9.6(@types/node@20.19.1)
@@ -1171,18 +1171,15 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@eventcatalog/generator-asyncapi@5.1.3':
-    resolution: { integrity: sha512-RXfxOxJMbfLI77jijh6uwHoFoMZspgc+qVi1ZLpwMDBldb13WeUO3DoltaIr159rvi0KBQTZ5tdqDogve7WpSQ== }
+  '@eventcatalog/generator-asyncapi@5.1.5':
+    resolution: { integrity: sha512-pvQHWLD/EWPzQso+L53FhYOYoqv1B56rM1Jz/n6RecGTb+xCYaO5tG0zazQGJOoyxoAUiNtesNURBBQ3tBbpbw== }
 
-  '@eventcatalog/generator-openapi@7.6.2':
-    resolution: { integrity: sha512-ddrrvfJE0+BWVTTkRmnsx2FUIVdwuLDVWWPi99bLTOM/zGAclUQx57MabNpIVb7xiBVC7TMaLgYGHOJ3zQuLCw== }
+  '@eventcatalog/generator-openapi@7.6.4':
+    resolution: { integrity: sha512-isPygA55wdcIgudvqG2DFobuS3MUDbkuZ+WeQKlpqKaa8a22ZsFMVKcA32DQJEokI9g+ZU60jrWLseGwfAENxw== }
 
   '@eventcatalog/license@0.0.7':
     resolution: { integrity: sha512-izSIn3Dfc6LTcPiA89EqZ4/l5WCitLxt0XVu2yilyaibMOioxW7ABRFZY8/Azocd6ULKseVA2lCcoeT35/GRcg== }
     engines: { node: '>=16.0.0' }
-
-  '@eventcatalog/sdk@2.9.2':
-    resolution: { integrity: sha512-gQJqO0yBFZfM7819Jj5oHGtF8tYKZ2lp76/mgo4pjgWID/Hg1Eb2ORTgUZX8FIbkXZfj3dJPHAh1Qm3qad+KMQ== }
 
   '@eventcatalog/sdk@2.9.6':
     resolution: { integrity: sha512-u1/IlS82Su55IJgJivzi5eZp1nfW6Lpf5PPhw1/q3EVlhVDZbEVDVuYtgQlnIGLDi144m4QKtzYCHI8824icLQ== }
@@ -5188,14 +5185,14 @@ snapshots:
   '@esbuild/win32-x64@0.25.5':
     optional: true
 
-  '@eventcatalog/generator-asyncapi@5.1.3':
+  '@eventcatalog/generator-asyncapi@5.1.5(@types/node@20.19.1)':
     dependencies:
       '@asyncapi/avro-schema-parser': 3.0.24
       '@asyncapi/parser': 3.4.0
-      '@eventcatalog/sdk': 2.9.2
+      '@eventcatalog/sdk': 2.9.6(@types/node@20.19.1)
       chalk: 4.1.2
       fs-extra: 11.3.0
-      glob: 11.0.3
+      glob: 11.1.0
       gray-matter: 4.0.3
       js-yaml: 4.1.0
       lodash: 4.17.21
@@ -5204,12 +5201,13 @@ snapshots:
       update-notifier: 7.3.1
       zod: 3.25.67
     transitivePeerDependencies:
+      - '@types/node'
       - encoding
 
-  '@eventcatalog/generator-openapi@7.6.2(@types/node@20.19.1)':
+  '@eventcatalog/generator-openapi@7.6.4(@types/node@20.19.1)':
     dependencies:
       '@apidevtools/swagger-parser': 10.1.1(openapi-types@12.1.3)
-      '@changesets/cli': 2.29.5
+      '@changesets/cli': 2.29.6(@types/node@20.19.1)
       '@eventcatalog/sdk': 2.9.6(@types/node@20.19.1)
       chalk: 4.1.2
       js-yaml: 4.1.0
@@ -5228,16 +5226,6 @@ snapshots:
       jose: 5.10.0
     transitivePeerDependencies:
       - supports-color
-
-  '@eventcatalog/sdk@2.9.2':
-    dependencies:
-      '@changesets/cli': 2.29.5
-      fs-extra: 11.3.0
-      glob: 11.0.3
-      gray-matter: 4.0.3
-      proper-lockfile: 4.1.2
-      semver: 7.6.3
-      slugify: 1.6.6
 
   '@eventcatalog/sdk@2.9.6(@types/node@20.19.1)':
     dependencies:

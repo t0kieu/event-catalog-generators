@@ -666,7 +666,11 @@ describe('AsyncAPI EventCatalog Plugin', () => {
           version: existingVersion,
           name: 'Random Name',
           markdown: 'Here is my original markdown, please do not override this!',
-          specifications: { openapiPath: 'simple.openapi.yml', asyncapiPath: 'old.asyncapi.yml' },
+          // Test with array format for specifications (new format)
+          specifications: [
+            { type: 'openapi', path: 'simple.openapi.yml' },
+            { type: 'asyncapi', path: 'old.asyncapi.yml' },
+          ],
         });
 
         await addFileToService(
@@ -694,13 +698,13 @@ describe('AsyncAPI EventCatalog Plugin', () => {
 
         expect(specs).toHaveLength(2);
         expect(specs[0]).toEqual({
-          key: 'openapiPath',
+          key: 'openapi',
           content: 'Some content',
           fileName: 'simple.openapi.yml',
           path: expect.anything(),
         });
         expect(specs[1]).toEqual({
-          key: 'asyncapiPath',
+          key: 'asyncapi',
           content: expect.anything(),
           fileName: 'simple.asyncapi.yml',
           path: expect.anything(),
@@ -709,10 +713,11 @@ describe('AsyncAPI EventCatalog Plugin', () => {
         // Verify that the asyncapi file is overriden content
         expect(specs[1].content).not.toEqual('old contents');
 
-        expect(service.specifications).toEqual({
-          openapiPath: 'simple.openapi.yml',
-          asyncapiPath: 'simple.asyncapi.yml',
-        });
+        // Array format is preserved
+        expect(service.specifications).toEqual([
+          { type: 'openapi', path: 'simple.openapi.yml' },
+          { type: 'asyncapi', path: 'simple.asyncapi.yml' },
+        ]);
       });
 
       it('if the service has owners, these owners are written to the service', async () => {
