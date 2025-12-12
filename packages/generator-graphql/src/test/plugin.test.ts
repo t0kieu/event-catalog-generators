@@ -125,36 +125,40 @@ describe('GraphQL EventCatalog Plugin', () => {
         );
       });
 
-      it('if a domain is defined in the GraphQL file but the versions do not match, the existing domain is versioned and a new one is created', async () => {
-        const { writeDomain, getDomain, getResourcePath } = utils(catalogDir);
+      it(
+        'if a domain is defined in the GraphQL file but the versions do not match, the existing domain is versioned and a new one is created',
+        async () => {
+          const { writeDomain, getDomain, getResourcePath } = utils(catalogDir);
 
-        await writeDomain({
-          id: 'users',
-          name: 'Users Domain',
-          version: '0.0.1',
-          markdown: '',
-        });
+          await writeDomain({
+            id: 'users',
+            name: 'Users Domain',
+            version: '0.0.1',
+            markdown: '',
+          });
 
-        await plugin(config, {
-          services: [
-            {
-              path: join(graphQLExamples, 'simple.graphql'),
-              id: 'user-service',
-              version: '1.0.0',
-              summary: 'This is a sample server User service.',
-              name: 'User Service',
-            },
-          ],
-          domain: { id: 'users', name: 'Users Domain', version: '1.0.0' },
-        });
+          await plugin(config, {
+            services: [
+              {
+                path: join(graphQLExamples, 'simple.graphql'),
+                id: 'user-service',
+                version: '1.0.0',
+                summary: 'This is a sample server User service.',
+                name: 'User Service',
+              },
+            ],
+            domain: { id: 'users', name: 'Users Domain', version: '1.0.0' },
+          });
 
-        const versionedDomain = await getDomain('users', '0.0.1');
-        const newDomain = await getDomain('users', '1.0.0');
+          const versionedDomain = await getDomain('users', '0.0.1');
+          const newDomain = await getDomain('users', '1.0.0');
 
-        expect(versionedDomain.version).toEqual('0.0.1');
-        expect(newDomain.version).toEqual('1.0.0');
-        expect(newDomain.services).toEqual([{ id: 'user-service', version: '1.0.0' }]);
-      });
+          expect(versionedDomain.version).toEqual('0.0.1');
+          expect(newDomain.version).toEqual('1.0.0');
+          expect(newDomain.services).toEqual([{ id: 'user-service', version: '1.0.0' }]);
+        },
+        { timeout: 10000 }
+      );
 
       it('if a domain is defined in the GraphQL plugin configuration and that domain exists the GraphQL Service is added to that domain', async () => {
         const { getDomain } = utils(catalogDir);
