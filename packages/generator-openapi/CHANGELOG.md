@@ -1,5 +1,11 @@
 # @eventcatalog/generator-openapi
 
+## 7.6.5
+
+### Patch Changes
+
+- 7737ad7: fix(plugin): fixed issue with specification parsed 286
+
 ## 7.6.4
 
 ### Patch Changes
