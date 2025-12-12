@@ -1,5 +1,11 @@
 # @eventcatalog/sdk
 
+## 5.1.6
+
+### Patch Changes
+
+- 7737ad7: fix(plugin): fixed issue with specification parsed 286
+
 ## 5.1.5
 
 ### Patch Changes
