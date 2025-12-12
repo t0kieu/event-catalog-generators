@@ -1,5 +1,11 @@
 # @eventcatalog/generator-confluent-schema-registry
 
+## 0.2.6
+
+### Patch Changes
+
+- cac3de1: chore(core): updated packages
+
 ## 0.2.5
 
 ### Patch Changes

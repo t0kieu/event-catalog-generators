@@ -1,5 +1,11 @@
 # @eventcatalog/generator-aws-glue
 
+## 0.1.4
+
+### Patch Changes
+
+- cac3de1: chore(core): updated packages
+
 ## 0.1.3
 
 ### Patch Changes

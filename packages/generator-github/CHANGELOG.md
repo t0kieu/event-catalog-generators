@@ -1,5 +1,11 @@
 # @eventcatalog/generator-github
 
+## 0.2.4
+
+### Patch Changes
+
+- cac3de1: chore(core): updated packages
+
 ## 0.2.3
 
 ### Patch Changes

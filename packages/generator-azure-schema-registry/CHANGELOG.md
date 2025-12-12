@@ -1,5 +1,11 @@
 # @eventcatalog/generator-azure-schema-registry
 
+## 0.0.5
+
+### Patch Changes
+
+- cac3de1: chore(core): updated packages
+
 ## 0.0.4
 
 ### Patch Changes

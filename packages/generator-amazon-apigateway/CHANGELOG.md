@@ -1,5 +1,11 @@
 # @eventcatalog/generator-amazon-apigateway
 
+## 1.2.5
+
+### Patch Changes
+
+- cac3de1: chore(core): updated packages
+
 ## 1.2.4
 
 ### Patch Changes

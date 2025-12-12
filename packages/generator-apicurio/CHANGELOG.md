@@ -1,5 +1,14 @@
 # @eventcatalog/generator-apicurio
 
+## 0.0.6
+
+### Patch Changes
+
+- cac3de1: chore(core): updated packages
+- Updated dependencies [cac3de1]
+  - @eventcatalog/generator-asyncapi@5.1.5
+  - @eventcatalog/generator-openapi@7.6.4
+
 ## 0.0.5
 
 ### Patch Changes

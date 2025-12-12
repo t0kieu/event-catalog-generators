@@ -1,5 +1,11 @@
 # @eventcatalog/generator-eventbridge
 
+## 3.3.1
+
+### Patch Changes
+
+- cac3de1: chore(core): updated packages
+
 ## 3.3.0
 
 ### Minor Changes
