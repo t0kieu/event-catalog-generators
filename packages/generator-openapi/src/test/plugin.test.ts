@@ -607,6 +607,68 @@ describe('OpenAPI EventCatalog Plugin', () => {
         });
       });
 
+      it('if the service already has specifications in array format, the array format is preserved and openapi file is updated', async () => {
+        const { writeService, getService, addFileToService, getSpecificationFilesForService } = utils(catalogDir);
+
+        const existingVersion = '1.0.0';
+        await writeService({
+          id: 'swagger-petstore',
+          version: existingVersion,
+          name: 'Random Name',
+          markdown: 'Here is my original markdown, please do not override this!',
+          // Test with array format for specifications (new format)
+          specifications: [
+            { type: 'asyncapi', path: 'simple.asyncapi.yml' },
+            { type: 'openapi', path: 'old.openapi.yml' },
+          ],
+        });
+
+        await addFileToService(
+          'swagger-petstore',
+          {
+            fileName: 'simple.asyncapi.yml',
+            content: 'Some content',
+          },
+          existingVersion
+        );
+        await addFileToService(
+          'swagger-petstore',
+          {
+            fileName: 'old.openapi.yml',
+            content: 'old contents',
+          },
+          existingVersion
+        );
+
+        await plugin(config, { services: [{ path: join(openAPIExamples, 'petstore.yml'), id: 'swagger-petstore' }] });
+
+        const service = await getService('swagger-petstore', '1.0.0');
+        const specs = await getSpecificationFilesForService('swagger-petstore', existingVersion);
+
+        expect(specs).toHaveLength(2);
+        expect(specs[0]).toEqual({
+          key: 'asyncapi',
+          content: 'Some content',
+          fileName: 'simple.asyncapi.yml',
+          path: expect.anything(),
+        });
+        expect(specs[1]).toEqual({
+          key: 'openapi',
+          content: expect.anything(),
+          fileName: 'petstore.yml',
+          path: expect.anything(),
+        });
+
+        // Verify that the openapi file is overridden content
+        expect(specs[1].content).not.toEqual('old contents');
+
+        // Array format is preserved
+        expect(service.specifications).toEqual([
+          { type: 'asyncapi', path: 'simple.asyncapi.yml' },
+          { type: 'openapi', path: 'petstore.yml' },
+        ]);
+      });
+
       it('all endpoints in the OpenAPI spec are messages the service receives', async () => {
         const { getService } = utils(catalogDir);
 

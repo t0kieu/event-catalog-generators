@@ -38,6 +38,16 @@ const toUniqueArray = (array: Pointer[]) => {
   return array.filter((item, index, self) => index === self.findIndex((t) => t.id === item.id && t.version === item.version));
 };
 
+// Helper to merge openapi path into existing specifications, preserving format (array or object)
+const mergeOpenApiIntoSpecifications = (existingSpecs: any, openapiFileName: string): any => {
+  if (Array.isArray(existingSpecs)) {
+    return [...existingSpecs.filter((spec: any) => spec.type !== 'openapi'), { type: 'openapi', path: openapiFileName }];
+  }
+  // Remove old openapiPath and add new one first to preserve expected key order
+  const { openapiPath: _, ...rest } = existingSpecs || {};
+  return { openapiPath: openapiFileName, ...rest };
+};
+
 export default async (_: any, options: Props) => {
   if (!process.env.PROJECT_DIR) {
     process.env.PROJECT_DIR = process.cwd();
@@ -219,11 +229,10 @@ export default async (_: any, options: Props) => {
         serviceAttachments = latestServiceInCatalog.attachments || null;
         serviceWritesTo = latestServiceInCatalog.writesTo || ([] as any);
         serviceReadsFrom = latestServiceInCatalog.readsFrom || ([] as any);
-        // persist any specifications that are already in the catalog
-        serviceSpecifications = {
-          ...serviceSpecifications,
-          ...(persistPreviousSpecificationFiles ? latestServiceInCatalog.specifications : {}),
-        };
+        // persist any specifications that are already in the catalog, preserving format (array or object)
+        if (persistPreviousSpecificationFiles && latestServiceInCatalog.specifications) {
+          serviceSpecifications = mergeOpenApiIntoSpecifications(latestServiceInCatalog.specifications, service.schemaPath);
+        }
 
         // Match found, override it
         if (latestServiceInCatalog.version === version) {
