@@ -1,5 +1,11 @@
 # @eventcatalog/generator-openapi
 
+## 7.6.4
+
+### Patch Changes
+
+- cac3de1: chore(core): updated packages
+
 ## 7.6.3
 
 ### Patch Changes

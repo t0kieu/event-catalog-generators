@@ -1,5 +1,11 @@
 # @eventcatalog/generator-graphql
 
+## 0.0.9
+
+### Patch Changes
+
+- cac3de1: chore(core): updated packages
+
 ## 0.0.8
 
 ### Patch Changes

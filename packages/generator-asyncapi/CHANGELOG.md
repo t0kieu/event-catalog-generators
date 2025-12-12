@@ -1,5 +1,11 @@
 # @eventcatalog/sdk
 
+## 5.1.5
+
+### Patch Changes
+
+- cac3de1: chore(core): updated packages
+
 ## 5.1.4
 
 ### Patch Changes

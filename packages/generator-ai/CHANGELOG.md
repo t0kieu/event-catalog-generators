@@ -1,5 +1,11 @@
 # @eventcatalog/generator-ai
 
+## 1.2.3
+
+### Patch Changes
+
+- cac3de1: chore(core): updated packages
+
 ## 1.2.2
 
 ### Patch Changes

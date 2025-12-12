@@ -1,5 +1,11 @@
 # @eventcatalog/generator-federation
 
+## 2.2.4
+
+### Patch Changes
+
+- cac3de1: chore(core): updated packages
+
 ## 2.2.3
 
 ### Patch Changes
