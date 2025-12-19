@@ -454,7 +454,6 @@ export default async (config: any, options: Props) => {
 
           const channelsForMessage = parseChannels ? getChannelsForMessage(message, channels, document) : [];
 
-          // Write the message to the catalog
           await writeMessage(
             {
               id: messageId,
@@ -480,6 +479,7 @@ export default async (config: any, options: Props) => {
           );
 
           console.log(chalk.cyan(` - Message (v${messageVersion}) created`));
+
           // Check if the message has a payload, if it does then document in EventCatalog
           if (messageHasSchema(message)) {
             // Get the schema from the original payload if it exists
@@ -491,13 +491,19 @@ export default async (config: any, options: Props) => {
               schema = schema.schema;
             }
 
+            // Normalize path separators and remove leading relative path segments (../ or ./ for both Unix and Windows)
+            const cleanedMessagePath = messagePath
+              .replace(/\\/g, '/') // Convert all backslashes to forward slashes
+              .replace(/^(\.\.\/|\.\/)+/g, ''); // Remove all leading ../ or ./ segments
+
             await addSchemaToMessage(
               messageId,
               {
                 fileName: getSchemaFileName(message),
                 schema: JSON.stringify(schema, null, 4),
               },
-              messageVersion
+              messageVersion,
+              { path: cleanedMessagePath }
             );
             console.log(chalk.cyan(` - Schema added to message (v${messageVersion})`));
           }
