@@ -1,6 +1,6 @@
 {
   "name": "@eventcatalog/generator-apicurio",
-  "version": "0.0.6",
+  "version": "1.0.0",
   "description": "Apicurio Registry generator for EventCatalog",
   "scripts": {
     "build": "tsup",
@@ -38,7 +38,7 @@
     "update-notifier": "^7.3.1"
   },
   "peerDependencies": {
-    "@eventcatalog/generator-asyncapi": ">=5.1.5",
+    "@eventcatalog/generator-asyncapi": ">=5.2.0",
     "@eventcatalog/generator-openapi": ">=7.6.4"
   },
   "peerDependenciesMeta": {
