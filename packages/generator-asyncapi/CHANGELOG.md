@@ -1,5 +1,11 @@
 # @eventcatalog/sdk
 
+## 5.2.0
+
+### Minor Changes
+
+- adee350: fix(plugin): asyncapi will now write schemas to duplicated messages
+
 ## 5.1.6
 
 ### Patch Changes
